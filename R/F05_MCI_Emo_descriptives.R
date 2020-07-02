@@ -1,9 +1,7 @@
-#/* Run this first piece of code only if you want to create a markdown report!
+#/* Run this first piece of code only if you want to create a markdown report for GitHub:
 #+ eval = FALSE
-# To compile a report of this script for GitHub, simply run:
-rmarkdown::render(input = "R/F05_MCI_Emo_descriptives.R",
-                  output_format = "github_document",
-                  output_file = "F05_MCI_descriptives.md",
+rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
+                  output_format = rmarkdown::github_document(html_preview = FALSE),
                   output_dir = "output",
                   knit_root_dir = getwd())
 #*/
