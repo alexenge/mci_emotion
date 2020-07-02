@@ -1,3 +1,12 @@
+# /* Run this first piece of code only if you want to create a markdown report! */
+#+ eval = FALSE
+# To compile a report of this script, simply run:
+rmarkdown::render(input = "R/F05_MCI_Emo_descriptives.R",
+                  output_format = "md_document",
+                  output_file = "F05_MCI_descriptives.md",
+                  output_dir = "output")
+#+
+
 ### MCI EMO DESCRIPTIVES SCRIPT ###
 
 # Gives descriptive information about the number of (a) rejected ERP epochs and (b) errors or
@@ -7,13 +16,13 @@
 ## SETUP ## ---------------------------------------------------------------------------------------
 
 # Load packages
-library(Rmisc)
+library(Rmisc)     # version 1.5
 
 # Load preprocessed data
-a1 <- readRDS("Results/EEG/export/a1.RDS")
+a1 <- readRDS("../data/a1.RDS")
 
 # Add a column for rejected ERPs
-a1$rejected <- is.na(a1$N400) | is.na(a1$Npic)
+a1$rejected <- is.na(a1$N400.verb) | is.na(a1$N400.pict)
 
 # Check number of rejected ERPs participant (mean, median, min, max)
 mean(table(a1$rejected, a1$participant)[2,])
