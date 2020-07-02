@@ -12,7 +12,10 @@ rmarkdown::render(input = "R/F02_MCI_Emo_mixed_models",
 ### MCI EMO MIXED MODELS SCRIPT ###
 
 # Computes linear mixed-effects regression models with simple contrast coding for the fixed effects
-# of semantics (violation - intuitive, mci - intuitive) and emotional context (negative - neutral).
+# of semantics and emotional context. Thus, in each model, the estimate of the intercept is the
+# grand mean, while the estimates of the slopes contrast "treatment" levels to their respective
+# reference levels (semantics: violation - intuitive, mci - intuitive; emotional context (negative 
+# - neutral).
 # The maximal random effects structure is used with all by-participant and by-item random slopes and
 # random intercepts. Correlations between random effects are removed if the model fails two converge
 # with two different numerical optimizers. Planned follow-up contrasts are computed for the main
@@ -37,10 +40,17 @@ a1 <- na.omit(a1[!a1$error,])
 a1$logRT <- log(a1$BildRT)
 
 # Define simple contrast coding for context emotionality (negative - neutral)
+    # HO(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
+    # H0(Slope): -mu1 + mu2 = 0
+    # with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
 t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
 contrasts(a1$context) <- ginv(contrasts.context)
 
 # Define simple contrast coding for semantics (violation - intuitive, mci - intuitive)
+    # H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
+    # H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
+    # H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
+    # with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
 t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
                                  c("int" = -1, "vio" = 0, "mci" = 1))))
 contrasts(a1$semantics) <- ginv(contrasts.semantics)
