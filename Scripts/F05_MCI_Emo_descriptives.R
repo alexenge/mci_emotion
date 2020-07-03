@@ -46,3 +46,5 @@ accuracy <- summarySEwithin(a1, measurevar = "error", withinvars = c("semantics"
                             betweenvars = "participant", idvar = "participant", na.rm = TRUE)
 summary(aov(error ~ semantics*context + Error(participant/(semantics*context)), data = accuracy))
 
+# SessionInfo
+sessionInfo()
