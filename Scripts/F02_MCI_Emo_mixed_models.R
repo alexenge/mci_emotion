@@ -1,4 +1,4 @@
-#/* Run this first piece of code only if you want to create a markdown report for GitHub:
+#/* Run this first piece of code only if you want to create a markdown report for GitHub
 #+ eval = FALSE
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
                   output_format = rmarkdown::github_document(html_preview = FALSE),
@@ -67,7 +67,7 @@ mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|partici
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
                  data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Create list of models
+# Create a list of models
 models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)
 
 # F-tests (type III tests)
@@ -79,16 +79,20 @@ models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = 
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 # Follow-up contrasts for the main effect of semantics
-(means.semantics <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")}))
+(means.semantics <- lapply(models,function(x){
+    emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for the main effect of context
-(means.context <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")}))
+(means.context <- lapply(models, function(x){
+    emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each contexts
-(means.nested <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")}))
+(means.nested <- lapply(models, function(x){
+    emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Backup results
 save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 
-# SessionInfo
+# Full system specs and package versions
 sessionInfo()
+

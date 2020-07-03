@@ -1,4 +1,4 @@
-#/* Run this first piece of code only if you want to create a markdown report for GitHub:
+#/* Run this first piece of code only if you want to create a markdown report for GitHub
 #+ eval = FALSE
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
                   output_format = rmarkdown::github_document(html_preview = FALSE),
@@ -10,7 +10,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 ### MCI EMO PREPROCESSING SCRIPT ###
 
 # Reads behavioral log files for all participants and binds them together. Performs EEG preprocessing
-# including re-refercing, ocular artifact correction, filtering, epoching, baseline correction and
+# including re-refercing, ocular artifact correction, filtering, epoching, baseline correction, and
 # automatic artifact rejection, separetly for verb- and picture-related potentials. Computes single-
 # trial mean ERP amplitudes for the N400 component and exports by-participant averaged waveforms for
 # plotting.
@@ -38,8 +38,8 @@ a1 <- do.call(rbind, a1)
 # Remove empty lines
 a1 <- na.omit(a1)
 
-# For exploratory analyses: Add factorized columns for lag 1 semantics and context manipulations
-    # Fillers are coded as intuitive semantic condition and neutral context condition
+# For exploratory analyses: Add factorized columns for semantics and context manipulations at lag 1
+# Fillers are coded as belonging to the intuitive semantic and neutral context condition
 a1 <- a1 %>% mutate(lag1Semantics = factor(lag(SatzBed, n=1), levels = c("filler", "neutral", "sem", "mci"),
                                            labels = c("int", "int", "vio", "mci")))
 a1 <- a1 %>% mutate(lag1Context = factor(lag(EmoBed, n=1), levels =c(1,2), labels = c("neu", "neg")))
@@ -55,10 +55,10 @@ a1$context <- factor(a1$EmoBed, levels = c(1, 2), labels = c("neu", "neg"))
 a1$participant <- as.factor(a1$VP_nr)
 a1$item <- as.factor(a1$Verb)
 
-# Add a column checking if participants made an error or if RTs are unrealistically short (< 200 ms)
+# Add a column which checks if participants made an error or if RTs are unrealistically short (< 200 ms)
 a1$error <- a1$Errors == 99 | a1$BildRT <= 200
 
-# Remove trials with missing EEG
+# Remove trials with missing EEG (due to technical issues)
 a1 <- a1[-c(4002:4011),]
 a1 <- a1[-7013,]
 a1 <- a1[-c(9488:9492),]
@@ -66,7 +66,7 @@ a1 <- a1[-c(10300:10303),]
 
 ## EEG DATA ## ------------------------------------------------------------------------------------
 
-# List EEG header files and BESA matrices
+# List EEG header files and BESA matrices (for ocular correction)
 filenames.eeg <- list.files("EEG/raw", pattern = ".vhdr", full.names = TRUE)
 filenames.besa <- list.files("EEG/cali", pattern = ".matrix", full.names = TRUE)
 
@@ -84,7 +84,7 @@ eeg.verb <- mapply(function(vhdr.filename, besa.filename){
   message("## OCCULAR CORRECTION...")
   besa <- as.matrix(read.delim(besa.filename, row.names = 1))
   tmp <- t(dat$.signal %>% select(all_of(channames)))
-  tmp <- besa %*% tmp # This is the actual OC, above and below is just to transform the sginal table
+  tmp <- besa %*% tmp # This is the actual OC; lines above and below are just transforming the sginal table
   tmp <- split(tmp, row(tmp))
   tmp <- lapply(tmp, channel_dbl)
   dat$.signal[,channames] <- tmp[1:length(channames)]
@@ -121,7 +121,7 @@ eeg.pict <- mapply(function(vhdr.filename, besa.filename){
   message("## OCCULAR CORRECTION...")
   besa <- as.matrix(read.delim(besa.filename, row.names = 1))
   tmp <- t(dat$.signal %>% select(all_of(channames)))
-  tmp <- besa %*% tmp # This is the actual OC, above and below is just to transform the sginal table
+  tmp <- besa %*% tmp # This is the actual OC; lines above and below are just transforming the sginal table
   tmp <- split(tmp, row(tmp))
   tmp <- lapply(tmp, channel_dbl)
   dat$.signal[,channames] <- tmp[1:length(channames)]
@@ -143,7 +143,7 @@ eeg.pict <- mapply(function(vhdr.filename, besa.filename){
   return(dat)
 }, filenames.eeg, filenames.besa, SIMPLIFY = FALSE)
 
-# Bind all participants together
+# Bind data from all participants together
 eeg.verb <- do.call(bind, eeg.verb)
 eeg.pict <- do.call(bind, eeg.pict)
 
@@ -161,15 +161,15 @@ eeg.verb <- eeg.verb %>% mutate(semantics = factor(semantics, levels = c("int", 
 eeg.pict <- eeg.pict %>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci")),
                                 context = factor(context, levels = c("neu", "neg")))
 
-# Compute mean amplitude accross the N400/P600 ROI
+# Compute mean amplitude accross electrodes in the N400 ROI
 eeg.verb <- eeg.verb %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 eeg.pict <- eeg.pict %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 
-# Average single trial ERPs across ROI electrodes in the relevant time window (and bind to behavioral data)
+# Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
 a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.300, 0.500)], mean, na.action = NULL)$ROI
 a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
 
-# Export behavioral data with ERPs for LMMs
+# Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1.RDS")
 
 ## PREPARE FOR PLOTTING ## ------------------------------------------------------------------------
@@ -190,5 +190,6 @@ avgs.pict <- eeg.pict %>%
 saveRDS(avgs.verb, "EEG/export/avgs_verb.RDS")
 saveRDS(avgs.pict, "EEG/export/avgs_pict.RDS")
 
-# Session Info
+# Full system specs and package versions
 sessionInfo()
+

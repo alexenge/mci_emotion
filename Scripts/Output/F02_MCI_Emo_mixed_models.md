@@ -20,56 +20,8 @@ alexander
 # Load packages
 library(MASS)         # version 7.3-51.6
 library(lme4)         # version 1.1-23
-```
-
-    ## Loading required package: Matrix
-
-``` r
 library(lmerTest)     # version 3.1-2
-```
-
-    ## 
-    ## Attaching package: 'lmerTest'
-
-    ## The following object is masked from 'package:lme4':
-    ## 
-    ##     lmer
-
-    ## The following object is masked from 'package:stats':
-    ## 
-    ##     step
-
-``` r
 library(afex)         # version 0.27-2
-```
-
-    ## Registered S3 methods overwritten by 'car':
-    ##   method                          from
-    ##   influence.merMod                lme4
-    ##   cooks.distance.influence.merMod lme4
-    ##   dfbeta.influence.merMod         lme4
-    ##   dfbetas.influence.merMod        lme4
-
-    ## ************
-    ## Welcome to afex. For support visit: http://afex.singmann.science/
-
-    ## - Functions for ANOVAs: aov_car(), aov_ez(), and aov_4()
-    ## - Methods for calculating p-values with mixed(): 'KR', 'S', 'LRT', and 'PB'
-    ## - 'afex_aov' and 'mixed' objects can be passed to emmeans() for follow-up tests
-    ## - NEWS: library('emmeans') now needs to be called explicitly!
-    ## - Get and set global package options with: afex_options()
-    ## - Set orthogonal sum-to-zero contrasts globally: set_sum_contrasts()
-    ## - For example analyses see: browseVignettes("afex")
-    ## ************
-
-    ## 
-    ## Attaching package: 'afex'
-
-    ## The following object is masked from 'package:lme4':
-    ## 
-    ##     lmer
-
-``` r
 library(emmeans)      # version 1.4.8
 
 # Load preprocessed data
@@ -127,7 +79,7 @@ mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|partici
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
                  data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Create list of models
+# Create a list of models
 models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)
 
 # F-tests (type III tests)
@@ -177,29 +129,16 @@ models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = 
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 # Follow-up contrasts for the main effect of semantics
-(means.semantics <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")}))
+(means.semantics <- lapply(models,function(x){
+    emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 ```
 
     ## NOTE: Results may be misleading due to involvement in interactions
-
     ## NOTE: Results may be misleading due to involvement in interactions
     ## NOTE: Results may be misleading due to involvement in interactions
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $VALENCE
-    ## $emmeans
-    ##  semantics emmean     SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.482 0.0614 78.3   -0.632   -0.332 -7.854  <.0001 
-    ##  vio       -0.473 0.0617 80.9   -0.624   -0.322 -7.658  <.0001 
-    ##  mci       -0.477 0.0618 80.6   -0.628   -0.326 -7.719  <.0001 
-    ## 
-    ## Results are averaged over the levels of: context 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int  0.00922 0.0694 60.2   -0.150    0.169 0.133   1.0000 
     ##  mci - int  0.00478 0.0676 60.2   -0.151    0.160 0.071   1.0000 
@@ -210,21 +149,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $AROUSAL
-    ## $emmeans
-    ##  semantics  emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.1138 0.132 32.8   -0.446    0.219 -0.863  1.0000 
-    ##  vio       -0.0884 0.135 35.8   -0.427    0.250 -0.656  1.0000 
-    ##  mci       -0.1117 0.134 34.9   -0.449    0.225 -0.834  1.0000 
-    ## 
-    ## Results are averaged over the levels of: context 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int  0.02541 0.0518 60.5  -0.0936    0.144 0.491   1.0000 
     ##  mci - int  0.00209 0.0449 60.1  -0.1012    0.105 0.046   1.0000 
@@ -235,21 +160,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $N400.VERB
-    ## $emmeans
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.438 0.189 31.6   -0.916   0.0392 -2.320  0.0808 
-    ##  vio       -0.467 0.197 33.2   -0.964   0.0312 -2.363  0.0724 
-    ##  mci       -0.821 0.180 33.5   -1.274  -0.3687 -4.574  0.0002 
-    ## 
-    ## Results are averaged over the levels of: context 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int  -0.0283 0.131 61.3   -0.329    0.272 -0.216  1.0000 
     ##  mci - int  -0.3830 0.114 65.9   -0.643   -0.123 -3.374  0.0025 
@@ -260,21 +171,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $N400.PICT
-    ## $emmeans
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int        -2.80 0.310 30.4    -3.59    -2.02 -9.037  <.0001 
-    ##  vio        -2.73 0.312 32.4    -3.52    -1.94 -8.727  <.0001 
-    ##  mci        -2.92 0.306 31.5    -3.69    -2.15 -9.548  <.0001 
-    ## 
-    ## Results are averaged over the levels of: context 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int    0.073 0.129 35.5   -0.228    0.374  0.568  1.0000 
     ##  mci - int   -0.121 0.138 37.7   -0.444    0.202 -0.872  0.7774 
@@ -287,7 +184,8 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 ``` r
 # Follow-up contrasts for the main effect of context
-(means.context <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")}))
+(means.context <- lapply(models, function(x){
+    emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 ```
 
     ## NOTE: Results may be misleading due to involvement in interactions
@@ -296,18 +194,6 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $VALENCE
-    ## $emmeans
-    ##  context emmean     SE   df lower.CL upper.CL t.ratio p.value
-    ##  neu      0.227 0.0515 67.5    0.109    0.346   4.413 0.0001 
-    ##  neg     -1.182 0.0890 37.3   -1.390   -0.974 -13.287 <.0001 
-    ## 
-    ## Results are averaged over the levels of: semantics 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 2 estimates 
-    ## P value adjustment: bonferroni method for 2 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate   SE df lower.CL upper.CL t.ratio p.value
     ##  neg - neu    -1.41 0.11 38    -1.63    -1.19 -12.818 <.0001 
     ## 
@@ -315,20 +201,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
     ## 
-    ## 
     ## $AROUSAL
-    ## $emmeans
-    ##  context emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  neu     -0.626 0.142 42.4   -0.955   -0.297 -4.424  0.0001 
-    ##  neg      0.417 0.142 42.4    0.088    0.746  2.946  0.0104 
-    ## 
-    ## Results are averaged over the levels of: semantics 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 2 estimates 
-    ## P value adjustment: bonferroni method for 2 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
     ##  neg - neu     1.04 0.113 37.9    0.813     1.27 9.194   <.0001 
     ## 
@@ -336,20 +209,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
     ## 
-    ## 
     ## $N400.VERB
-    ## $emmeans
-    ##  context emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  neu     -0.583 0.189 31.4   -1.028   -0.137 -3.080  0.0086 
-    ##  neg     -0.568 0.175 30.1   -0.982   -0.155 -3.242  0.0058 
-    ## 
-    ## Results are averaged over the levels of: semantics 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 2 estimates 
-    ## P value adjustment: bonferroni method for 2 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
     ##  neg - neu   0.0142 0.103 34.9   -0.195    0.223 0.138   0.8912 
     ## 
@@ -357,20 +217,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
     ## 
-    ## 
     ## $N400.PICT
-    ## $emmeans
-    ##  context emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  neu      -2.81 0.300 29.7    -3.52     -2.1 -9.369  <.0001 
-    ##  neg      -2.82 0.304 30.5    -3.54     -2.1 -9.277  <.0001 
-    ## 
-    ## Results are averaged over the levels of: semantics 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 2 estimates 
-    ## P value adjustment: bonferroni method for 2 tests 
-    ## 
-    ## $contrasts
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
     ##  neg - neu -0.00704 0.0972 44.1   -0.203    0.189 -0.072  0.9426 
     ## 
@@ -380,29 +227,11 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 ``` r
 # Follow-up contrasts for semantics within each contexts
-(means.nested <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")}))
+(means.nested <- lapply(models, function(x){
+    emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 ```
 
     ## $VALENCE
-    ## $emmeans
-    ## context = neu:
-    ##  semantics emmean     SE   df lower.CL upper.CL t.ratio p.value
-    ##  int        0.223 0.0737 81.0   0.0423    0.403   3.019 0.0102 
-    ##  vio        0.237 0.0763 81.9   0.0506    0.423   3.107 0.0078 
-    ##  mci        0.223 0.0772 82.4   0.0341    0.411   2.885 0.0150 
-    ## 
-    ## context = neg:
-    ##  semantics emmean     SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -1.187 0.0986 48.5  -1.4310   -0.942 -12.037 <.0001 
-    ##  vio       -1.183 0.1008 49.3  -1.4324   -0.933 -11.731 <.0001 
-    ##  mci       -1.177 0.0957 52.8  -1.4138   -0.941 -12.303 <.0001 
-    ## 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ## context = neu:
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int 0.014478 0.0960 60.3   -0.206    0.235 0.151   1.0000 
@@ -418,27 +247,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $AROUSAL
-    ## $emmeans
-    ## context = neu:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.638 0.145 46.6  -0.9985   -0.278 -4.404  0.0002 
-    ##  vio       -0.616 0.149 52.1  -0.9854   -0.247 -4.132  0.0004 
-    ##  mci       -0.624 0.149 51.4  -0.9916   -0.256 -4.195  0.0003 
-    ## 
-    ## context = neg:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int        0.411 0.145 46.6   0.0509    0.771  2.835  0.0203 
-    ##  vio        0.440 0.149 52.1   0.0707    0.809  2.947  0.0144 
-    ##  mci        0.400 0.149 51.4   0.0324    0.768  2.693  0.0286 
-    ## 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ## context = neu:
     ##  contrast  estimate     SE  df lower.CL upper.CL t.ratio p.value
     ##  vio - int   0.0221 0.0658 115   -0.127    0.172  0.336  1.0000 
@@ -454,27 +263,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $N400.VERB
-    ## $emmeans
-    ## context = neu:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.349 0.222 34.5   -0.908   0.2101 -1.571  0.3762 
-    ##  vio       -0.519 0.238 35.9   -1.118   0.0797 -2.177  0.1084 
-    ##  mci       -0.880 0.185 37.0   -1.344  -0.4151 -4.748  0.0001 
-    ## 
-    ## context = neg:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int       -0.528 0.189 30.4   -1.008  -0.0478 -2.786  0.0273 
-    ##  vio       -0.414 0.186 32.6   -0.884   0.0558 -2.225  0.0995 
-    ##  mci       -0.763 0.219 32.5   -1.316  -0.2105 -3.486  0.0043 
-    ## 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ## context = neu:
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
     ##  vio - int   -0.170 0.193 63.4   -0.613    0.273 -0.882  0.7621 
@@ -490,27 +279,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Conf-level adjustment: bonferroni method for 2 estimates 
     ## P value adjustment: bonferroni method for 2 tests 
     ## 
-    ## 
     ## $N400.PICT
-    ## $emmeans
-    ## context = neu:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int        -2.67 0.313 31.5    -3.46    -1.87 -8.524  <.0001 
-    ##  vio        -2.70 0.326 31.3    -3.53    -1.88 -8.292  <.0001 
-    ##  mci        -3.07 0.309 30.2    -3.85    -2.29 -9.953  <.0001 
-    ## 
-    ## context = neg:
-    ##  semantics emmean    SE   df lower.CL upper.CL t.ratio p.value
-    ##  int        -2.94 0.328 30.6    -3.77    -2.10 -8.941  <.0001 
-    ##  vio        -2.75 0.315 33.4    -3.55    -1.96 -8.732  <.0001 
-    ##  mci        -2.77 0.326 33.5    -3.59    -1.95 -8.492  <.0001 
-    ## 
-    ## Degrees-of-freedom method: satterthwaite 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: bonferroni method for 3 estimates 
-    ## P value adjustment: bonferroni method for 3 tests 
-    ## 
-    ## $contrasts
     ## context = neu:
     ##  contrast  estimate    SE   df lower.CL  upper.CL t.ratio p.value
     ##  vio - int  -0.0363 0.163 34.4   -0.419  0.346628 -0.222  1.0000 
@@ -530,7 +299,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 # Backup results
 save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 
-# SessionInfo
+# Full system specs and package versions
 sessionInfo()
 ```
 
@@ -543,28 +312,22 @@ sessionInfo()
     ## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
     ## 
     ## locale:
-    ## [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
     ## 
     ## attached base packages:
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] afex_0.27-2    lmerTest_3.1-2 lme4_1.1-23    Matrix_1.2-18  MASS_7.3-51.6 
-    ## [6] emmeans_1.4.8 
+    ## [1] emmeans_1.4.8  afex_0.27-2    lmerTest_3.1-2 lme4_1.1-23    Matrix_1.2-18  MASS_7.3-51.6 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.4.6        mvtnorm_1.1-1       lattice_0.20-41     digest_0.6.25      
-    ##  [5] R6_2.4.1            cellranger_1.1.0    plyr_1.8.6          evaluate_0.14      
-    ##  [9] ggplot2_3.3.2       highr_0.8           pillar_1.4.4        rlang_0.4.6        
-    ## [13] curl_4.3            readxl_1.3.1        rstudioapi_0.11     minqa_1.2.4        
-    ## [17] data.table_1.12.8   car_3.0-8           nloptr_1.2.2.1      rmarkdown_2.3      
-    ## [21] splines_4.0.2       statmod_1.4.34      stringr_1.4.0       foreign_0.8-80     
-    ## [25] munsell_0.5.0       compiler_4.0.2      numDeriv_2016.8-1.1 xfun_0.15          
-    ## [29] pkgconfig_2.0.3     htmltools_0.5.0     tibble_3.0.1        rio_0.5.16         
-    ## [33] crayon_1.3.4        grid_4.0.2          nlme_3.1-148        xtable_1.8-4       
-    ## [37] gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5        scales_1.1.1       
-    ## [41] zip_2.0.4           estimability_1.3    stringi_1.4.6       carData_3.0-4      
-    ## [45] reshape2_1.4.4      ellipsis_0.3.1      vctrs_0.3.1         boot_1.3-25        
-    ## [49] openxlsx_4.1.5      tools_4.0.2         forcats_0.5.0       glue_1.4.1         
-    ## [53] hms_0.5.3           abind_1.4-5         parallel_4.0.2      yaml_2.2.1         
-    ## [57] colorspace_1.4-1    knitr_1.29          haven_2.3.1
+    ##  [1] statmod_1.4.34      tidyselect_1.1.0    xfun_0.15           reshape2_1.4.4      purrr_0.3.4         splines_4.0.2       haven_2.3.1        
+    ##  [8] lattice_0.20-41     carData_3.0-4       colorspace_1.4-1    vctrs_0.3.1         generics_0.0.2      htmltools_0.5.0     yaml_2.2.1         
+    ## [15] rlang_0.4.6         nloptr_1.2.2.2      pillar_1.4.4        foreign_0.8-80      glue_1.4.1          readxl_1.3.1        plyr_1.8.6         
+    ## [22] lifecycle_0.2.0     stringr_1.4.0       munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0    zip_2.0.4           mvtnorm_1.1-1      
+    ## [29] coda_0.19-3         evaluate_0.14       knitr_1.29          rio_0.5.16          forcats_0.5.0       curl_4.3            parallel_4.0.2     
+    ## [36] highr_0.8           Rcpp_1.0.4.6        xtable_1.8-4        scales_1.1.1        abind_1.4-5         ggplot2_3.3.2       hms_0.5.3          
+    ## [43] digest_0.6.25       stringi_1.4.6       openxlsx_4.1.5      dplyr_1.0.0         numDeriv_2016.8-1.1 grid_4.0.2          tools_4.0.2        
+    ## [50] magrittr_1.5        tibble_3.0.1        crayon_1.3.4        car_3.0-8           pkgconfig_2.0.3     ellipsis_0.3.1      data.table_1.12.8  
+    ## [57] estimability_1.3    minqa_1.2.4         rmarkdown_2.3       rstudioapi_0.11     R6_2.4.1            boot_1.3-25         nlme_3.1-148       
+    ## [64] compiler_4.0.2
