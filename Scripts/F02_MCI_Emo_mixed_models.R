@@ -1,3 +1,12 @@
+#/* Run this first piece of code only if you want to create a markdown report for GitHub:
+#+ eval = FALSE
+rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
+                  output_format = rmarkdown::github_document(html_preview = FALSE),
+                  output_dir = "Scripts/Output",
+                  knit_root_dir = getwd())
+#*/
+#+
+
 ### MCI EMO MIXED MODELS SCRIPT ###
 
 # Computes linear mixed-effects regression models with simple contrast coding for the fixed effects
@@ -18,7 +27,7 @@ library(MASS)         # version 7.3-51.6
 library(lme4)         # version 1.1-23
 library(lmerTest)     # version 3.1-2
 library(afex)         # version 0.27-2
-library(emmeans)      # version 1.4.7
+library(emmeans)      # version 1.4.8
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
