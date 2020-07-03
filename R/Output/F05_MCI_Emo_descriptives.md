@@ -1,7 +1,7 @@
 F05\_MCI\_Emo\_descriptives.R
 ================
 alexander
-2020-07-02
+2020-07-03
 
 ``` r
 ### MCI EMO DESCRIPTIVES SCRIPT ###
@@ -14,9 +14,15 @@ alexander
 
 # Load packages
 library(Rmisc)     # version 1.5
+```
 
+    ## Loading required package: lattice
+
+    ## Loading required package: plyr
+
+``` r
 # Load preprocessed data
-a1 <- readRDS("data/a1.RDS")
+a1 <- readRDS("EEG/export/a1.RDS")
 
 # Add a column for rejected ERPs
 a1$rejected <- is.na(a1$N400.verb) | is.na(a1$N400.pict)

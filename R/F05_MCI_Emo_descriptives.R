@@ -2,7 +2,7 @@
 #+ eval = FALSE
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
                   output_format = rmarkdown::github_document(html_preview = FALSE),
-                  output_dir = "output",
+                  output_dir = "R/Output",
                   knit_root_dir = getwd())
 #*/
 #+
@@ -19,7 +19,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 library(Rmisc)     # version 1.5
 
 # Load preprocessed data
-a1 <- readRDS("data/a1.RDS")
+a1 <- readRDS("EEG/export/a1.RDS")
 
 # Add a column for rejected ERPs
 a1$rejected <- is.na(a1$N400.verb) | is.na(a1$N400.pict)
