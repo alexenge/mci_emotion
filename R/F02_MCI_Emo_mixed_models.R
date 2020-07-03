@@ -1,14 +1,3 @@
-# /* Run this first piece of code only if you want to create an HTML report! */
-#+ eval = FALSE
-# To compile a report of this script, simply run:
-rmarkdown::render(input = "R/F02_MCI_Emo_mixed_models",
-                  output_format = "markdown_document",
-                  output_file = "F02_MCI_Emo_mixed_models.md",
-                  output_dir = "output",
-                  knit_root_dir = getwd())
-
-#+
-
 ### MCI EMO MIXED MODELS SCRIPT ###
 
 # Computes linear mixed-effects regression models with simple contrast coding for the fixed effects
@@ -16,6 +5,7 @@ rmarkdown::render(input = "R/F02_MCI_Emo_mixed_models",
 # grand mean, while the estimates of the slopes contrast "treatment" levels to their respective
 # reference levels (semantics: violation - intuitive, mci - intuitive; emotional context (negative 
 # - neutral).
+#
 # The maximal random effects structure is used with all by-participant and by-item random slopes and
 # random intercepts. Correlations between random effects are removed if the model fails two converge
 # with two different numerical optimizers. Planned follow-up contrasts are computed for the main
@@ -31,7 +21,7 @@ library(afex)         # version 0.27-2
 library(emmeans)      # version 1.4.7
 
 # Load preprocessed data
-a1 <- readRDS("data/a1.RDS")
+a1 <- readRDS("EEG/export/a1.RDS")
 
 # Remove trials with errors or invalid RTs/ERPs
 a1 <- na.omit(a1[!a1$error,])
@@ -94,5 +84,5 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 (means.nested <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")}))
 
 # Backup results
-save(models, tests, means.semantics, means.context, means.nested, file = "export/stats.RData")
+save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 

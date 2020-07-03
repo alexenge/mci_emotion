@@ -19,7 +19,7 @@ memory.limit(size = 64000)
 ## BEHAVIORAL DATA ## -----------------------------------------------------------------------------
 
 # List behavioral log files
-filenames.rt <- list.files("Results/RT", pattern = ".txt", full.names = TRUE)
+filenames.rt <- list.files("RT", pattern = ".txt", full.names = TRUE)
 filenames.rt <- naturalsort(filenames.rt)
 
 # Read behavioral data into one data frame
@@ -50,8 +50,8 @@ a1 <- a1[-c(10300:10303),]
 ## EEG DATA ## ------------------------------------------------------------------------------------
 
 # List EEG header files and BESA matrices
-filenames.eeg <- list.files("Results/EEG/raw", pattern = ".vhdr", full.names = TRUE)
-filenames.besa <- list.files("Results/EEG/cali", pattern = ".matrix", full.names = TRUE)
+filenames.eeg <- list.files("EEG/raw", pattern = ".vhdr", full.names = TRUE)
+filenames.besa <- list.files("EEG/cali", pattern = ".matrix", full.names = TRUE)
 
 # Preprocessing for verb-related potentials
 eeg.verb <- mapply(function(vhdr.filename, besa.filename){
@@ -153,7 +153,7 @@ a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 
 a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
 
 # Export behavioral data with ERPs for LMMs
-saveRDS(a1, file = "Results/EEG/export/a1.RDS")
+saveRDS(a1, file = "EEG/export/a1.RDS")
 
 ## PREPARE FOR PLOTTING ## ------------------------------------------------------------------------
 
@@ -170,6 +170,6 @@ avgs.pict <- eeg.pict %>%
   summarize_at(channel_names(.), mean, na.rm = TRUE)
 
 # Export averaged waveforms for plotting
-saveRDS(avgs.verb, "results/EEG/export/avgs_verb.RDS")
-saveRDS(avgs.pict, "results/EEG/export/avgs_pict.RDS")
+saveRDS(avgs.verb, "EEG/export/avgs_verb.RDS")
+saveRDS(avgs.pict, "EEG/export/avgs_pict.RDS")
 

@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .DS_Store
-mci_emotion.Rproj
+*.Rproj
 data
 EEG
+RT
