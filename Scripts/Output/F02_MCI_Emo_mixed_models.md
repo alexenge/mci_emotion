@@ -28,12 +28,7 @@ library(emmeans)      # version 1.4.8
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
-```
 
-    ## Warning in readRDS("EEG/export/a1.RDS"): strings not representable in native encoding will
-    ## be translated to UTF-8
-
-``` r
 # Remove trials with errors or invalid RTs/ERPs
 a1 <- na.omit(a1[!a1$error,])
 
@@ -499,4 +494,42 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 ``` r
 # Backup results
 save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
+
+# SessionInfo
+sessionInfo()
 ```
+
+    ## R version 4.0.2 (2020-06-22)
+    ## Platform: x86_64-apple-darwin17.0 (64-bit)
+    ## Running under: macOS Catalina 10.15.5
+    ## 
+    ## Matrix products: default
+    ## BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+    ## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+    ## 
+    ## locale:
+    ## [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
+    ## 
+    ## attached base packages:
+    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
+    ## 
+    ## other attached packages:
+    ## [1] afex_0.27-2    lmerTest_3.1-2 lme4_1.1-23    Matrix_1.2-18  MASS_7.3-51.6 
+    ## [6] emmeans_1.4.8 
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##  [1] Rcpp_1.0.4.6        mvtnorm_1.1-1       lattice_0.20-41     digest_0.6.25      
+    ##  [5] R6_2.4.1            cellranger_1.1.0    plyr_1.8.6          evaluate_0.14      
+    ##  [9] ggplot2_3.3.2       highr_0.8           pillar_1.4.4        rlang_0.4.6        
+    ## [13] curl_4.3            readxl_1.3.1        rstudioapi_0.11     minqa_1.2.4        
+    ## [17] data.table_1.12.8   car_3.0-8           nloptr_1.2.2.1      rmarkdown_2.3      
+    ## [21] splines_4.0.2       statmod_1.4.34      stringr_1.4.0       foreign_0.8-80     
+    ## [25] munsell_0.5.0       compiler_4.0.2      numDeriv_2016.8-1.1 xfun_0.15          
+    ## [29] pkgconfig_2.0.3     htmltools_0.5.0     tibble_3.0.1        rio_0.5.16         
+    ## [33] crayon_1.3.4        grid_4.0.2          nlme_3.1-148        xtable_1.8-4       
+    ## [37] gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5        scales_1.1.1       
+    ## [41] zip_2.0.4           estimability_1.3    stringi_1.4.6       carData_3.0-4      
+    ## [45] reshape2_1.4.4      ellipsis_0.3.1      vctrs_0.3.1         boot_1.3-25        
+    ## [49] openxlsx_4.1.5      tools_4.0.2         forcats_0.5.0       glue_1.4.1         
+    ## [53] hms_0.5.3           abind_1.4-5         parallel_4.0.2      yaml_2.2.1         
+    ## [57] colorspace_1.4-1    knitr_1.29          haven_2.3.1

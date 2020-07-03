@@ -95,3 +95,5 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 # Backup results
 save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 
+# SessionInfo
+sessionInfo()
