@@ -1,3 +1,12 @@
+#/* Run this first piece of code only if you want to create a markdown report for GitHub:
+#+ eval = FALSE
+rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
+                  output_format = rmarkdown::github_document(html_preview = FALSE),
+                  output_dir = "Scripts/Output",
+                  knit_root_dir = getwd())
+#*/
+#+
+
 ### MCI EMO PREPROCESSING SCRIPT ###
 
 # Reads behavioral log files for all participants and binds them together. Performs EEG preprocessing
@@ -22,12 +31,19 @@ memory.limit(size = 64000)
 filenames.rt <- list.files("RT", pattern = ".txt", full.names = TRUE)
 filenames.rt <- naturalsort(filenames.rt)
 
-# Read behavioral data into one data frame
+# Read behavioral data into one data frame (if umlaute can't be read, try: Sys.setlocale("LC_ALL", "C"))
 a1 <- lapply(filenames.rt, read.delim2)
 a1 <- do.call(rbind, a1)
 
-# Remove empty lines and fillers
+# Remove empty lines
 a1 <- na.omit(a1)
+
+# for exploratory analyses: add factorized columns for lag1 semantics and context manipulations
+    # fillers are coded as intuitive semantic condition and neutral context condition
+a1 <- a1 %>% mutate(lag1Semantics = factor(lag(SatzBed, n=1), levels = c("filler", "neutral", "sem", "mci"), labels = c("int", "int", "vio", "mci")))
+a1 <- a1 %>% mutate(lag1Context = factor(lag(EmoBed, n=1), levels =c(1,2), labels = c("neu", "neg")))
+
+# Remove fillers
 a1 <- subset(a1, SatzBed != "filler")
 
 # Add factorized columns for semantics and context manipulations (fixed effects)
