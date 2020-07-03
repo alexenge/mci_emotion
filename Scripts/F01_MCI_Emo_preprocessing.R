@@ -190,3 +190,5 @@ avgs.pict <- eeg.pict %>%
 saveRDS(avgs.verb, "EEG/export/avgs_verb.RDS")
 saveRDS(avgs.pict, "EEG/export/avgs_pict.RDS")
 
+# Session Info
+sessionInfo()
