@@ -13,12 +13,10 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 # of semantics and emotional context. Thus, in each model, the estimate of the intercept is the
 # grand mean, while the estimates of the slopes contrast "treatment" levels to their respective
 # reference levels (semantics: violation - intuitive, mci - intuitive; emotional context (negative 
-# - neutral).
-#
-# The maximal random effects structure is used with all by-participant and by-item random slopes and
-# random intercepts. Correlations between random effects are removed if the model fails two converge
-# with two different numerical optimizers. Planned follow-up contrasts are computed for the main
-# effects and the effects of semantics separately within each type of emotional context.
+# - neutral). The maximal random effects structure is used with all by-participant and by-item random 
+# slopes and random intercepts. Correlations between random effects are removed if the model fails two 
+# converge with two different numerical optimizers. Planned follow-up contrasts are computed for the
+# main effects and the effects of semantics separately within each type of emotional context.
 
 ## SETUP ## ---------------------------------------------------------------------------------------
 
@@ -34,9 +32,6 @@ a1 <- readRDS("EEG/export/a1.RDS")
 
 # Remove trials with errors or invalid RTs/ERPs
 a1 <- na.omit(a1[!a1$error,])
-
-# Log-transform reaction times
-a1$logRT <- log(a1$BildRT)
 
 # Define simple contrast coding for context emotionality (negative - neutral)
     # HO(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
@@ -73,12 +68,12 @@ mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|partici
                  data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Create list of models
-models <- list(mod.valence, mod.aroursal, mod.N400.verb, mod.N400.pict)
+models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)
 
 # F-tests (type III tests)
 (tests <- lapply(models, anova))
 
-## POST-HOC CONTRASTS ## --------------------------------------------------------------------------
+## PLANNED FOLLOW-UP CONTRASTS ## -----------------------------------------------------------------
 
 # Allow emmeans to compute Satterthwaites p-values
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
@@ -89,7 +84,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 # Follow-up contrasts for the main effect of context
 (means.context <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")}))
 
-# Follow-up contrasts for semantics nested within contexts
+# Follow-up contrasts for semantics within each contexts
 (means.nested <- lapply(models, function(x){emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")}))
 
 # Backup results
