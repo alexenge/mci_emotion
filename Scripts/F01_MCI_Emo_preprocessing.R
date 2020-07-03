@@ -19,8 +19,8 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 # Load packages
 library(naturalsort)  # Version 0.1.3
-library(dplyr)        # Version 0.8.5 (!)
-library(eeguana)      # Version 0.1.3.9000
+library(dplyr)        # Version 1.0.0
+library(eeguana)      # Version 0.1.4.9000
 
 # Make sure we have enough RAM available
 memory.limit(size = 64000)
@@ -38,9 +38,10 @@ a1 <- do.call(rbind, a1)
 # Remove empty lines
 a1 <- na.omit(a1)
 
-# for exploratory analyses: add factorized columns for lag1 semantics and context manipulations
-    # fillers are coded as intuitive semantic condition and neutral context condition
-a1 <- a1 %>% mutate(lag1Semantics = factor(lag(SatzBed, n=1), levels = c("filler", "neutral", "sem", "mci"), labels = c("int", "int", "vio", "mci")))
+# For exploratory analyses: Add factorized columns for lag 1 semantics and context manipulations
+    # Fillers are coded as intuitive semantic condition and neutral context condition
+a1 <- a1 %>% mutate(lag1Semantics = factor(lag(SatzBed, n=1), levels = c("filler", "neutral", "sem", "mci"),
+                                           labels = c("int", "int", "vio", "mci")))
 a1 <- a1 %>% mutate(lag1Context = factor(lag(EmoBed, n=1), levels =c(1,2), labels = c("neu", "neg")))
 
 # Remove fillers
@@ -83,7 +84,7 @@ eeg.verb <- mapply(function(vhdr.filename, besa.filename){
   message("## OCCULAR CORRECTION...")
   besa <- as.matrix(read.delim(besa.filename, row.names = 1))
   tmp <- t(dat$.signal %>% select(all_of(channames)))
-  tmp <- besa %*% tmp # This is the actual OC, but this requires transforming the signal table
+  tmp <- besa %*% tmp # This is the actual OC, above and below is just to transform the sginal table
   tmp <- split(tmp, row(tmp))
   tmp <- lapply(tmp, channel_dbl)
   dat$.signal[,channames] <- tmp[1:length(channames)]
@@ -120,7 +121,7 @@ eeg.pict <- mapply(function(vhdr.filename, besa.filename){
   message("## OCCULAR CORRECTION...")
   besa <- as.matrix(read.delim(besa.filename, row.names = 1))
   tmp <- t(dat$.signal %>% select(all_of(channames)))
-  tmp <- besa %*% tmp # This is the actual OC, but this requires transforming the signal table
+  tmp <- besa %*% tmp # This is the actual OC, above and below is just to transform the sginal table
   tmp <- split(tmp, row(tmp))
   tmp <- lapply(tmp, channel_dbl)
   dat$.signal[,channames] <- tmp[1:length(channames)]
@@ -164,7 +165,7 @@ eeg.pict <- eeg.pict %>% mutate(semantics = factor(semantics, levels = c("int", 
 eeg.verb <- eeg.verb %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 eeg.pict <- eeg.pict %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 
-# Compute single trial ERPS and bind to behavioral data
+# Average single trial ERPs across ROI electrodes in the relevant time window (and bind to behavioral data)
 a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.300, 0.500)], mean, na.action = NULL)$ROI
 a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
 
