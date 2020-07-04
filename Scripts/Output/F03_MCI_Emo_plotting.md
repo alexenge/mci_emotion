@@ -10,60 +10,11 @@ alexander
 
 # Load packages
 library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:plyr':
-    ## 
-    ##     arrange, count, desc, failwith, id, mutate, rename, summarise, summarize
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 library(tidyr)
 library(eeguana)
-```
-
-    ## 
-    ## Attaching package: 'eeguana'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     between
-
-``` r
 library(ggplot2)
 library(cowplot)
-```
 
-    ## 
-    ## ********************************************************
-
-    ## Note: As of version 1.0.0, cowplot does not change the
-
-    ##   default ggplot2 theme anymore. To recover the previous
-
-    ##   behavior, execute:
-    ##   theme_set(theme_cowplot())
-
-    ## ********************************************************
-
-    ## 
-    ## Attaching package: 'cowplot'
-
-    ## The following object is masked from 'package:eeguana':
-    ## 
-    ##     plot_components
-
-``` r
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
 avgs.verb <- readRDS("EEG/export/avgs_verb.RDS")
@@ -285,7 +236,7 @@ plot_grid(stim, waves$`Verb-related`,
 
     ## integer(0)
 
-[](Figures/N400_verb.png)
+![Figure 1: Verb-Related N400 Effects](Figures/N400_verb.png)
 
 ``` r
 # Combine everything and save (picture-related)
@@ -302,7 +253,7 @@ plot_grid(plot_grid(waves$`Picture-related`) +
 
     ## integer(0)
 
-[](Figures/N400_pict.png)
+![Figure 2: Picture-Related N400 Effects](Figures/N400_pict.png)
 
 ``` r
 # Full system specs and package versions
@@ -324,17 +275,22 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0        Rmisc_1.5          plyr_1.8.6         lattice_0.20-41   
+    ## [1] huxtable_5.0.0     cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0        Rmisc_1.5          plyr_1.8.6        
+    ## [9] lattice_0.20-41   
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] viridis_0.5.1        httr_1.4.1           jsonlite_1.7.0       viridisLite_0.3.0    splines_4.0.2        R.utils_2.9.2        shiny_1.5.0         
-    ##  [8] highr_0.8            yaml_2.2.1           globals_0.12.5       pillar_1.4.4         glue_1.4.1           digest_0.6.25        RColorBrewer_1.1-2  
-    ## [15] promises_1.1.1       colorspace_1.4-1     htmltools_0.5.0      httpuv_1.5.4         Matrix_1.2-18        R.oo_1.23.0          R.matlab_3.6.2      
-    ## [22] pkgconfig_2.0.3      edfReader_1.2.1      listenv_0.8.0        purrr_0.3.4          xtable_1.8-4         scales_1.1.1         later_1.1.0.1       
-    ## [29] pracma_2.2.9         tibble_3.0.1         mgcv_1.8-31          farver_2.0.3         generics_0.0.2       ellipsis_0.3.1       withr_2.2.0         
-    ## [36] lazyeval_0.2.2       magrittr_1.5         crayon_1.3.4         mime_0.9             evaluate_0.14        R.methodsS3_1.8.0    future_1.17.0       
-    ## [43] nlme_3.1-148         MASS_7.3-51.6        shinydashboard_0.7.1 tools_4.0.2          data.table_1.12.8    lifecycle_0.2.0      matrixStats_0.56.0  
-    ## [50] stringr_1.4.0        plotly_4.9.2.1       munsell_0.5.0        compiler_4.0.2       signal_0.7-6         rlang_0.4.6          grid_4.0.2          
-    ## [57] rstudioapi_0.11      htmlwidgets_1.5.1    miniUI_0.1.1.1       labeling_0.3         rmarkdown_2.3        gtable_0.3.0         codetools_0.2-16    
-    ## [64] abind_1.4-5          R6_2.4.1             ini_0.3.1            gridExtra_2.3        knitr_1.29           eegUtils_0.5.0       fastmap_1.0.1       
-    ## [71] future.apply_1.6.0   stringi_1.4.6        parallel_4.0.2       Rcpp_1.0.4.6         vctrs_0.3.1          tidyselect_1.1.0     xfun_0.15
+    ##   [1] nlme_3.1-148         matrixStats_0.56.0   RColorBrewer_1.1-2   httr_1.4.1           numDeriv_2016.8-1.1  tools_4.0.2          R6_2.4.1            
+    ##   [8] afex_0.27-2          lazyeval_0.2.2       mgcv_1.8-31          colorspace_1.4-1     withr_2.2.0          tidyselect_1.1.0     gridExtra_2.3       
+    ##  [15] emmeans_1.4.8        curl_4.3             compiler_4.0.2       edfReader_1.2.1      eegUtils_0.5.0       plotly_4.9.2.1       labeling_0.3        
+    ##  [22] scales_1.1.1         mvtnorm_1.1-1        stringr_1.4.0        digest_0.6.25        foreign_0.8-80       minqa_1.2.4          rmarkdown_2.3       
+    ##  [29] R.utils_2.9.2        rio_0.5.16           ini_0.3.1            pkgconfig_2.0.3      htmltools_0.5.0      lme4_1.1-23          fastmap_1.0.1       
+    ##  [36] highr_0.8            readxl_1.3.1         htmlwidgets_1.5.1    rlang_0.4.6          rstudioapi_0.11      shiny_1.5.0          generics_0.0.2      
+    ##  [43] farver_2.0.3         jsonlite_1.7.0       zip_2.0.4            car_3.0-8            R.oo_1.23.0          magrittr_1.5         R.matlab_3.6.2      
+    ##  [50] Matrix_1.2-18        Rcpp_1.0.4.6         munsell_0.5.0        abind_1.4-5          viridis_0.5.1        lifecycle_0.2.0      R.methodsS3_1.8.0   
+    ##  [57] stringi_1.4.6        yaml_2.2.1           carData_3.0-4        MASS_7.3-51.6        grid_4.0.2           parallel_4.0.2       listenv_0.8.0       
+    ##  [64] promises_1.1.1       forcats_0.5.0        shinydashboard_0.7.1 crayon_1.3.4         miniUI_0.1.1.1       haven_2.3.1          splines_4.0.2       
+    ##  [71] hms_0.5.3            knitr_1.29           pillar_1.4.4         boot_1.3-25          estimability_1.3     reshape2_1.4.4       future.apply_1.6.0  
+    ##  [78] codetools_0.2-16     glue_1.4.1           evaluate_0.14        data.table_1.12.8    vctrs_0.3.1          nloptr_1.2.2.2       httpuv_1.5.4        
+    ##  [85] cellranger_1.1.0     gtable_0.3.0         purrr_0.3.4          future_1.17.0        assertthat_0.2.1     openxlsx_4.1.5       xfun_0.15           
+    ##  [92] mime_0.9             xtable_1.8-4         pracma_2.2.9         coda_0.19-3          later_1.1.0.1        viridisLite_0.3.0    signal_0.7-6        
+    ##  [99] tibble_3.0.1         lmerTest_3.1-2       globals_0.12.5       statmod_1.4.34       ellipsis_0.3.1

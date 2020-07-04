@@ -216,7 +216,7 @@ plot_grid(stim, waves$`Verb-related`,
   ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm") +
   ggsave(filename = "Scripts/Output/Figures/N400_verb.png", width = 18, height = 22, units = "cm")
 
-#' [](Figures/N400_verb.png)
+#' ![Figure 1: Verb-Related N400 Effects](Figures/N400_verb.png)
 
 # Combine everything and save (picture-related)
 plot_grid(plot_grid(waves$`Picture-related`) +
@@ -229,7 +229,7 @@ plot_grid(plot_grid(waves$`Picture-related`) +
   ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm") +
   ggsave(filename = "Scripts/Output/Figures/N400_pict.png", width = 18, height = 22, units = "cm")
 
-#' [](Figures/N400_pict.png)
+#' ![Figure 2: Picture-Related N400 Effects](Figures/N400_pict.png)
 
 # Full system specs and package versions
 sessionInfo()
