@@ -236,8 +236,7 @@ plot_grid(stim, waves$`Verb-related`,
 
     ## integer(0)
 
-![Figure 1: Verb-Related N400
-Effects](Figures/N400_verb.png%20%7C%20width=400)
+![Figure 1: Verb-Related N400 Effects](Figures/N400_verb.png)
 
 ``` r
 # Combine everything and save (picture-related)
@@ -254,8 +253,7 @@ plot_grid(plot_grid(waves$`Picture-related`) +
 
     ## integer(0)
 
-![Figure 2: Picture-Related N400
-Effects](Figures/N400_pict.png%20%7C%20width=400)
+![Figure 2: Picture-Related N400 Effects](Figures/N400_pict.png)
 
 ``` r
 # Full system specs and package versions
