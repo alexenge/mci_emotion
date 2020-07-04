@@ -2,8 +2,7 @@
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
                   output_format = rmarkdown::github_document(html_preview = FALSE),
                   output_dir = "Scripts/Output",
-                  knit_root_dir = getwd())
-#*/
+                  knit_root_dir = getwd()) #*/
 
 ### MCI EMO DESCRIPTIVES SCRIPT ###
 
