@@ -1,0 +1,73 @@
+#/* Run this first piece of code only if you want to create a markdown report for GitHub
+#+ eval = FALSE
+rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
+                  output_format = rmarkdown::github_document(html_preview = FALSE),
+                  output_dir = "Scripts/Output",
+                  knit_root_dir = getwd())
+#*/
+#+ results="asis"
+
+### MCI EMO TABLES SCRIPT ###
+
+# Creates tables for linear mixed effect model outputs, including ANOVA-style type III tests (F-tests) and
+# planned contrasts. To render these tables to a word document, run (only) the following line of code:
+
+# Load packages
+library(huxtable)     # version 5.0.0
+
+# Load output from mixed models
+load("EEG/export/stats.RData")
+
+# Extract a table for the F tests for each model (columns: F value (df), p-value)
+anovas <- lapply(tests, function(x){
+  coefs <- data.frame(paste0(format(round(x$`F value`, 2), nsmall = 2),
+                             "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
+                      format(round(x$`Pr(>F)`, 3), nsmall = 3),
+                      fix.empty.names = FALSE)
+  coefs[,2] <- substr(coefs[,2], 1, 5)
+  coefs[coefs[,2] == "0.000", 2] <- "< .001"
+  return(coefs)})
+
+# Bind all the F-tests to one data frame
+anovas <- do.call(cbind, anovas)
+anovas <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas)
+
+# Extract a table for the planned contrasts for each model (columns: estimate (CI), p-value)
+conts <- lapply(means.nested, function(x){
+  x <- as.data.frame(x)
+  coefs <- data.frame(paste0(format(round(x$estimate, 2), nsmall = 2),
+                             "<br/>[", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
+                             format(round(x$upper.CL, 2), trim = TRUE, nsmall = 2), "]"),
+                      format(round(x$p.value, 3), nsmall = 3),
+                      fix.empty.names = FALSE)
+  coefs[,2] <- substr(coefs[,2], 1, 5)
+  coefs[coefs[,2] == "0.000", 2] <- "< .001"
+  return(coefs)})
+
+# Bind all the planned contrasts to one data frame
+conts <- do.call(cbind, conts)
+conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
+
+# Bind both data frames (F-tests and contrats) below one another
+tab <- rbind(anovas, conts)
+
+# Add model names (dependent varibales) as the first row
+tab <- rbind(c("Valence Rating", "", "Arousal Rating", "", "Verb-Related N400", "", "Picture-Related N400", ""), tab)
+
+# Add a stub column
+tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
+               "**Planned contrasts**", "Vio. - int.<br/>(neutral)", "MCI - int.<br/>(neutral)",
+               "Vio. - int.<br/>(negative)", "MCI - int.<br/>(negative)"), tab)
+
+# Removeo old column names
+names(tab) <- NULL
+
+# Create a huxtable and output as markdown
+huxt <- huxtable(tab, add_colnames = FALSE)
+print_md(huxt, max_width = Inf)
+
+#+
+
+# Full system specs and package versions
+sessionInfo()
+
