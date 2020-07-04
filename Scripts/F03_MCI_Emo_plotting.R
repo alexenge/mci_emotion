@@ -41,8 +41,6 @@ styling <-   theme(panel.grid = element_blank(),
                    strip.background = element_blank(),
                    strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
-## FIGURES FOR PUBLIACTION ## ---------------------------------------------------------------------
-
 # Rename some factor leves
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
@@ -52,6 +50,8 @@ avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"
 # Define colours for conditions
 condition.colors <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
 names(condition.colors) <- c("Intuitive", "Violation", "MCI")
+
+## BAR PLOTS ## -----------------------------------------------------------------------------------
 
 # Convert dependent variables to long format
 a1.long <- a1 %>% gather(key = "dv", value = "value", N400.verb, N400.pict, factor_key = TRUE)
@@ -88,7 +88,9 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
     theme_bw() + styling + theme(axis.title.x = element_blank(), legend.position = "none")
 }, simplify = FALSE)
 
-# Trial structure
+## EXAMPLE TRIAL ## -------------------------------------------------------------------------------
+
+# Example for one sentence with verbs in three conditions
 stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "white", color = "white")) +
   coord_cartesian(xlim = c(0, 1.2), ylim = c(0, 1)) + 
   geom_text(aes(x = 0.5, y = 0.5, label = '"The old barren birch tree'), size = 4.939, family = "Helvetica", hjust = 1) +
@@ -103,7 +105,9 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_text(aes(x = 0.730, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
-# Waveforms for verb-related and picture-related N400
+## WAVEFORMS ## -----------------------------------------------------------------------------------
+
+# ERP waveforms for verb-related and picture-related N400
 waves <- sapply(c("Verb-related", "Picture-related"), function(what){
   # Which time window to shade
   tmin <- ifelse(what == "Verb-related", 0.300, 0.150)
@@ -141,7 +145,9 @@ waves <- sapply(c("Verb-related", "Picture-related"), function(what){
     facet_grid(.~context)
 }, simplify = FALSE)
 
-# Topographies for verb-related and picture-related N400
+## TOPOGRAPHIES ## --------------------------------------------------------------------------------
+
+# Create scalp topographies for verb-related and picture-related N400
 topos <- sapply(c("Verb-related", "Picture-related"), function(what){
   if(what == "Verb-related"){
     tmp <- avgs %>% filter(between(as_time(.sample), 0.300, 0.500), type == "Verb-related")
@@ -164,7 +170,7 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
     p <- p + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, size = 10, family = "Helvetica"))})
 }, simplify = FALSE)
 
-# Colorbar
+# Create a colorbar
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
                        scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left"), breaks = c(-0.7, 0, 0.7)) +
@@ -176,7 +182,7 @@ colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster(
                              legend.text = element_text(family = "Helvetica", size = 10, color = "black"),
                              legend.title.align = 0.5))
 
-# Create one plot with four topographies (verb-related)
+# Create one plot combining all four topographies (verb-related)
 simdat2 <- data.frame("semantics" = as.factor(c("Violation - Intuitive", "MCI - Intuitive")),
                       "context" = as.factor(c("Neutral\ncontext", "Negative\ncontext")))
 topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
@@ -193,7 +199,7 @@ topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
         axis.title = element_blank(),
         axis.text.y = element_text(angle = 90, hjust = 0.5))
 
-# Create one plot with four topographies (picture-related)
+# Create one plot combining all four topographies (picture-related)
 topos.pict <- ggplot(simdat2, aes(x = context, y = semantics)) +
   geom_point() +
   draw_plot(topos$`Picture-related`[[1]], x = 0.4, y = 1.5, width = 1.1, height = 1.1) +
@@ -208,14 +214,16 @@ topos.pict <- ggplot(simdat2, aes(x = context, y = semantics)) +
         axis.title = element_blank(),
         axis.text.y = element_text(angle = 90, hjust = 0.5))
 
-# Combine everything and save (verb-related)
+## PUBLICATION-READY FIGURES ## -------------------------------------------------------------------
+
+# Figure 1: Verb-Related N400 Effects
 plot_grid(stim, waves$`Verb-related`,
           plot_grid(bars$N400.verb, topos.verb, nrow = 1, rel_widths = c(0.6, 1), labels = c("C", "D"),
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 3, rel_heights = c(0.2, 0.8, 1), labels = c("A", "B", NULL), label_fontfamily = "Helvetica") %>%
   ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm")
 
-# Combine everything and save (picture-related)
+# Figure 2: Picture-Related N400 Effects
 plot_grid(plot_grid(waves$`Picture-related`) +
             draw_plot(get_legend(bars$N400.pict +
                                    theme(legend.position = "right", legend.title = element_blank(), legend.background = element_blank())),

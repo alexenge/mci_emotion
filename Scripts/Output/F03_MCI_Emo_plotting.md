@@ -46,8 +46,6 @@ styling <-   theme(panel.grid = element_blank(),
                    strip.background = element_blank(),
                    strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
-## FIGURES FOR PUBLIACTION ## ---------------------------------------------------------------------
-
 # Rename some factor leves
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
@@ -57,6 +55,8 @@ avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"
 # Define colours for conditions
 condition.colors <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
 names(condition.colors) <- c("Intuitive", "Violation", "MCI")
+
+## BAR PLOTS ## -----------------------------------------------------------------------------------
 
 # Convert dependent variables to long format
 a1.long <- a1 %>% gather(key = "dv", value = "value", N400.verb, N400.pict, factor_key = TRUE)
@@ -93,7 +93,9 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
     theme_bw() + styling + theme(axis.title.x = element_blank(), legend.position = "none")
 }, simplify = FALSE)
 
-# Trial structure
+## EXAMPLE TRIAL ## -------------------------------------------------------------------------------
+
+# Example for one sentence with verbs in three conditions
 stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "white", color = "white")) +
   coord_cartesian(xlim = c(0, 1.2), ylim = c(0, 1)) + 
   geom_text(aes(x = 0.5, y = 0.5, label = '"The old barren birch tree'), size = 4.939, family = "Helvetica", hjust = 1) +
@@ -108,7 +110,9 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_text(aes(x = 0.730, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
-# Waveforms for verb-related and picture-related N400
+## WAVEFORMS ## -----------------------------------------------------------------------------------
+
+# ERP waveforms for verb-related and picture-related N400
 waves <- sapply(c("Verb-related", "Picture-related"), function(what){
   # Which time window to shade
   tmin <- ifelse(what == "Verb-related", 0.300, 0.150)
@@ -146,7 +150,9 @@ waves <- sapply(c("Verb-related", "Picture-related"), function(what){
     facet_grid(.~context)
 }, simplify = FALSE)
 
-# Topographies for verb-related and picture-related N400
+## TOPOGRAPHIES ## --------------------------------------------------------------------------------
+
+# Create scalp topographies for verb-related and picture-related N400
 topos <- sapply(c("Verb-related", "Picture-related"), function(what){
   if(what == "Verb-related"){
     tmp <- avgs %>% filter(between(as_time(.sample), 0.300, 0.500), type == "Verb-related")
@@ -181,7 +187,7 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
     ## Attempting to add standard electrode locations...
 
 ``` r
-# Colorbar
+# Create a colorbar
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
                        scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left"), breaks = c(-0.7, 0, 0.7)) +
@@ -193,7 +199,7 @@ colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster(
                              legend.text = element_text(family = "Helvetica", size = 10, color = "black"),
                              legend.title.align = 0.5))
 
-# Create one plot with four topographies (verb-related)
+# Create one plot combining all four topographies (verb-related)
 simdat2 <- data.frame("semantics" = as.factor(c("Violation - Intuitive", "MCI - Intuitive")),
                       "context" = as.factor(c("Neutral\ncontext", "Negative\ncontext")))
 topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
@@ -210,7 +216,7 @@ topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
         axis.title = element_blank(),
         axis.text.y = element_text(angle = 90, hjust = 0.5))
 
-# Create one plot with four topographies (picture-related)
+# Create one plot combining all four topographies (picture-related)
 topos.pict <- ggplot(simdat2, aes(x = context, y = semantics)) +
   geom_point() +
   draw_plot(topos$`Picture-related`[[1]], x = 0.4, y = 1.5, width = 1.1, height = 1.1) +
@@ -225,21 +231,16 @@ topos.pict <- ggplot(simdat2, aes(x = context, y = semantics)) +
         axis.title = element_blank(),
         axis.text.y = element_text(angle = 90, hjust = 0.5))
 
-# Combine everything and save (verb-related)
+## PUBLICATION-READY FIGURES ## -------------------------------------------------------------------
+
+# Figure 1: Verb-Related N400 Effects
 plot_grid(stim, waves$`Verb-related`,
           plot_grid(bars$N400.verb, topos.verb, nrow = 1, rel_widths = c(0.6, 1), labels = c("C", "D"),
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 3, rel_heights = c(0.2, 0.8, 1), labels = c("A", "B", NULL), label_fontfamily = "Helvetica") %>%
-  ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm") +
-  ggsave(filename = "Scripts/Output/Figures/N400_verb.png", width = 18, height = 22, units = "cm")
-```
+  ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm")
 
-    ## integer(0)
-
-![Figure 1: Verb-Related N400 Effects](Figures/N400_verb.png)
-
-``` r
-# Combine everything and save (picture-related)
+# Figure 2: Picture-Related N400 Effects
 plot_grid(plot_grid(waves$`Picture-related`) +
             draw_plot(get_legend(bars$N400.pict +
                                    theme(legend.position = "right", legend.title = element_blank(), legend.background = element_blank())),
@@ -247,15 +248,8 @@ plot_grid(plot_grid(waves$`Picture-related`) +
           plot_grid(bars$N400.pict, topos.pict, nrow = 1, rel_widths = c(0.6, 1), labels = c("B", "C"),
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
-  ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm") +
-  ggsave(filename = "Scripts/Output/Figures/N400_pict.png", width = 18, height = 22, units = "cm")
-```
+  ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm")
 
-    ## integer(0)
-
-![Figure 2: Picture-Related N400 Effects](Figures/N400_pict.png)
-
-``` r
 # Full system specs and package versions
 sessionInfo()
 ```
@@ -275,22 +269,23 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] huxtable_5.0.0     cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0        Rmisc_1.5          plyr_1.8.6        
-    ## [9] lattice_0.20-41   
+    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] nlme_3.1-148         matrixStats_0.56.0   RColorBrewer_1.1-2   httr_1.4.1           numDeriv_2016.8-1.1  tools_4.0.2          R6_2.4.1            
-    ##   [8] afex_0.27-2          lazyeval_0.2.2       mgcv_1.8-31          colorspace_1.4-1     withr_2.2.0          tidyselect_1.1.0     gridExtra_2.3       
-    ##  [15] emmeans_1.4.8        curl_4.3             compiler_4.0.2       edfReader_1.2.1      eegUtils_0.5.0       plotly_4.9.2.1       labeling_0.3        
-    ##  [22] scales_1.1.1         mvtnorm_1.1-1        stringr_1.4.0        digest_0.6.25        foreign_0.8-80       minqa_1.2.4          rmarkdown_2.3       
-    ##  [29] R.utils_2.9.2        rio_0.5.16           ini_0.3.1            pkgconfig_2.0.3      htmltools_0.5.0      lme4_1.1-23          fastmap_1.0.1       
-    ##  [36] highr_0.8            readxl_1.3.1         htmlwidgets_1.5.1    rlang_0.4.6          rstudioapi_0.11      shiny_1.5.0          generics_0.0.2      
-    ##  [43] farver_2.0.3         jsonlite_1.7.0       zip_2.0.4            car_3.0-8            R.oo_1.23.0          magrittr_1.5         R.matlab_3.6.2      
-    ##  [50] Matrix_1.2-18        Rcpp_1.0.4.6         munsell_0.5.0        abind_1.4-5          viridis_0.5.1        lifecycle_0.2.0      R.methodsS3_1.8.0   
-    ##  [57] stringi_1.4.6        yaml_2.2.1           carData_3.0-4        MASS_7.3-51.6        grid_4.0.2           parallel_4.0.2       listenv_0.8.0       
-    ##  [64] promises_1.1.1       forcats_0.5.0        shinydashboard_0.7.1 crayon_1.3.4         miniUI_0.1.1.1       haven_2.3.1          splines_4.0.2       
-    ##  [71] hms_0.5.3            knitr_1.29           pillar_1.4.4         boot_1.3-25          estimability_1.3     reshape2_1.4.4       future.apply_1.6.0  
-    ##  [78] codetools_0.2-16     glue_1.4.1           evaluate_0.14        data.table_1.12.8    vctrs_0.3.1          nloptr_1.2.2.2       httpuv_1.5.4        
-    ##  [85] cellranger_1.1.0     gtable_0.3.0         purrr_0.3.4          future_1.17.0        assertthat_0.2.1     openxlsx_4.1.5       xfun_0.15           
-    ##  [92] mime_0.9             xtable_1.8-4         pracma_2.2.9         coda_0.19-3          later_1.1.0.1        viridisLite_0.3.0    signal_0.7-6        
-    ##  [99] tibble_3.0.1         lmerTest_3.1-2       globals_0.12.5       statmod_1.4.34       ellipsis_0.3.1
+    ##  [1] viridis_0.5.1        httr_1.4.1           jsonlite_1.7.0       viridisLite_0.3.0    splines_4.0.2       
+    ##  [6] R.utils_2.9.2        shiny_1.5.0          highr_0.8            yaml_2.2.1           globals_0.12.5      
+    ## [11] pillar_1.4.4         lattice_0.20-41      glue_1.4.1           digest_0.6.25        RColorBrewer_1.1-2  
+    ## [16] promises_1.1.1       colorspace_1.4-1     htmltools_0.5.0      httpuv_1.5.4         Matrix_1.2-18       
+    ## [21] R.oo_1.23.0          plyr_1.8.6           R.matlab_3.6.2       pkgconfig_2.0.3      edfReader_1.2.1     
+    ## [26] listenv_0.8.0        purrr_0.3.4          xtable_1.8-4         scales_1.1.1         later_1.1.0.1       
+    ## [31] pracma_2.2.9         tibble_3.0.1         mgcv_1.8-31          farver_2.0.3         generics_0.0.2      
+    ## [36] ellipsis_0.3.1       withr_2.2.0          lazyeval_0.2.2       magrittr_1.5         crayon_1.3.4        
+    ## [41] mime_0.9             evaluate_0.14        R.methodsS3_1.8.0    future_1.17.0        nlme_3.1-148        
+    ## [46] MASS_7.3-51.6        shinydashboard_0.7.1 tools_4.0.2          data.table_1.12.8    lifecycle_0.2.0     
+    ## [51] matrixStats_0.56.0   stringr_1.4.0        plotly_4.9.2.1       munsell_0.5.0        compiler_4.0.2      
+    ## [56] signal_0.7-6         tinytex_0.24         rlang_0.4.6          grid_4.0.2           rstudioapi_0.11     
+    ## [61] Rmisc_1.5            htmlwidgets_1.5.1    miniUI_0.1.1.1       labeling_0.3         rmarkdown_2.3       
+    ## [66] gtable_0.3.0         codetools_0.2-16     abind_1.4-5          R6_2.4.1             ini_0.3.1           
+    ## [71] gridExtra_2.3        knitr_1.29           eegUtils_0.5.0       fastmap_1.0.1        future.apply_1.6.0  
+    ## [76] stringi_1.4.6        parallel_4.0.2       Rcpp_1.0.4.6         vctrs_0.3.1          tidyselect_1.1.0    
+    ## [81] xfun_0.15
