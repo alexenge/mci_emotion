@@ -213,10 +213,7 @@ plot_grid(stim, waves$`Verb-related`,
           plot_grid(bars$N400.verb, topos.verb, nrow = 1, rel_widths = c(0.6, 1), labels = c("C", "D"),
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 3, rel_heights = c(0.2, 0.8, 1), labels = c("A", "B", NULL), label_fontfamily = "Helvetica") %>%
-  ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm") +
-  ggsave(filename = "Scripts/Output/Figures/N400_verb.png", width = 18, height = 22, units = "cm")
-
-#' ![Figure 1: Verb-Related N400 Effects](Figures/N400_verb.png)
+  ggsave(filename = "EEG/figures/N400_verb.pdf", width = 18, height = 22, units = "cm")
 
 # Combine everything and save (picture-related)
 plot_grid(plot_grid(waves$`Picture-related`) +
@@ -226,10 +223,7 @@ plot_grid(plot_grid(waves$`Picture-related`) +
           plot_grid(bars$N400.pict, topos.pict, nrow = 1, rel_widths = c(0.6, 1), labels = c("B", "C"),
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
-  ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm") +
-  ggsave(filename = "Scripts/Output/Figures/N400_pict.png", width = 18, height = 22, units = "cm")
-
-#' ![Figure 2: Picture-Related N400 Effects](Figures/N400_pict.png)
+  ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm")
 
 # Full system specs and package versions
 sessionInfo()
