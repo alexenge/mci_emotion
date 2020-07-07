@@ -1,9 +1,9 @@
-#/* Run this first piece of code only if you want to create a markdown report for GitHub
-rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
-                  output_format = rmarkdown::github_document(html_preview = FALSE),
-                  output_dir = "Scripts/Output",
-                  knit_root_dir = getwd()) #*/
+F03\_mci\_emotion\_plotting.R
+================
+alexander
+2020-07-07
 
+``` r
 ### MCI EMO PLOTTING SCRIPT ###
 
 ## PREPARATION ## ---------------------------------------------------------------------------------
@@ -24,6 +24,11 @@ avgs.pict <- readRDS("EEG/export/avgs_pict.RDS")
 avgs.verb <- avgs.verb %>% mutate(type = "Verb-related")
 avgs.pict <- avgs.pict %>% mutate(type = "Picture-related")
 avgs <- bind(avgs.verb, avgs.pict)
+```
+
+    ## # Object size in memory 110.5 Mb
+
+``` r
 avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "Picture-related"))
 
 # Remove trials with errors or invalid RTs/ERPs
@@ -169,7 +174,19 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
     p$layers[[7]]$aes_params$colour <- "black"
     p <- p + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, size = 10, family = "Helvetica"))})
 }, simplify = FALSE)
+```
 
+    ## Attempting to add standard electrode locations...
+
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+
+``` r
 # Create a colorbar
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
@@ -183,8 +200,8 @@ colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster(
                              legend.title.align = 0.5))
 
 # Create one plot combining all four topographies (verb-related)
-simdat2 <- data.frame("semantics" = as.factor(c("Violation - Intuitive", "MCI - Intuitive")),
-                      "context" = as.factor(c("Neutral\ncontext", "Negative\ncontext")))
+simdat2 <- data.frame("semantics" = factor(c("Violation - Intuitive", "MCI - Intuitive")),
+                      "context" = factor(c("Neutral\ncontext", "Negative\ncontext"), levels = c("Neutral\ncontext", "Negative\ncontext")))
 topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
   geom_point() +
   draw_plot(topos$`Verb-related`[[1]], x = 0.4, y = 1.5, width = 1.1, height = 1.1) +
@@ -235,4 +252,34 @@ plot_grid(plot_grid(waves$`Picture-related`) +
 
 # Full system specs and package versions
 sessionInfo()
+```
 
+    ## R version 4.0.2 (2020-06-22)
+    ## Platform: x86_64-apple-darwin17.0 (64-bit)
+    ## Running under: macOS Catalina 10.15.5
+    ## 
+    ## Matrix products: default
+    ## BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+    ## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+    ## 
+    ## locale:
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ## 
+    ## attached base packages:
+    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
+    ## 
+    ## other attached packages:
+    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1            R.matlab_3.6.2     
+    ##  [8] plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.1          highr_0.8           pillar_1.4.4       
+    ## [15] rlang_0.4.6         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11     data.table_1.12.8   miniUI_0.1.1.1      R.utils_2.9.2      
+    ## [22] R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3       labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1  
+    ## [29] eegUtils_0.5.0.9000 munsell_0.5.0       shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.15           pkgconfig_2.0.3    
+    ## [36] mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.1        codetools_0.2-16    matrixStats_0.56.0 
+    ## [43] viridisLite_0.3.0   future_1.17.0       crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6       R.methodsS3_1.8.0  
+    ## [50] grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5       
+    ## [57] scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3        promises_1.1.1      ini_0.3.1           ellipsis_0.3.1     
+    ## [64] generics_0.0.2      vctrs_0.3.1         RColorBrewer_1.1-2  tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5        
+    ## [71] parallel_4.0.2      fastmap_1.0.1       yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29

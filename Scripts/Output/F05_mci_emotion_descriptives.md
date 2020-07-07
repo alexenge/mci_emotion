@@ -1,7 +1,7 @@
-F05\_MCI\_Emo\_descriptives.R
+F05\_mci\_emotion\_descriptives.R
 ================
 alexander
-2020-07-04
+2020-07-07
 
 ``` r
 ### MCI EMO DESCRIPTIVES SCRIPT ###
@@ -135,5 +135,5 @@ sessionInfo()
     ## [1] Rmisc_1.5       plyr_1.8.6      lattice_0.20-41
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.4.6    digest_0.6.25   grid_4.0.2      magrittr_1.5    evaluate_0.14   highr_0.8       stringi_1.4.6   rlang_0.4.6     rstudioapi_0.11
+    ##  [1] Rcpp_1.0.5      digest_0.6.25   grid_4.0.2      magrittr_1.5    evaluate_0.14   highr_0.8       stringi_1.4.6   rlang_0.4.6     rstudioapi_0.11
     ## [10] rmarkdown_2.3   tools_4.0.2     stringr_1.4.0   xfun_0.15       yaml_2.2.1      compiler_4.0.2  htmltools_0.5.0 knitr_1.29
