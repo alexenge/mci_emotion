@@ -1,7 +1,7 @@
 F02\_mci\_emotion\_mixed\_models.R
 ================
 alexander
-2020-07-07
+2020-07-08
 
 ``` r
 ### MCI EMO MIXED MODELS SCRIPT ###
@@ -65,23 +65,19 @@ contrasts(a1$semantics) <- ginv(contrasts.semantics)
 
 # LMM for valence ratings (converged on first attempt)
 mod.valence <- lmer(ValenzResp ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE))
-```
+                    data = a1, control = lmerControl(calc.derivs = FALSE))
 
-    ## Warning: Model failed to converge with 1 negative eigenvalue: -1.5e+00
-
-``` r
 # LMM for arousal ratings (converged after changing the optimizer + removing correlations between REs)
 mod.aroursal <- lmer_alt(ArousalResp ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                     data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                         data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # LMM for verb-related N400 (converged on first attempt)
 mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE))
+                      data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for picture-related N400 (converged after changing the optimizer)
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Create a list of models
 models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)
@@ -93,36 +89,36 @@ models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = 
     ## $VALENCE
     ## Type III Analysis of Variance Table with Satterthwaite's method
     ##                   Sum Sq Mean Sq NumDF  DenDF  F value    Pr(>F)    
-    ## semantics          0.007   0.004     2 60.038   0.0092    0.9909    
-    ## context           64.836  64.836     1 37.920 164.1355 2.376e-15 ***
-    ## semantics:context  0.012   0.006     2 60.466   0.0157    0.9844    
+    ## semantics          0.007   0.003     2 60.057   0.0088    0.9912    
+    ## context           64.894  64.894     1 37.997 164.2915 2.263e-15 ***
+    ## semantics:context  0.013   0.006     2 60.419   0.0162    0.9839    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## $AROUSAL
     ## Type III Analysis of Variance Table with Satterthwaite's method
     ##                   Sum Sq Mean Sq NumDF  DenDF F value    Pr(>F)    
-    ## semantics          0.131   0.066     2 65.904  0.1209    0.8863    
-    ## context           45.860  45.860     1 37.925 84.5358 3.405e-11 ***
-    ## semantics:context  0.054   0.027     2 87.852  0.0495    0.9517    
+    ## semantics          0.131   0.065     2 65.905  0.1205    0.8867    
+    ## context           45.853  45.853     1 37.924 84.5312 3.408e-11 ***
+    ## semantics:context  0.054   0.027     2 87.907  0.0494    0.9518    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## $N400.VERB
     ## Type III Analysis of Variance Table with Satterthwaite's method
     ##                    Sum Sq Mean Sq NumDF  DenDF F value   Pr(>F)   
-    ## semantics         247.963 123.981     2 63.114  7.0832 0.001678 **
-    ## context             0.317   0.317     1 34.979  0.0181 0.893730   
-    ## semantics:context  43.707  21.853     2 69.610  1.2485 0.293276   
+    ## semantics         248.274 124.137     2 63.107  7.0927 0.001665 **
+    ## context             0.332   0.332     1 34.906  0.0190 0.891227   
+    ## semantics:context  43.824  21.912     2 69.569  1.2520 0.292305   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## $N400.PICT
     ## Type III Analysis of Variance Table with Satterthwaite's method
     ##                    Sum Sq Mean Sq NumDF  DenDF F value  Pr(>F)  
-    ## semantics          23.533  11.766     2 37.017  0.7277 0.48981  
-    ## context             0.085   0.085     1 44.147  0.0053 0.94243  
-    ## semantics:context 125.895  62.948     2 52.128  3.8929 0.02656 *
+    ## semantics          23.539  11.769     2 37.017  0.7279 0.48970  
+    ## context             0.085   0.085     1 44.145  0.0052 0.94259  
+    ## semantics:context 125.890  62.945     2 52.115  3.8931 0.02656 *
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -144,8 +140,8 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
     ## $VALENCE
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int  0.00939 0.0693 60.2   -0.150    0.169 0.135   1.0000 
-    ##  mci - int  0.00477 0.0676 60.0   -0.151    0.160 0.071   1.0000 
+    ##  vio - int  0.00922 0.0694 60.2   -0.150    0.169 0.133   1.0000 
+    ##  mci - int  0.00478 0.0676 60.2   -0.151    0.160 0.071   1.0000 
     ## 
     ## Results are averaged over the levels of: context 
     ## Degrees-of-freedom method: satterthwaite 
@@ -155,7 +151,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## 
     ## $AROUSAL
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int  0.02545 0.0518 60.5  -0.0935    0.144 0.492   1.0000 
+    ##  vio - int  0.02541 0.0518 60.5  -0.0936    0.144 0.491   1.0000 
     ##  mci - int  0.00209 0.0449 60.1  -0.1012    0.105 0.046   1.0000 
     ## 
     ## Results are averaged over the levels of: context 
@@ -166,8 +162,8 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## 
     ## $N400.VERB
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int  -0.0288 0.131 61.2   -0.330    0.272 -0.220  1.0000 
-    ##  mci - int  -0.3830 0.114 66.0   -0.644   -0.123 -3.373  0.0025 
+    ##  vio - int  -0.0283 0.131 61.3   -0.329    0.272 -0.216  1.0000 
+    ##  mci - int  -0.3830 0.114 65.9   -0.643   -0.123 -3.374  0.0025 
     ## 
     ## Results are averaged over the levels of: context 
     ## Degrees-of-freedom method: satterthwaite 
@@ -177,7 +173,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## 
     ## $N400.PICT
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int    0.073 0.129 35.5   -0.228    0.374  0.567  1.0000 
+    ##  vio - int    0.073 0.129 35.5   -0.228    0.374  0.568  1.0000 
     ##  mci - int   -0.121 0.138 37.7   -0.444    0.202 -0.872  0.7774 
     ## 
     ## Results are averaged over the levels of: context 
@@ -198,8 +194,8 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $VALENCE
-    ##  contrast  estimate   SE   df lower.CL upper.CL t.ratio p.value
-    ##  neg - neu    -1.41 0.11 37.9    -1.63    -1.19 -12.812 <.0001 
+    ##  contrast  estimate   SE df lower.CL upper.CL t.ratio p.value
+    ##  neg - neu    -1.41 0.11 38    -1.63    -1.19 -12.818 <.0001 
     ## 
     ## Results are averaged over the levels of: semantics 
     ## Degrees-of-freedom method: satterthwaite 
@@ -214,8 +210,8 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## Confidence level used: 0.95 
     ## 
     ## $N400.VERB
-    ##  contrast  estimate    SE df lower.CL upper.CL t.ratio p.value
-    ##  neg - neu   0.0139 0.103 35   -0.195    0.223 0.135   0.8937 
+    ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
+    ##  neg - neu   0.0142 0.103 34.9   -0.195    0.223 0.138   0.8912 
     ## 
     ## Results are averaged over the levels of: semantics 
     ## Degrees-of-freedom method: satterthwaite 
@@ -223,7 +219,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## 
     ## $N400.PICT
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
-    ##  neg - neu -0.00706 0.0972 44.1   -0.203    0.189 -0.073  0.9424 
+    ##  neg - neu -0.00704 0.0972 44.1   -0.203    0.189 -0.072  0.9426 
     ## 
     ## Results are averaged over the levels of: semantics 
     ## Degrees-of-freedom method: satterthwaite 
@@ -238,13 +234,13 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## $VALENCE
     ## context = neu:
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int 0.014482 0.0960 60.3   -0.206    0.235 0.151   1.0000 
-    ##  mci - int 0.000146 0.0919 60.3   -0.211    0.211 0.002   1.0000 
+    ##  vio - int 0.014478 0.0960 60.3   -0.206    0.235 0.151   1.0000 
+    ##  mci - int 0.000172 0.0919 60.4   -0.211    0.211 0.002   1.0000 
     ## 
     ## context = neg:
     ##  contrast  estimate     SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int 0.004289 0.0729 59.9   -0.163    0.172 0.059   1.0000 
-    ##  mci - int 0.009390 0.0754 60.1   -0.164    0.183 0.125   1.0000 
+    ##  vio - int 0.003969 0.0728 59.8   -0.164    0.171 0.054   1.0000 
+    ##  mci - int 0.009384 0.0754 60.1   -0.164    0.183 0.124   1.0000 
     ## 
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
@@ -259,7 +255,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## 
     ## context = neg:
     ##  contrast  estimate     SE  df lower.CL upper.CL t.ratio p.value
-    ##  vio - int   0.0288 0.0658 115   -0.121    0.178  0.437  1.0000 
+    ##  vio - int   0.0287 0.0658 115   -0.121    0.178  0.436  1.0000 
     ##  mci - int  -0.0107 0.0623 121   -0.152    0.131 -0.171  1.0000 
     ## 
     ## Degrees-of-freedom method: satterthwaite 
@@ -270,13 +266,13 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## $N400.VERB
     ## context = neu:
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int   -0.170 0.193 63.3   -0.613    0.273 -0.882  0.7623 
-    ##  mci - int   -0.531 0.156 97.9   -0.887   -0.175 -3.395  0.0020 
+    ##  vio - int   -0.170 0.193 63.4   -0.613    0.273 -0.882  0.7621 
+    ##  mci - int   -0.531 0.156 98.1   -0.887   -0.175 -3.396  0.0020 
     ## 
     ## context = neg:
     ##  contrast  estimate    SE   df lower.CL upper.CL t.ratio p.value
-    ##  vio - int    0.113 0.157 69.3   -0.248    0.473  0.715  0.9541 
-    ##  mci - int   -0.235 0.160 70.4   -0.601    0.130 -1.474  0.2898 
+    ##  vio - int    0.113 0.157 69.1   -0.247    0.474  0.721  0.9464 
+    ##  mci - int   -0.235 0.160 70.4   -0.601    0.130 -1.474  0.2896 
     ## 
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
@@ -286,13 +282,13 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     ## $N400.PICT
     ## context = neu:
     ##  contrast  estimate    SE   df lower.CL  upper.CL t.ratio p.value
-    ##  vio - int  -0.0363 0.163 34.4   -0.419  0.346617 -0.222  1.0000 
-    ##  mci - int  -0.4060 0.175 47.1   -0.811 -0.000838 -2.320  0.0494 
+    ##  vio - int  -0.0363 0.163 34.4   -0.419  0.346628 -0.222  1.0000 
+    ##  mci - int  -0.4060 0.175 47.1   -0.811 -0.000841 -2.320  0.0494 
     ## 
     ## context = neg:
     ##  contrast  estimate    SE   df lower.CL  upper.CL t.ratio p.value
-    ##  vio - int   0.1823 0.178 43.2   -0.230  0.594863  1.026  0.6209 
-    ##  mci - int   0.1645 0.170 35.8   -0.233  0.561694  0.969  0.6778 
+    ##  vio - int   0.1824 0.178 43.2   -0.230  0.594854  1.027  0.6204 
+    ##  mci - int   0.1645 0.170 35.8   -0.233  0.561698  0.969  0.6778 
     ## 
     ## Degrees-of-freedom method: satterthwaite 
     ## Confidence level used: 0.95 
@@ -325,17 +321,13 @@ sessionInfo()
     ## [1] emmeans_1.4.8  afex_0.27-2    lmerTest_3.1-2 lme4_1.1-23    Matrix_1.2-18  MASS_7.3-51.6 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] nlme_3.1-148        matrixStats_0.56.0  RColorBrewer_1.1-2  httr_1.4.1          numDeriv_2016.8-1.1 tools_4.0.2         R6_2.4.1           
-    ##  [8] lazyeval_0.2.2      mgcv_1.8-31         colorspace_1.4-1    tidyselect_1.1.0    curl_4.3            compiler_4.0.2      eegUtils_0.5.0.9000
-    ## [15] plotly_4.9.2.1      scales_1.1.1        mvtnorm_1.1-1       stringr_1.4.0       digest_0.6.25       foreign_0.8-80      minqa_1.2.4        
-    ## [22] rmarkdown_2.3       R.utils_2.9.2       rio_0.5.16          ini_0.3.1           pkgconfig_2.0.3     htmltools_0.5.0     highr_0.8          
-    ## [29] fastmap_1.0.1       htmlwidgets_1.5.1   Rmisc_1.5           rlang_0.4.6         readxl_1.3.1        rstudioapi_0.11     shiny_1.5.0        
-    ## [36] generics_0.0.2      jsonlite_1.7.0      dplyr_1.0.0         zip_2.0.4           car_3.0-8           R.oo_1.23.0         magrittr_1.5       
-    ## [43] R.matlab_3.6.2      Rcpp_1.0.5          munsell_0.5.0       abind_1.4-5         lifecycle_0.2.0     R.methodsS3_1.8.0   stringi_1.4.6      
-    ## [50] yaml_2.2.1          carData_3.0-4       plyr_1.8.6          grid_4.0.2          parallel_4.0.2      listenv_0.8.0       promises_1.1.1     
-    ## [57] forcats_0.5.0       crayon_1.3.4        miniUI_0.1.1.1      lattice_0.20-41     haven_2.3.1         splines_4.0.2       hms_0.5.3          
-    ## [64] knitr_1.29          pillar_1.4.4        boot_1.3-25         estimability_1.3    future.apply_1.6.0  reshape2_1.4.4      codetools_0.2-16   
-    ## [71] glue_1.4.1          evaluate_0.14       data.table_1.12.8   vctrs_0.3.1         nloptr_1.2.2.2      httpuv_1.5.4        cellranger_1.1.0   
-    ## [78] gtable_0.3.0        purrr_0.3.4         tidyr_1.1.0         future_1.17.0       ggplot2_3.3.2       xfun_0.15           openxlsx_4.1.5     
-    ## [85] mime_0.9            xtable_1.8-4        pracma_2.2.9        coda_0.19-3         later_1.1.0.1       viridisLite_0.3.0   signal_0.7-6       
-    ## [92] tibble_3.0.1        tinytex_0.24        globals_0.12.5      statmod_1.4.34      ellipsis_0.3.1
+    ##  [1] statmod_1.4.34      tidyselect_1.1.0    xfun_0.15           reshape2_1.4.4      purrr_0.3.4         splines_4.0.2       haven_2.3.1        
+    ##  [8] lattice_0.20-41     carData_3.0-4       colorspace_1.4-1    vctrs_0.3.1         generics_0.0.2      htmltools_0.5.0     yaml_2.2.1         
+    ## [15] rlang_0.4.6         nloptr_1.2.2.2      pillar_1.4.4        foreign_0.8-80      glue_1.4.1          readxl_1.3.1        plyr_1.8.6         
+    ## [22] lifecycle_0.2.0     stringr_1.4.0       munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0    zip_2.0.4           mvtnorm_1.1-1      
+    ## [29] coda_0.19-3         evaluate_0.14       knitr_1.29          rio_0.5.16          forcats_0.5.0       curl_4.3            parallel_4.0.2     
+    ## [36] highr_0.8           Rcpp_1.0.5          xtable_1.8-4        scales_1.1.1        abind_1.4-5         ggplot2_3.3.2       hms_0.5.3          
+    ## [43] digest_0.6.25       stringi_1.4.6       openxlsx_4.1.5      dplyr_1.0.0         numDeriv_2016.8-1.1 grid_4.0.2          tools_4.0.2        
+    ## [50] magrittr_1.5        tibble_3.0.1        crayon_1.3.4        car_3.0-8           pkgconfig_2.0.3     ellipsis_0.3.1      data.table_1.12.8  
+    ## [57] estimability_1.3    minqa_1.2.4         rmarkdown_2.3       rstudioapi_0.11     R6_2.4.1            boot_1.3-25         nlme_3.1-148       
+    ## [64] compiler_4.0.2

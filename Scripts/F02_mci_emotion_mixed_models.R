@@ -50,19 +50,19 @@ contrasts(a1$semantics) <- ginv(contrasts.semantics)
 
 # LMM for valence ratings (converged on first attempt)
 mod.valence <- lmer(ValenzResp ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE))
+                    data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for arousal ratings (converged after changing the optimizer + removing correlations between REs)
 mod.aroursal <- lmer_alt(ArousalResp ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                     data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                         data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # LMM for verb-related N400 (converged on first attempt)
 mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE))
+                      data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for picture-related N400 (converged after changing the optimizer)
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                 data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Create a list of models
 models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)

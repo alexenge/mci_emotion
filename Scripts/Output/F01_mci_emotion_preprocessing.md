@@ -1,7 +1,7 @@
 F01\_mci\_emotion\_preprocessing.R
 ================
 neuro-lab
-2020-07-03
+2020-07-07
 
 ``` r
 ### MCI EMO PREPROCESSING SCRIPT ###
@@ -2883,9 +2883,16 @@ sessionInfo()
     ## [1] eeguana_0.1.4.9000 dplyr_1.0.0        naturalsort_0.1.3 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.4.6      pillar_1.4.4      compiler_4.0.2    highr_0.8         tools_4.0.2       digest_0.6.25     evaluate_0.14    
-    ##  [8] lifecycle_0.2.0   tibble_3.0.1      gtable_0.3.0      pkgconfig_2.0.3   rlang_0.4.6       rstudioapi_0.11   yaml_2.2.1       
-    ## [15] RcppRoll_0.3.0    xfun_0.15         stringr_1.4.0     knitr_1.29        generics_0.0.2    vctrs_0.3.1       grid_4.0.2       
-    ## [22] tidyselect_1.1.0  glue_1.4.1        data.table_1.12.8 R6_2.4.1          rmarkdown_2.3     ggplot2_3.3.2     purrr_0.3.4      
-    ## [29] magrittr_1.5      scales_1.1.1      ellipsis_0.3.1    htmltools_0.5.0   MASS_7.3-51.6     colorspace_1.4-1  stringi_1.4.6    
-    ## [36] ini_0.3.1         signal_0.7-6      munsell_0.5.0     crayon_1.3.4
+    ##  [1] Rcpp_1.0.5          lattice_0.20-41     tidyr_1.1.0         listenv_0.8.0       digest_0.6.25       mime_0.9           
+    ##  [7] R6_2.4.1            R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14      
+    ## [13] highr_0.8           httr_1.4.1          ggplot2_3.3.2       pillar_1.4.4        rlang_0.4.6         Rmisc_1.5          
+    ## [19] lazyeval_0.2.2      rstudioapi_0.11     data.table_1.12.8   miniUI_0.1.1.1      R.utils_2.9.2       R.oo_1.23.0        
+    ## [25] Matrix_1.2-18       rmarkdown_2.3       splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1   eegUtils_0.5.0.9000
+    ## [31] munsell_0.5.0       tinytex_0.24        shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.15          
+    ## [37] pkgconfig_2.0.3     mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.1       
+    ## [43] codetools_0.2-16    matrixStats_0.56.0  RcppRoll_0.3.0      future_1.17.0       viridisLite_0.3.0   crayon_1.3.4       
+    ## [49] later_1.1.0.1       MASS_7.3-51.6       R.methodsS3_1.8.0   grid_4.0.2          nlme_3.1-148        jsonlite_1.7.0     
+    ## [55] xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        stringi_1.4.6      
+    ## [61] future.apply_1.6.0  promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.1        
+    ## [67] RColorBrewer_1.1-2  tools_4.0.2         glue_1.4.1          purrr_0.3.4         yaml_2.2.1          abind_1.4-5        
+    ## [73] parallel_4.0.2      fastmap_1.0.1       colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
