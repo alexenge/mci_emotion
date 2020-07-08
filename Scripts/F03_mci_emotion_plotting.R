@@ -6,6 +6,10 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 ### MCI EMO PLOTTING SCRIPT ###
 
+# Creates a bar plot, an ERP waveform, and scalp topographies for the N400 effect for the
+# different semantic conditions (intuitive, violation, MCI) within each type of emotional 
+# context (neutral, negative), separetely for verb- and picture-related potentials.
+
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages

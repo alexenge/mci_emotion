@@ -7,8 +7,13 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 ### MCI EMO TABLES SCRIPT ###
 
-# Creates tables for linear mixed effect model outputs, including ANOVA-style type III tests (F-tests) and
-# planned contrasts. To render these tables to a word document, run (only) the following line of code:
+# Creates a table for the output of our four linear mixed-effects models. The upper half of
+# the table includes ANOVA-style type III tests (F-tests), the bottom half contains planned
+# follow-up contrasts. For the F-tests, F-values, degrees of freedom, and p-values are
+# printed, whereas for the contrasts, regression estimates, 95% confidence intervals, and
+# p-values are printed.
+
+## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
 library(huxtable)     # version 5.0.0
@@ -45,6 +50,8 @@ conts <- lapply(means.nested, function(x){
 # Bind all the planned contrasts to one data frame
 conts <- do.call(cbind, conts)
 conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
+
+## CREATE A SINGLE TABLE ## -----------------------------------------------------------------------
 
 # Bind both data frames (F-tests and contrats) below one another
 tab <- rbind(anovas, conts)

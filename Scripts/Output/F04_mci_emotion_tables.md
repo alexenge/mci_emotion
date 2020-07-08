@@ -6,12 +6,30 @@ alexander
 ``` r
 ### MCI EMO TABLES SCRIPT ###
 
-# Creates tables for linear mixed effect model outputs, including ANOVA-style type III tests (F-tests) and
-# planned contrasts. To render these tables to a word document, run (only) the following line of code:
+# Creates a table for the output of our four linear mixed-effects models. The upper half of
+# the table includes ANOVA-style type III tests (F-tests), the bottom half contains planned
+# follow-up contrasts. For the F-tests, F-values, degrees of freedom, and p-values are
+# printed, whereas for the contrasts, regression estimates, 95% confidence intervals, and
+# p-values are printed.
+
+## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
 library(huxtable)     # version 5.0.0
+```
 
+    ## 
+    ## Attaching package: 'huxtable'
+
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     theme_grey
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     add_rownames
+
+``` r
 # Load output from mixed models
 load("EEG/export/stats.RData")
 ```
@@ -53,6 +71,8 @@ conts <- lapply(means.nested, function(x){
 # Bind all the planned contrasts to one data frame
 conts <- do.call(cbind, conts)
 conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
+
+## CREATE A SINGLE TABLE ## -----------------------------------------------------------------------
 
 # Bind both data frames (F-tests and contrats) below one another
 tab <- rbind(anovas, conts)
@@ -113,18 +133,22 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] huxtable_5.0.0
+    ## [1] huxtable_5.0.0     cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          mvtnorm_1.1-1       lattice_0.20-41     assertthat_0.2.1    digest_0.6.25       R6_2.4.1            cellranger_1.1.0   
-    ##  [8] plyr_1.8.6          evaluate_0.14       coda_0.19-3         ggplot2_3.3.2       highr_0.8           pillar_1.4.4        gdtools_0.2.2      
-    ## [15] rlang_0.4.6         curl_4.3            readxl_1.3.1        uuid_0.1-4          rstudioapi_0.11     minqa_1.2.4         data.table_1.12.8  
-    ## [22] car_3.0-8           nloptr_1.2.2.2      Matrix_1.2-18       flextable_0.5.10    rmarkdown_2.3       splines_4.0.2       lme4_1.1-23        
-    ## [29] statmod_1.4.34      stringr_1.4.0       foreign_0.8-80      afex_0.27-2         munsell_0.5.0       compiler_4.0.2      numDeriv_2016.8-1.1
-    ## [36] xfun_0.15           systemfonts_0.2.3   base64enc_0.1-3     pkgconfig_2.0.3     lmerTest_3.1-2      htmltools_0.5.0     tidyselect_1.1.0   
-    ## [43] tibble_3.0.1        rio_0.5.16          crayon_1.3.4        dplyr_1.0.0         commonmark_1.7      MASS_7.3-51.6       grid_4.0.2         
-    ## [50] nlme_3.1-148        xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        zip_2.0.4          
-    ## [57] estimability_1.3    stringi_1.4.6       carData_3.0-4       reshape2_1.4.4      xml2_1.3.2          ellipsis_0.3.1      generics_0.0.2     
-    ## [64] vctrs_0.3.1         boot_1.3-25         openxlsx_4.1.5      tools_4.0.2         forcats_0.5.0       glue_1.4.1          officer_0.3.12     
-    ## [71] purrr_0.3.4         hms_0.5.3           emmeans_1.4.8       abind_1.4-5         parallel_4.0.2      yaml_2.2.1          colorspace_1.4-1   
-    ## [78] knitr_1.29          haven_2.3.1
+    ##   [1] minqa_1.2.4         colorspace_1.4-1    ellipsis_0.3.1      rio_0.5.16          estimability_1.3    flextable_0.5.10    base64enc_0.1-3    
+    ##   [8] rstudioapi_0.11     listenv_0.8.0       R.matlab_3.6.2      farver_2.0.3        mvtnorm_1.1-1       xml2_1.3.2          codetools_0.2-16   
+    ##  [15] splines_4.0.2       R.methodsS3_1.8.0   knitr_1.29          eegUtils_0.5.0.9000 afex_0.27-2         jsonlite_1.7.0      nloptr_1.2.2.2     
+    ##  [22] R.oo_1.23.0         shiny_1.5.0         compiler_4.0.2      httr_1.4.1          emmeans_1.4.8       assertthat_0.2.1    Matrix_1.2-18      
+    ##  [29] fastmap_1.0.1       lazyeval_0.2.2      later_1.1.0.1       htmltools_0.5.0     tools_4.0.2         lmerTest_3.1-2      coda_0.19-3        
+    ##  [36] gtable_0.3.0        glue_1.4.1          reshape2_1.4.4      Rcpp_1.0.5          carData_3.0-4       cellranger_1.1.0    vctrs_0.3.1        
+    ##  [43] nlme_3.1-148        xfun_0.15           stringr_1.4.0       globals_0.12.5      Rmisc_1.5           openxlsx_4.1.5      lme4_1.1-23        
+    ##  [50] mime_0.9            miniUI_0.1.1.1      lifecycle_0.2.0     statmod_1.4.34      future_1.17.0       MASS_7.3-51.6       scales_1.1.1       
+    ##  [57] hms_0.5.3           promises_1.1.1      parallel_4.0.2      RColorBrewer_1.1-2  yaml_2.2.1          curl_4.3            gdtools_0.2.2      
+    ##  [64] stringi_1.4.6       highr_0.8           boot_1.3-25         zip_2.0.4           commonmark_1.7      rlang_0.4.6         pkgconfig_2.0.3    
+    ##  [71] systemfonts_0.2.3   matrixStats_0.56.0  pracma_2.2.9        evaluate_0.14       lattice_0.20-41     purrr_0.3.4         htmlwidgets_1.5.1  
+    ##  [78] labeling_0.3        tidyselect_1.1.0    plyr_1.8.6          magrittr_1.5        R6_2.4.1            generics_0.0.2      ini_0.3.1          
+    ##  [85] pillar_1.4.4        haven_2.3.1         foreign_0.8-80      withr_2.2.0         mgcv_1.8-31         abind_1.4-5         tibble_3.0.1       
+    ##  [92] future.apply_1.6.0  crayon_1.3.4        car_3.0-8           uuid_0.1-4          plotly_4.9.2.1      rmarkdown_2.3       officer_0.3.12     
+    ##  [99] grid_4.0.2          readxl_1.3.1        data.table_1.12.8   forcats_0.5.0       digest_0.6.25       xtable_1.8-4        httpuv_1.5.4       
+    ## [106] numDeriv_2016.8-1.1 R.utils_2.9.2       signal_0.7-6        munsell_0.5.0       viridisLite_0.3.0

@@ -6,6 +6,10 @@ alexander
 ``` r
 ### MCI EMO PLOTTING SCRIPT ###
 
+# Creates a bar plot, an ERP waveform, and scalp topographies for the N400 effect for the
+# different semantic conditions (intuitive, violation, MCI) within each type of emotional 
+# context (neutral, negative), separetely for verb- and picture-related potentials.
+
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
@@ -272,15 +276,14 @@ sessionInfo()
     ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       assertthat_0.2.1    digest_0.6.25       mime_0.9            R6_2.4.1           
-    ##  [8] R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        evaluate_0.14       pracma_2.2.9        highr_0.8           httr_1.4.1         
-    ## [15] pillar_1.4.4        rlang_0.4.6         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11     data.table_1.12.8   miniUI_0.1.1.1     
-    ## [22] R.utils_2.9.2       R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3       labeling_0.3        splines_4.0.2       stringr_1.4.0      
-    ## [29] htmlwidgets_1.5.1   eegUtils_0.5.0.9000 munsell_0.5.0       shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.15          
-    ## [36] pkgconfig_2.0.3     mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.1        codetools_0.2-16   
-    ## [43] matrixStats_0.56.0  fansi_0.4.1         future_1.17.0       viridisLite_0.3.0   crayon_1.3.4        withr_2.2.0         later_1.1.0.1      
-    ## [50] MASS_7.3-51.6       R.methodsS3_1.8.0   grid_4.0.2          nlme_3.1-148        jsonlite_1.7.0      xtable_1.8-4        gtable_0.3.0       
-    ## [57] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        stringi_1.4.6       cli_2.0.2           future.apply_1.6.0  farver_2.0.3       
-    ## [64] promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.1         RColorBrewer_1.1-2  tools_4.0.2        
-    ## [71] glue_1.4.1          purrr_0.3.4         abind_1.4-5         parallel_4.0.2      fastmap_1.0.1       yaml_2.2.1          colorspace_1.4-1   
-    ## [78] plotly_4.9.2.1      knitr_1.29
+    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1            R.matlab_3.6.2     
+    ##  [8] plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.1          highr_0.8           pillar_1.4.4       
+    ## [15] rlang_0.4.6         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11     data.table_1.12.8   miniUI_0.1.1.1      R.utils_2.9.2      
+    ## [22] R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3       labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1  
+    ## [29] eegUtils_0.5.0.9000 munsell_0.5.0       shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.15           pkgconfig_2.0.3    
+    ## [36] mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.1        codetools_0.2-16    matrixStats_0.56.0 
+    ## [43] viridisLite_0.3.0   future_1.17.0       crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6       R.methodsS3_1.8.0  
+    ## [50] grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5       
+    ## [57] scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3        promises_1.1.1      ini_0.3.1           ellipsis_0.3.1     
+    ## [64] generics_0.0.2      vctrs_0.3.1         RColorBrewer_1.1-2  tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5        
+    ## [71] parallel_4.0.2      fastmap_1.0.1       yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
