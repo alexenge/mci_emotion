@@ -8,16 +8,16 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 # Creates a bar plot, an ERP waveform, and scalp topographies for the N400 effect for the
 # different semantic conditions (intuitive, violation, MCI) within each type of emotional 
-# context (neutral, negative), separetely for verb- and picture-related potentials.
+# context (neutral, negative), separately for verb- and picture-related potentials.
 
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
-library(dplyr)
-library(tidyr)
-library(eeguana)
-library(ggplot2)
-library(cowplot)
+library(dplyr)   # Version 1.0.0
+library(tidyr)   # Version 1.1.0
+library(eeguana) # Version 0.1.4.9000
+library(ggplot2) # Version 3.3.2
+library(cowplot) # Version 1.0.0
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
@@ -45,7 +45,7 @@ styling <-   theme(panel.grid = element_blank(),
                    strip.background = element_blank(),
                    strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
-# Rename some factor leves
+# Rename some factor levels
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
@@ -60,7 +60,7 @@ names(condition.colors) <- c("Intuitive", "Violation", "MCI")
 # Convert dependent variables to long format
 a1.long <- a1 %>% gather(key = "dv", value = "value", N400.verb, N400.pict, factor_key = TRUE)
 
-# Compute summery statistics (means and confidence intervals) for verb-related and picture-related N400
+# Compute summary statistics (means and confidence intervals) for verb-related and picture-related N400
 summs <- sapply(c("N400.verb", "N400.pict"), function(dv){
   summ <- Rmisc::summarySEwithin(a1, measurevar = dv, withinvars = c("semantics", "context"), idvar = "participant", na.rm = TRUE)
   colnames(summ)[colnames(summ) == dv] <- "value"
