@@ -27,15 +27,15 @@ anovas <- lapply(tests, function(x){
                              "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
                       format(round(x$`Pr(>F)`, 3), nsmall = 3),
                       fix.empty.names = FALSE)
-  coefs[,2] <- substr(coefs[,2], 1, 5)
-  coefs[coefs[,2] == "0.000", 2] <- "< .001"
+  coefs[,2] <- substr(coefs[,2], 2, 5)
+  coefs[coefs[,2] == ".000", 2] <- "< .001"
   return(coefs)})
 
 # Bind all the F-tests to one data frame
 anovas <- do.call(cbind, anovas)
 anovas <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas)
 
-# Extract a table for the planned contrasts for each model (columns: estimate (CI), p-value)
+# Extract a table for the planned contrasts for each model (columns: estimate [CI], p-value)
 conts <- lapply(means.nested, function(x){
   x <- as.data.frame(x)
   coefs <- data.frame(paste0(format(round(x$estimate, 2), trim = TRUE, nsmall = 2),
@@ -43,8 +43,8 @@ conts <- lapply(means.nested, function(x){
                              format(round(x$upper.CL, 2), trim = TRUE, nsmall = 2), "]"),
                       format(round(x$p.value, 3), nsmall = 3),
                       fix.empty.names = FALSE)
-  coefs[,2] <- substr(coefs[,2], 1, 5)
-  coefs[coefs[,2] == "0.000", 2] <- "< .001"
+  coefs[,2] <- substr(coefs[,2], 2, 5)
+  coefs[coefs[,2] == ".000", 2] <- "< .001"
   return(coefs)})
 
 # Bind all the planned contrasts to one data frame
@@ -56,7 +56,7 @@ conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
 # Bind both data frames (F-tests and contrats) below one another
 tab <- rbind(anovas, conts)
 
-# Add model names (dependent varibales) as the first row
+# Add model names (dependent variables) as the first row
 tab <- rbind(c("Valence Rating", "", "Arousal Rating", "", "Verb-Related N400", "", "Picture-Related N400", ""), tab)
 
 # Add a stub column
@@ -64,7 +64,7 @@ tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × con
                "**Planned contrasts**", "Vio. - int.<br/>(neutral)", "MCI - int.<br/>(neutral)",
                "Vio. - int.<br/>(negative)", "MCI - int.<br/>(negative)"), tab)
 
-# Removeo old column names
+# Remove old column names
 names(tab) <- NULL
 
 # Create a huxtable and output as markdown
