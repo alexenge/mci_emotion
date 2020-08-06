@@ -1,23 +1,23 @@
 F03\_mci\_emotion\_plotting.R
 ================
-alexander
-2020-07-08
+kirstenstark
+2020-08-06
 
 ``` r
 ### MCI EMO PLOTTING SCRIPT ###
 
 # Creates a bar plot, an ERP waveform, and scalp topographies for the N400 effect for the
 # different semantic conditions (intuitive, violation, MCI) within each type of emotional 
-# context (neutral, negative), separetely for verb- and picture-related potentials.
+# context (neutral, negative), separately for verb- and picture-related potentials.
 
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
-library(dplyr)
-library(tidyr)
-library(eeguana)
-library(ggplot2)
-library(cowplot)
+library(dplyr)   # Version 1.0.0
+library(tidyr)   # Version 1.1.0
+library(eeguana) # Version 0.1.4.9000
+library(ggplot2) # Version 3.3.2
+library(cowplot) # Version 1.0.0
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
@@ -50,7 +50,7 @@ styling <-   theme(panel.grid = element_blank(),
                    strip.background = element_blank(),
                    strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
-# Rename some factor leves
+# Rename some factor levels
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
@@ -65,7 +65,7 @@ names(condition.colors) <- c("Intuitive", "Violation", "MCI")
 # Convert dependent variables to long format
 a1.long <- a1 %>% gather(key = "dv", value = "value", N400.verb, N400.pict, factor_key = TRUE)
 
-# Compute summery statistics (means and confidence intervals) for verb-related and picture-related N400
+# Compute summary statistics (means and confidence intervals) for verb-related and picture-related N400
 summs <- sapply(c("N400.verb", "N400.pict"), function(dv){
   summ <- Rmisc::summarySEwithin(a1, measurevar = dv, withinvars = c("semantics", "context"), idvar = "participant", na.rm = TRUE)
   colnames(summ)[colnames(summ) == dv] <- "value"
@@ -194,7 +194,7 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
 # Create a colorbar
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
-                       scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left"), breaks = c(-0.7, 0, 0.7)) +
+                       scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7)) +
                        labs(fill = "Ampl.\n(µV)") +
                        theme(legend.position = "right",
                              legend.background = element_blank(),
@@ -260,30 +260,56 @@ sessionInfo()
 
     ## R version 4.0.2 (2020-06-22)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
-    ## Running under: macOS Catalina 10.15.5
+    ## Running under: macOS Catalina 10.15.6
     ## 
     ## Matrix products: default
     ## BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
     ## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
     ## 
     ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ## [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
     ## 
     ## attached base packages:
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
+    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0       
+    ## [5] dplyr_1.0.0       
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1            R.matlab_3.6.2     
-    ##  [8] plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.1          highr_0.8           pillar_1.4.4       
-    ## [15] rlang_0.4.6         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11     data.table_1.12.8   miniUI_0.1.1.1      R.utils_2.9.2      
-    ## [22] R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3       labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1  
-    ## [29] eegUtils_0.5.0.9000 munsell_0.5.0       shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.15           pkgconfig_2.0.3    
-    ## [36] mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.1        codetools_0.2-16    matrixStats_0.56.0 
-    ## [43] viridisLite_0.3.0   future_1.17.0       crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6       R.methodsS3_1.8.0  
-    ## [50] grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5       
-    ## [57] scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3        promises_1.1.1      ini_0.3.1           ellipsis_0.3.1     
-    ## [64] generics_0.0.2      vctrs_0.3.1         RColorBrewer_1.1-2  tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5        
-    ## [71] parallel_4.0.2      fastmap_1.0.1       yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
+    ##   [1] nlme_3.1-148         matrixStats_0.56.0   httr_1.4.1          
+    ##   [4] RColorBrewer_1.1-2   numDeriv_2016.8-1.1  tools_4.0.2         
+    ##   [7] R6_2.4.1             afex_0.27-2          lazyeval_0.2.2      
+    ##  [10] mgcv_1.8-31          colorspace_1.4-1     withr_2.2.0         
+    ##  [13] gridExtra_2.3        tidyselect_1.1.0     emmeans_1.4.8       
+    ##  [16] curl_4.3             compiler_4.0.2       edfReader_1.2.1     
+    ##  [19] eegUtils_0.5.0       plotly_4.9.2.1       labeling_0.3        
+    ##  [22] scales_1.1.1         mvtnorm_1.1-1        stringr_1.4.0       
+    ##  [25] digest_0.6.25        foreign_0.8-80       minqa_1.2.4         
+    ##  [28] rmarkdown_2.3        R.utils_2.9.2        rio_0.5.16          
+    ##  [31] ini_0.3.1            pkgconfig_2.0.3      htmltools_0.5.0     
+    ##  [34] lme4_1.1-23          highr_0.8            fastmap_1.0.1       
+    ##  [37] htmlwidgets_1.5.1    Rmisc_1.5            rlang_0.4.7         
+    ##  [40] readxl_1.3.1         rstudioapi_0.11      shiny_1.5.0         
+    ##  [43] farver_2.0.3         generics_0.0.2       jsonlite_1.7.0      
+    ##  [46] zip_2.0.4            car_3.0-8            R.oo_1.23.0         
+    ##  [49] magrittr_1.5         R.matlab_3.6.2       Matrix_1.2-18       
+    ##  [52] Rcpp_1.0.5           munsell_0.5.0        viridis_0.5.1       
+    ##  [55] abind_1.4-5          lifecycle_0.2.0      R.methodsS3_1.8.0   
+    ##  [58] stringi_1.4.6        yaml_2.2.1           carData_3.0-4       
+    ##  [61] MASS_7.3-51.6        plyr_1.8.6           grid_4.0.2          
+    ##  [64] parallel_4.0.2       listenv_0.8.0        promises_1.1.1      
+    ##  [67] shinydashboard_0.7.1 forcats_0.5.0        crayon_1.3.4        
+    ##  [70] miniUI_0.1.1.1       lattice_0.20-41      haven_2.3.1         
+    ##  [73] splines_4.0.2        hms_0.5.3            knitr_1.29          
+    ##  [76] pillar_1.4.6         boot_1.3-25          estimability_1.3    
+    ##  [79] future.apply_1.6.0   reshape2_1.4.4       codetools_0.2-16    
+    ##  [82] glue_1.4.1           packrat_0.5.0        evaluate_0.14       
+    ##  [85] data.table_1.12.8    vctrs_0.3.2          nloptr_1.2.2.2      
+    ##  [88] httpuv_1.5.4         cellranger_1.1.0     gtable_0.3.0        
+    ##  [91] purrr_0.3.4          future_1.18.0        xfun_0.15           
+    ##  [94] openxlsx_4.1.5       mime_0.9             xtable_1.8-4        
+    ##  [97] pracma_2.2.9         coda_0.19-3          later_1.1.0.1       
+    ## [100] viridisLite_0.3.0    signal_0.7-6         tibble_3.0.3        
+    ## [103] lmerTest_3.1-2       globals_0.12.5       statmod_1.4.34      
+    ## [106] ellipsis_0.3.1
