@@ -8,7 +8,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 # Reads behavioral log files for all participants and binds them together. Performs EEG preprocessing
 # including re-refercing, ocular artifact correction, filtering, epoching, baseline correction, and
-# automatic artifact rejection, separetly for verb- and picture-related potentials. Computes single-
+# automatic artifact rejection, separatly for verb- and picture-related potentials. Computes single-
 # trial mean ERP amplitudes for the N400 component and exports by-participant averaged waveforms for
 # plotting.
 
