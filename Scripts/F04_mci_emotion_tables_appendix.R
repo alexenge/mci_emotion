@@ -5,7 +5,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
                   knit_root_dir = getwd()) #*/
 #+ results="asis"
 
-### MCI EMO TABLES SCRIPT  - APPENDIX (P600) ###
+### MCI EMO TABLES SCRIPT - APPENDIX (P600) ###
 
 # Creates a table for the output of our linear mixed-effects models on P600 amplitudes. The 
 # upper half of the table includes ANOVA-style type III tests (F-tests), the bottom half 
