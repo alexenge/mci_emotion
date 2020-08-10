@@ -26,8 +26,8 @@ anovas <- lapply(tests, function(x){
                              "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
                       format(round(x$`Pr(>F)`, 3), nsmall = 3),
                       fix.empty.names = FALSE)
-  coefs[,2] <- substr(coefs[,2], 2, 5)
-  coefs[coefs[,2] == ".000", 2] <- "< .001"
+  coefs[,2] <- substr(coefs[,2], 1, 5)
+  coefs[coefs[,2] == "0.000", 2] <- "< .001"
   return(coefs)})
 
 # Bind all the F-tests to one data frame
@@ -79,9 +79,9 @@ print_md(huxt, max_width = Inf)
 |                            | Verb-Related P600 (500-700 ms) |         |
 | -------------------------- | ------------------------------ | ------- |
 | **Model output**           | ***F*** (***df***)             | ***p*** |
-| Semantics                  | 2.27<br/>(2, 112.7)            | .108    |
-| Context                    | 0.15<br/>(1, 26.0)             | .705    |
-| Semantics × context        | 1.72<br/>(2, 65.5)             | .187    |
+| Semantics                  | 2.27<br/>(2, 112.7)            | 0.108   |
+| Context                    | 0.15<br/>(1, 26.0)             | 0.705   |
+| Semantics × context        | 1.72<br/>(2, 65.5)             | 0.187   |
 | **Planned contrasts**      | **Est. \[95% CI\]**            | ***p*** |
 | Vio. - int.<br/>(neutral)  | \-0.15<br/>\[-0.53, 0.24\]     | 0.778   |
 | MCI - int.<br/>(neutral)   | \-0.27<br/>\[-0.66, 0.13\]     | 0.258   |
@@ -118,9 +118,9 @@ print_md(huxt, max_width = Inf)
 |                            | Verb-Related P600 (500-900 ms) |         |
 | -------------------------- | ------------------------------ | ------- |
 | **Model output**           | ***F*** (***df***)             | ***p*** |
-| Semantics                  | 1.10<br/>(2, 103.6)            | .335    |
-| Context                    | 0.04<br/>(1, 29.6)             | .847    |
-| Semantics × context        | 0.72<br/>(2, 62.2)             | .492    |
+| Semantics                  | 1.10<br/>(2, 103.6)            | 0.335   |
+| Context                    | 0.04<br/>(1, 29.6)             | 0.847   |
+| Semantics × context        | 0.72<br/>(2, 62.2)             | 0.492   |
 | **Planned contrasts**      | **Est. \[95% CI\]**            | ***p*** |
 | Vio. - int.<br/>(neutral)  | \-0.02<br/>\[-0.37, 0.33\]     | 1.000   |
 | MCI - int.<br/>(neutral)   | \-0.11<br/>\[-0.50, 0.27\]     | 1.000   |

@@ -27,8 +27,8 @@ anovas <- lapply(tests, function(x){
                              "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
                       format(round(x$`Pr(>F)`, 3), nsmall = 3),
                       fix.empty.names = FALSE)
-  coefs[,2] <- substr(coefs[,2], 2, 5)
-  coefs[coefs[,2] == ".000", 2] <- "< .001"
+  coefs[,2] <- substr(coefs[,2], 1, 5)
+  coefs[coefs[,2] == "0.000", 2] <- "< .001"
   return(coefs)})
 
 # Bind all the F-tests to one data frame
