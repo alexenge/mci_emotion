@@ -37,8 +37,6 @@ a1 <- na.omit(a1[!a1$error,])
 t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
 contrasts(a1$context) <- ginv(contrasts.context)
 
-contrasts(a1$lag1Context) <- ginv(contrasts.context)
-
 # Define simple contrast coding for semantics (violation - intuitive, mci - intuitive)
     # H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
     # H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
@@ -47,9 +45,6 @@ contrasts(a1$lag1Context) <- ginv(contrasts.context)
 t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
                                  c("int" = -1, "vio" = 0, "mci" = 1))))
 contrasts(a1$semantics) <- ginv(contrasts.semantics)
-
-
-contrasts(a1$lag1Semantics) <- ginv(contrasts.semantics)
 
 ## LINEAR MIXED-EFFECTS MODELS ## -----------------------------------------------------------------
 
@@ -63,11 +58,6 @@ mod.aroursal <- lmer_alt(ArousalResp ~ semantics*context + (semantics*context||p
 
 # LMM for verb-related N400 (converged on first attempt)
 mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE))
-
-# LMM for verb-related N400: Controlling for sequence of trials
-    # same random structure as for mod.N400.verb, but including lag2Context and lag1Semantics
-mod.N400.verb.lag <- lmer(N400.verb ~ semantics*context*lag1Context*lag1Semantics + (semantics*context*lag1Context*lag1Semantics|participant) + (semantics*context*lag1Context*lag1Semantics|item),
                       data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for picture-related N400 (converged after changing the optimizer)
