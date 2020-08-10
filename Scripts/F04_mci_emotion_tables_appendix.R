@@ -56,8 +56,13 @@ conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
 # Bind both data frames (F-tests and contrats) below one another
 tab <- rbind(anovas, conts)
 
+## P600 - 500-700 ms ## ---------------------------------------------------------------------------
+# Subset tab
+tab_all <- tab
+tab <- tab_all[,1:2]
+
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Verb-Related P600 (500-700 ms)", "", "Picture-Related P600 (500-900 ms)", ""), tab)
+tab <- rbind(c("Verb-Related P600 (500-700 ms)", ""), tab)
 
 # Add a stub column
 tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
@@ -75,7 +80,32 @@ print_md(huxt, max_width = Inf)
 tab_word <- data.frame(lapply(tab, function(x){gsub("<br/>", "\n", x)}))
 tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
-quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendix.docx", open = FALSE)
+quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-700ms.docx", open = FALSE)
+
+## P600 - 500-900 ms ## ---------------------------------------------------------------------------
+# Subset tab
+tab <- tab_all[,3:4]
+
+# Add model names (dependent variables) as the first row
+tab <- rbind(c("Verb-Related P600 (500-900 ms)", ""), tab)
+
+# Add a stub column
+tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
+               "**Planned contrasts**", "Vio. - int.<br/>(neutral)", "MCI - int.<br/>(neutral)",
+               "Vio. - int.<br/>(negative)", "MCI - int.<br/>(negative)"), tab)
+
+# Remove old column names
+names(tab) <- NULL
+
+# Create a huxtable and output as markdown
+huxt <- huxtable(tab, add_colnames = FALSE)
+print_md(huxt, max_width = Inf)
+
+# Export as a word file (after some re-formatting)
+tab_word <- data.frame(lapply(tab, function(x){gsub("<br/>", "\n", x)}))
+tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
+huxt_word <- huxtable(tab_word, add_colnames = FALSE)
+quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-900ms.docx", open = FALSE)
 
 #+
 

@@ -6,7 +6,7 @@ kirstenstark
 ``` r
 ### MCI EMO TABLES SCRIPT  - APPENDIX (P600) ###
 
-# Creates a table for the output of our linear mixed-effects models on P600 amplitdues. The 
+# Creates a table for the output of our linear mixed-effects models on P600 amplitudes. The 
 # upper half of the table includes ANOVA-style type III tests (F-tests), the bottom half 
 # contains planned follow-up contrasts. For the F-tests, F-values, degrees of freedom, and 
 # p-values are printed, whereas for the contrasts, regression estimates, 95% confidence 
@@ -18,7 +18,7 @@ kirstenstark
 library(huxtable)     # version 5.0.0
 
 # Load output from mixed models
-load("EEG/export/stats.RData")
+load("EEG/export/stats_appendix.RData")
 
 # Extract a table for the F tests for each model (columns: F value (df), p-value)
 anovas <- lapply(tests, function(x){
@@ -56,7 +56,7 @@ conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
 tab <- rbind(anovas, conts)
 
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Valence Rating", "", "Arousal Rating", "", "Verb-Related N400", "", "Picture-Related N400", ""), tab)
+tab <- rbind(c("Verb-Related P600 (500-700 ms)", "", "Picture-Related P600 (500-900 ms)", ""), tab)
 
 # Add a stub column
 tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
@@ -71,24 +71,24 @@ huxt <- huxtable(tab, add_colnames = FALSE)
 print_md(huxt, max_width = Inf)
 ```
 
-|                            | Valence Rating           |         | Arousal Rating             |         | Verb-Related N400           |         | Picture-Related N400       |         |
-| -------------------------- | :----------------------- | ------- | :------------------------- | ------- | :-------------------------- | ------- | :------------------------- | ------- |
-| **Model output**           | ***F*** (***df***)       | ***p*** | ***F*** (***df***)         | ***p*** | ***F*** (***df***)          | ***p*** | ***F*** (***df***)         | ***p*** |
-| Semantics                  | 0.01<br/>(2, 60.1)       | .991    | 0.12<br/>(2, 65.9)         | .887    | 7.09<br/>(2, 63.1)          | .002    | 0.73<br/>(2, 37.0)         | .490    |
-| Context                    | 164.29<br/>(1, 38.0)     | \< .001 | 84.53<br/>(1, 37.9)        | \< .001 | 0.02<br/>(1, 34.9)          | .891    | 0.01<br/>(1, 44.1)         | .943    |
-| Semantics × context        | 0.02<br/>(2, 60.4)       | .984    | 0.05<br/>(2, 87.9)         | .952    | 1.25<br/>(2, 69.6)          | .292    | 3.89<br/>(2, 52.1)         | .027    |
-| **Planned contrasts**      | **Est. \[95% CI\]**      | ***p*** | **Est. \[95% CI\]**        | ***p*** | **Est. \[95% CI\]**         | ***p*** | **Est. \[95% CI\]**        | ***p*** |
-| Vio. - int.<br/>(neutral)  | 0.01<br/>\[-0.21, 0.24\] | 1.000   | 0.02<br/>\[-0.13, 0.17\]   | 1.000   | \-0.17<br/>\[-0.61, 0.27\]  | 0.762   | \-0.04<br/>\[-0.42, 0.35\] | 1.000   |
-| MCI - int.<br/>(neutral)   | 0.00<br/>\[-0.21, 0.21\] | 1.000   | 0.01<br/>\[-0.13, 0.16\]   | 1.000   | \-0.53<br/>\[-0.89, -0.17\] | 0.002   | \-0.41<br/>\[-0.81, 0.00\] | 0.049   |
-| Vio. - int.<br/>(negative) | 0.00<br/>\[-0.16, 0.17\] | 1.000   | 0.03<br/>\[-0.12, 0.18\]   | 1.000   | 0.11<br/>\[-0.25, 0.47\]    | 0.946   | 0.18<br/>\[-0.23, 0.59\]   | 0.620   |
-| MCI - int.<br/>(negative)  | 0.01<br/>\[-0.16, 0.18\] | 1.000   | \-0.01<br/>\[-0.15, 0.13\] | 1.000   | \-0.24<br/>\[-0.60, 0.13\]  | 0.290   | 0.16<br/>\[-0.23, 0.56\]   | 0.678   |
+|                            | Verb-Related P600 (500-700 ms) |         | Picture-Related P600 (500-900 ms) |         |
+| -------------------------- | ------------------------------ | ------- | --------------------------------- | ------- |
+| **Model output**           | ***F*** (***df***)             | ***p*** | ***F*** (***df***)                | ***p*** |
+| Semantics                  | 2.27<br/>(2, 112.7)            | .108    | 1.10<br/>(2, 103.6)               | .335    |
+| Context                    | 0.15<br/>(1, 26.0)             | .705    | 0.04<br/>(1, 29.6)                | .847    |
+| Semantics × context        | 1.72<br/>(2, 65.5)             | .187    | 0.72<br/>(2, 62.2)                | .492    |
+| **Planned contrasts**      | **Est. \[95% CI\]**            | ***p*** | **Est. \[95% CI\]**               | ***p*** |
+| Vio. - int.<br/>(neutral)  | \-0.15<br/>\[-0.53, 0.24\]     | 0.778   | \-0.02<br/>\[-0.37, 0.33\]        | 1.000   |
+| MCI - int.<br/>(neutral)   | \-0.27<br/>\[-0.66, 0.13\]     | 0.258   | \-0.11<br/>\[-0.50, 0.27\]        | 1.000   |
+| Vio. - int.<br/>(negative) | 0.28<br/>\[-0.10, 0.67\]       | 0.186   | 0.24<br/>\[-0.11, 0.58\]          | 0.254   |
+| MCI - int.<br/>(negative)  | \-0.17<br/>\[-0.57, 0.22\]     | 0.659   | \-0.04<br/>\[-0.43, 0.34\]        | 1.000   |
 
 ``` r
 # Export as a word file (after some re-formatting)
 tab_word <- data.frame(lapply(tab, function(x){gsub("<br/>", "\n", x)}))
 tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
-quick_docx(huxt_word, file = "EEG/tables/lmm_table.docx", open = FALSE)
+quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendix.docx", open = FALSE)
 ```
 
 ``` r
@@ -120,36 +120,37 @@ sessionInfo()
     ##   [1] minqa_1.2.4          colorspace_1.4-1     ellipsis_0.3.1      
     ##   [4] rio_0.5.16           estimability_1.3     flextable_0.5.10    
     ##   [7] base64enc_0.1-3      rstudioapi_0.11      listenv_0.8.0       
-    ##  [10] R.matlab_3.6.2       mvtnorm_1.1-1        xml2_1.3.2          
-    ##  [13] codetools_0.2-16     splines_4.0.2        R.methodsS3_1.8.0   
-    ##  [16] knitr_1.29           eegUtils_0.5.0       jsonlite_1.7.0      
-    ##  [19] nloptr_1.2.2.2       packrat_0.5.0        R.oo_1.23.0         
-    ##  [22] shinydashboard_0.7.1 shiny_1.5.0          compiler_4.0.2      
-    ##  [25] httr_1.4.1           assertthat_0.2.1     fastmap_1.0.1       
-    ##  [28] lazyeval_0.2.2       later_1.1.0.1        htmltools_0.5.0     
-    ##  [31] tools_4.0.2          coda_0.19-3          gtable_0.3.0        
-    ##  [34] glue_1.4.1           reshape2_1.4.4       Rcpp_1.0.5          
-    ##  [37] carData_3.0-4        cellranger_1.1.0     vctrs_0.3.2         
-    ##  [40] nlme_3.1-148         xfun_0.15            stringr_1.4.0       
-    ##  [43] globals_0.12.5       Rmisc_1.5            openxlsx_4.1.5      
-    ##  [46] mime_0.9             miniUI_0.1.1.1       lifecycle_0.2.0     
-    ##  [49] edfReader_1.2.1      statmod_1.4.34       future_1.18.0       
-    ##  [52] scales_1.1.1         hms_0.5.3            promises_1.1.1      
-    ##  [55] parallel_4.0.2       RColorBrewer_1.1-2   yaml_2.2.1          
-    ##  [58] curl_4.3             gridExtra_2.3        gdtools_0.2.2       
-    ##  [61] stringi_1.4.6        highr_0.8            boot_1.3-25         
-    ##  [64] zip_2.0.4            commonmark_1.7       systemfonts_0.2.3   
-    ##  [67] rlang_0.4.7          pkgconfig_2.0.3      matrixStats_0.56.0  
-    ##  [70] pracma_2.2.9         evaluate_0.14        lattice_0.20-41     
-    ##  [73] purrr_0.3.4          htmlwidgets_1.5.1    tidyselect_1.1.0    
-    ##  [76] plyr_1.8.6           magrittr_1.5         R6_2.4.1            
-    ##  [79] generics_0.0.2       ini_0.3.1            withr_2.2.0         
-    ##  [82] pillar_1.4.6         haven_2.3.1          foreign_0.8-80      
-    ##  [85] mgcv_1.8-31          abind_1.4-5          tibble_3.0.3        
-    ##  [88] future.apply_1.6.0   crayon_1.3.4         car_3.0-8           
-    ##  [91] uuid_0.1-4           plotly_4.9.2.1       rmarkdown_2.3       
-    ##  [94] officer_0.3.12       viridis_0.5.1        grid_4.0.2          
-    ##  [97] readxl_1.3.1         data.table_1.12.8    forcats_0.5.0       
-    ## [100] digest_0.6.25        xtable_1.8-4         httpuv_1.5.4        
-    ## [103] numDeriv_2016.8-1.1  R.utils_2.9.2        signal_0.7-6        
-    ## [106] munsell_0.5.0        viridisLite_0.3.0
+    ##  [10] R.matlab_3.6.2       fansi_0.4.1          mvtnorm_1.1-1       
+    ##  [13] xml2_1.3.2           codetools_0.2-16     splines_4.0.2       
+    ##  [16] R.methodsS3_1.8.0    knitr_1.29           eegUtils_0.5.0      
+    ##  [19] jsonlite_1.7.0       nloptr_1.2.2.2       packrat_0.5.0       
+    ##  [22] R.oo_1.23.0          shinydashboard_0.7.1 shiny_1.5.0         
+    ##  [25] compiler_4.0.2       httr_1.4.1           assertthat_0.2.1    
+    ##  [28] fastmap_1.0.1        lazyeval_0.2.2       cli_2.0.2           
+    ##  [31] later_1.1.0.1        htmltools_0.5.0      tools_4.0.2         
+    ##  [34] coda_0.19-3          gtable_0.3.0         glue_1.4.1          
+    ##  [37] reshape2_1.4.4       Rcpp_1.0.5           carData_3.0-4       
+    ##  [40] cellranger_1.1.0     vctrs_0.3.2          nlme_3.1-148        
+    ##  [43] xfun_0.15            stringr_1.4.0        globals_0.12.5      
+    ##  [46] Rmisc_1.5            openxlsx_4.1.5       mime_0.9            
+    ##  [49] miniUI_0.1.1.1       lifecycle_0.2.0      edfReader_1.2.1     
+    ##  [52] statmod_1.4.34       future_1.18.0        scales_1.1.1        
+    ##  [55] hms_0.5.3            promises_1.1.1       parallel_4.0.2      
+    ##  [58] RColorBrewer_1.1-2   yaml_2.2.1           curl_4.3            
+    ##  [61] gridExtra_2.3        gdtools_0.2.2        stringi_1.4.6       
+    ##  [64] highr_0.8            boot_1.3-25          zip_2.0.4           
+    ##  [67] commonmark_1.7       systemfonts_0.2.3    rlang_0.4.7         
+    ##  [70] pkgconfig_2.0.3      matrixStats_0.56.0   pracma_2.2.9        
+    ##  [73] evaluate_0.14        lattice_0.20-41      purrr_0.3.4         
+    ##  [76] htmlwidgets_1.5.1    tidyselect_1.1.0     plyr_1.8.6          
+    ##  [79] magrittr_1.5         R6_2.4.1             generics_0.0.2      
+    ##  [82] ini_0.3.1            withr_2.2.0          pillar_1.4.6        
+    ##  [85] haven_2.3.1          foreign_0.8-80       mgcv_1.8-31         
+    ##  [88] abind_1.4-5          tibble_3.0.3         future.apply_1.6.0  
+    ##  [91] crayon_1.3.4         car_3.0-8            uuid_0.1-4          
+    ##  [94] plotly_4.9.2.1       rmarkdown_2.3        officer_0.3.12      
+    ##  [97] viridis_0.5.1        grid_4.0.2           readxl_1.3.1        
+    ## [100] data.table_1.12.8    forcats_0.5.0        digest_0.6.25       
+    ## [103] xtable_1.8-4         httpuv_1.5.4         numDeriv_2016.8-1.1 
+    ## [106] R.utils_2.9.2        signal_0.7-6         munsell_0.5.0       
+    ## [109] viridisLite_0.3.0
