@@ -8,9 +8,9 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 # Reads behavioral log files for all participants and binds them together. Performs EEG preprocessing
 # including re-refercing, ocular artifact correction, filtering, epoching, baseline correction, and
-# automatic artifact rejection. The preprocessing is conducted for verb-related potentials only.
-# Computes single-trial mean ERP amplitudes for the P600 component and exports by-participant averaged
-# waveforms for plotting.
+# automatic artifact rejection, separetly for verb- and picture-related potentials. Computes single-
+# trial mean ERP amplitudes for the N400 component and supplemantary mean ERP amplitudes for the P600
+# component. Exports by-participant averaged waveforms for plotting.
 
 ## SETUP ## ---------------------------------------------------------------------------------------
 
@@ -114,13 +114,28 @@ eeg.verb <- eeg.verb %>% mutate(semantics = if_else(description %in% c("S211", "
 # Factorize these columns
 eeg.verb <- eeg.verb %>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci")),
                                 context = factor(context, levels = c("neu", "neg")))
+eeg.pict <- eeg.pict %>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci")),
+                                context = factor(context, levels = c("neu", "neg")))
 
-# Compute mean amplitude across electrodes in the P600 ROI (identical to N400 ROI)
+# Compute mean amplitude accross electrodes in the N400 ROI
 eeg.verb <- eeg.verb %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
+eeg.pict <- eeg.pict %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 
 # Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
+a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.300, 0.500)], mean, na.action = NULL)$ROI
+a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
+
+
+#### Supplementary analyses: P600
+# Average single trial ERPs in the ROI across the relevant time window across a posterior ROI (identical to N400)
 a1$P600_1.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI
 a1$P600_2.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI
+
+# Visual inspection suggests a more frontal ROI between 500 and 700 ms
+eeg.verb2 <- eeg.verb %>% mutate(ROI2 = chs_mean(C1, C2, Cz, FC1, FC2, Fz))
+
+# Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
+a1$P600_3.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1_appendix.RDS")
@@ -133,9 +148,16 @@ avgs.verb <- eeg.verb %>%
   filter(!error) %>%
   group_by(.sample, semantics, context, participant) %>%
   summarize_at(channel_names(.), mean, na.rm = TRUE)
+avgs.pict <- eeg.pict %>%
+  mutate(participant = a1$participant, error = a1$error) %>%
+  filter(!error) %>%
+  group_by(.sample, semantics, context, participant) %>%
+  summarize_at(channel_names(.), mean, na.rm = TRUE)
+
 
 # Export averaged waveforms for plotting
 saveRDS(avgs.verb, "EEG/export/avgs_verb_appendix.RDS")
+saveRDS(avgs.pict, "EEG/export/avgs_pict.RDS")
 
 # Full system specs and package versions
 sessionInfo()
