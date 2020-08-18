@@ -135,7 +135,8 @@ a1$P600_2.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample)
 eeg.verb2 <- eeg.verb %>% mutate(ROI2 = chs_mean(C1, C2, Cz, FC1, FC2, Fz))
 
 # Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
-a1$P600_3.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI
+a1$P600_3.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI2
+a1$P600_4.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI2
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1_appendix.RDS")

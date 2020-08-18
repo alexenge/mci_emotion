@@ -51,15 +51,19 @@ contrasts(a1$semantics) <- ginv(contrasts.semantics)
 
 # LMM for verb-related P600 - time window as in the old manuscript
 mod.P600_1.verb <- lmer_alt(P600_1.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 # (converged after changing the optimizer + removing correlations between REs)
 
-# LMM for verb-related P600 - time window as in the old manuscript
+# LMM for verb-related P600 - time window as in the new manuscript
 mod.P600_2.verb <- lmer_alt(P600_2.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                        data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# LMM for verb-related P600 - time window as in the old manuscript, but with a more frontal ROI
+mod.P600_3.verb <- lmer(P600_3.verb ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Create a list of models
-models <- list("P600.VERB - 1" = mod.P600_1.verb, "P600.VERB - 2" = mod.P600_2.verb)
+models <- list("P600.VERB - 1" = mod.P600_1.verb, "P600.VERB - 2" = mod.P600_2.verb, "P600.VERB - 3" = mod.P600_3.verb)
 
 # F-tests (type III tests)
 (tests <- lapply(models, anova))
