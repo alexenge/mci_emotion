@@ -54,15 +54,14 @@ conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
 ## CREATE A SINGLE TABLE ## -----------------------------------------------------------------------
 
 # Bind both data frames (F-tests and contrats) below one another
-tab <- rbind(anovas, conts)
+tab_all <- rbind(anovas, conts)
 
 ## P600 - 500-700 ms ## ---------------------------------------------------------------------------
 # Subset tab
-tab_all <- tab
-tab <- tab_all[,1:2]
+tab <- tab_all[,c(1, 2, 5, 6)]
 
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Verb-Related P600 (500-700 ms)", ""), tab)
+tab <- rbind(c("Verb-Related P600 (500-700 ms)", "", "Frontal verb-Related P600 (500-700 ms)", ""), tab)
 
 # Add a stub column
 tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
@@ -84,10 +83,10 @@ quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-700ms.docx",
 
 ## P600 - 500-900 ms ## ---------------------------------------------------------------------------
 # Subset tab
-tab <- tab_all[,3:4]
+tab <- tab_all[,c(3, 4, 7, 8)]
 
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Verb-Related P600 (500-900 ms)", ""), tab)
+tab <- rbind(c("Verb-Related P600 (500-700 ms)", "", "Frontal verb-Related P600 (500-700 ms)", ""), tab)
 
 # Add a stub column
 tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",

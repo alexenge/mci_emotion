@@ -1,7 +1,7 @@
 F03\_mci\_emotion\_plotting.R
 ================
-kirstenstark
-2020-08-06
+alexander
+2020-08-19
 
 ``` r
 ### MCI EMO PLOTTING SCRIPT ###
@@ -14,11 +14,56 @@ kirstenstark
 
 # Load packages
 library(dplyr)   # Version 1.0.0
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 library(tidyr)   # Version 1.1.0
 library(eeguana) # Version 0.1.4.9000
+```
+
+    ## 
+    ## Attaching package: 'eeguana'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     between
+
+``` r
 library(ggplot2) # Version 3.3.2
 library(cowplot) # Version 1.0.0
+```
 
+    ## 
+    ## ********************************************************
+
+    ## Note: As of version 1.0.0, cowplot does not change the
+
+    ##   default ggplot2 theme anymore. To recover the previous
+
+    ##   behavior, execute:
+    ##   theme_set(theme_cowplot())
+
+    ## ********************************************************
+
+    ## 
+    ## Attaching package: 'cowplot'
+
+    ## The following object is masked from 'package:eeguana':
+    ## 
+    ##     plot_components
+
+``` r
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
 avgs.verb <- readRDS("EEG/export/avgs_verb.RDS")
@@ -106,12 +151,12 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.8)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
-  geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.5, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.2, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
-  geom_text(aes(x = 0.675, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.643, y = 0.5, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.730, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.8, label = "creaked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.5, label = "talked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.2, label = "blossomed"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
+  geom_text(aes(x = 0.699, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.667, y = 0.5, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.753, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
 ## WAVEFORMS ## -----------------------------------------------------------------------------------
@@ -260,56 +305,32 @@ sessionInfo()
 
     ## R version 4.0.2 (2020-06-22)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
-    ## Running under: macOS Catalina 10.15.6
+    ## Running under: macOS Catalina 10.15.5
     ## 
     ## Matrix products: default
     ## BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
     ## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
     ## 
     ## locale:
-    ## [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
     ## 
     ## attached base packages:
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0       
-    ## [5] dplyr_1.0.0       
+    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] nlme_3.1-148         matrixStats_0.56.0   httr_1.4.1          
-    ##   [4] RColorBrewer_1.1-2   numDeriv_2016.8-1.1  tools_4.0.2         
-    ##   [7] R6_2.4.1             afex_0.27-2          lazyeval_0.2.2      
-    ##  [10] mgcv_1.8-31          colorspace_1.4-1     withr_2.2.0         
-    ##  [13] gridExtra_2.3        tidyselect_1.1.0     emmeans_1.4.8       
-    ##  [16] curl_4.3             compiler_4.0.2       edfReader_1.2.1     
-    ##  [19] eegUtils_0.5.0       plotly_4.9.2.1       labeling_0.3        
-    ##  [22] scales_1.1.1         mvtnorm_1.1-1        stringr_1.4.0       
-    ##  [25] digest_0.6.25        foreign_0.8-80       minqa_1.2.4         
-    ##  [28] rmarkdown_2.3        R.utils_2.9.2        rio_0.5.16          
-    ##  [31] ini_0.3.1            pkgconfig_2.0.3      htmltools_0.5.0     
-    ##  [34] lme4_1.1-23          highr_0.8            fastmap_1.0.1       
-    ##  [37] htmlwidgets_1.5.1    Rmisc_1.5            rlang_0.4.7         
-    ##  [40] readxl_1.3.1         rstudioapi_0.11      shiny_1.5.0         
-    ##  [43] farver_2.0.3         generics_0.0.2       jsonlite_1.7.0      
-    ##  [46] zip_2.0.4            car_3.0-8            R.oo_1.23.0         
-    ##  [49] magrittr_1.5         R.matlab_3.6.2       Matrix_1.2-18       
-    ##  [52] Rcpp_1.0.5           munsell_0.5.0        viridis_0.5.1       
-    ##  [55] abind_1.4-5          lifecycle_0.2.0      R.methodsS3_1.8.0   
-    ##  [58] stringi_1.4.6        yaml_2.2.1           carData_3.0-4       
-    ##  [61] MASS_7.3-51.6        plyr_1.8.6           grid_4.0.2          
-    ##  [64] parallel_4.0.2       listenv_0.8.0        promises_1.1.1      
-    ##  [67] shinydashboard_0.7.1 forcats_0.5.0        crayon_1.3.4        
-    ##  [70] miniUI_0.1.1.1       lattice_0.20-41      haven_2.3.1         
-    ##  [73] splines_4.0.2        hms_0.5.3            knitr_1.29          
-    ##  [76] pillar_1.4.6         boot_1.3-25          estimability_1.3    
-    ##  [79] future.apply_1.6.0   reshape2_1.4.4       codetools_0.2-16    
-    ##  [82] glue_1.4.1           packrat_0.5.0        evaluate_0.14       
-    ##  [85] data.table_1.12.8    vctrs_0.3.2          nloptr_1.2.2.2      
-    ##  [88] httpuv_1.5.4         cellranger_1.1.0     gtable_0.3.0        
-    ##  [91] purrr_0.3.4          future_1.18.0        xfun_0.15           
-    ##  [94] openxlsx_4.1.5       mime_0.9             xtable_1.8-4        
-    ##  [97] pracma_2.2.9         coda_0.19-3          later_1.1.0.1       
-    ## [100] viridisLite_0.3.0    signal_0.7-6         tibble_3.0.3        
-    ## [103] lmerTest_3.1-2       globals_0.12.5       statmod_1.4.34      
-    ## [106] ellipsis_0.3.1
+    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1           
+    ##  [7] R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.2         
+    ## [13] highr_0.8           pillar_1.4.6        rlang_0.4.7         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11    
+    ## [19] data.table_1.13.0   miniUI_0.1.1.1      R.utils_2.9.2       R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3      
+    ## [25] labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1   eegUtils_0.5.0.9000 munsell_0.5.0      
+    ## [31] shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.16           pkgconfig_2.0.3     mgcv_1.8-31        
+    ## [37] globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        codetools_0.2-16    matrixStats_0.56.0 
+    ## [43] viridisLite_0.3.0   future_1.18.0       crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6      
+    ## [49] R.methodsS3_1.8.0   grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0       
+    ## [55] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3       
+    ## [61] promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2         RColorBrewer_1.1-2 
+    ## [67] tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5         parallel_4.0.2      fastmap_1.0.1      
+    ## [73] yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
