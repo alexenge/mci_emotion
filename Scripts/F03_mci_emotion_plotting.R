@@ -51,9 +51,18 @@ a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral c
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 
-# Define colours for conditions
-condition.colors <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
-names(condition.colors) <- c("Intuitive", "Violation", "MCI")
+# Define color scheme
+colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
+colors.highlight <- "#ffff33"
+colors.topo <- "RdBu"
+
+# Define color scheme for conditions (brewer)
+colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
+colors.highlight <- viridisLite::plasma(1, direction = -1)
+colors.topo <- "plasma"
+
+# Assign names to colors
+names(colors.conditions) <- c("Intuitive", "Violation", "MCI")
 
 ## BAR PLOTS ## -----------------------------------------------------------------------------------
 
@@ -92,7 +101,7 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
     geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
     geom_segment(data = bracket, aes(x = xmin, y = ymin, xend = xmax, yend = ymax), inherit.aes = FALSE) +
     geom_label(data = star, aes(x = context, y = ypos, label = stars), inherit.aes = FALSE, size = 6, label.size = 0) +
-    scale_fill_manual(values = condition.colors) +
+    scale_fill_manual(values = colors.conditions) +
     labs(fill = "Semantics") +
     coord_cartesian(ylim = c(scaling$ymin, scaling$ymax)) +
     scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
@@ -110,12 +119,12 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.8)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
-  geom_text(aes(x = 0.55, y = 0.8, label = "creaked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.5, label = "blossomed"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.2, label = "talked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
-  geom_text(aes(x = 0.699, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.753, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.667, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[1], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.5, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[2], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.2, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[3], hjust = 0) +
+  geom_text(aes(x = 0.675, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.730, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.643, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
 ## WAVEFORMS ## -----------------------------------------------------------------------------------
@@ -145,12 +154,12 @@ waves <- sapply(c("Verb-related", "Picture-related"), function(what){
     select(ROI) %>%
     ggplot(aes(x = .time, y = .value, color = semantics)) +
     geom_rect(aes(xmin = lims$tmin, xmax = lims$tmax, ymin = -Inf, ymax = Inf), fill = "gray90", inherit.aes = FALSE) +
-    geom_ribbon(data = highlight, aes(x = .time, ymin = mci, ymax = int), fill = "#ffff33", inherit.aes = FALSE) +
+    geom_ribbon(data = highlight, aes(x = .time, ymin = mci, ymax = int), fill = colors.highlight, inherit.aes = FALSE) +
     geom_text(data = star, aes(x = lims$tmin+(lims$tmax-lims$tmin)/2, y = lims$ymax-lims$step/2, label = stars), inherit.aes = FALSE, size = 6) +
     geom_hline(yintercept = 0, linetype = "dotted") +
     geom_vline(xintercept = 0, linetype = "dotted") +
     stat_summary(fun = "mean", geom = "line") +
-    scale_color_manual(values = condition.colors) +
+    scale_color_manual(values = colors.conditions) +
     coord_cartesian(xlim = c(-0.2, 0.8), ylim = c(lims$ymin-lims$step/2, lims$ymax+lims$step/2), expand = FALSE) +
     scale_x_continuous(breaks = seq(-0.1, 0.7, 0.2), labels = seq(-100, 700, 200)) +
     scale_y_continuous(breaks = seq(lims$ymin, lims$ymax, lims$step)) +
@@ -178,8 +187,8 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
                     "diff.mci.neg" = tmp$mci.neg - tmp$int.neg,
                     "electrode" = rownames(tmp))
   topos <- lapply(1:4, function(x){
-    p <- eegUtils::topoplot(data = tmp, quantity = colnames(tmp)[x], limits = c(-0.7, 0.7), r = 0.9, palette = "RdBu", interp_limit = "skirt", 
-                            contour = FALSE, highlights = c("C1", "C2", "CZ", "CP1", "CP2", "CPZ"), scaling = 0.5)
+    p <- eegUtils::topoplot(data = tmp, quantity = colnames(tmp)[x], limits = c(-0.7, 0.7), r = 0.9, palette = colors.topo,
+                            interp_limit = "skirt", contour = FALSE, highlights = c("C1", "C2", "CZ", "CP1", "CP2", "CPZ"), scaling = 0.5)
     p$layers[[6]]$aes_params$size <- 0.1
     p$layers[[7]]$aes_params$colour <- "black"
     p <- p + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, size = 10, family = "Helvetica"))})
@@ -189,6 +198,7 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
                        scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7)) +
+                       scale_fill_viridis_c() +
                        labs(fill = "Ampl.\n(µV)") +
                        theme(legend.position = "right",
                              legend.background = element_blank(),

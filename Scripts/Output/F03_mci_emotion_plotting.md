@@ -333,15 +333,15 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1           
-    ##  [7] R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.2         
-    ## [13] highr_0.8           pillar_1.4.6        rlang_0.4.7         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11    
+    ##  [7] R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        evaluate_0.14       pracma_2.2.9        highr_0.8          
+    ## [13] httr_1.4.2          pillar_1.4.6        rlang_0.4.7         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11    
     ## [19] data.table_1.13.0   miniUI_0.1.1.1      R.utils_2.9.2       R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3      
     ## [25] labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1   eegUtils_0.5.0.9000 munsell_0.5.0      
     ## [31] shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.16           pkgconfig_2.0.3     mgcv_1.8-31        
     ## [37] globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        codetools_0.2-16    matrixStats_0.56.0 
-    ## [43] viridisLite_0.3.0   future_1.18.0       crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6      
-    ## [49] R.methodsS3_1.8.0   grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0       
-    ## [55] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3       
+    ## [43] future_1.18.0       viridisLite_0.3.0   withr_2.2.0         crayon_1.3.4        later_1.1.0.1       MASS_7.3-51.6      
+    ## [49] R.methodsS3_1.8.0   grid_4.0.2          nlme_3.1-148        jsonlite_1.7.0      xtable_1.8-4        gtable_0.3.0       
+    ## [55] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        stringi_1.4.6       future.apply_1.6.0  farver_2.0.3       
     ## [61] promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2         RColorBrewer_1.1-2 
     ## [67] tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5         parallel_4.0.2      fastmap_1.0.1      
     ## [73] yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
