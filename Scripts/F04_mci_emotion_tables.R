@@ -77,10 +77,35 @@ tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
 quick_docx(huxt_word, file = "EEG/tables/lmm_table.docx", open = FALSE)
 
-## INTERACTION EFFECTS ## -------------------------------------------------------------------------
+## MEAN RATINGS ## --------------------------------------------------------------------------------
 
+# Load some new packages
+library(Rmisc)
 library(tidyverse)
 library(magrittr)
+
+# Read data
+a1 <- readRDS("EEG/export/a1.RDS")
+
+# Remove trials with errors or invalid RTs/ERPs
+a1 <- na.omit(a1[!a1$error,])
+
+# Adjust range of response scalse
+a1$Valence <- a1$ValenzResp + 3
+a1$Arousal <- a1$ArousalResp + 3
+
+# Compute mean ratings
+summarySEwithin(a1, measurevar = "Valence", withinvars = "context") %>%
+  select(m_val = Valence, sd_val = sd) %>%
+  bind_cols(summarySEwithin(a1, measurevar = "Arousal", withinvars = "context") %>% 
+              select(m_aro = Arousal, sd_aro = sd)) %>%
+  set_rownames(c("Neutral", "Negative")) %>%
+  huxtable(add_rownames = "", add_colnames = FALSE) %>%
+  add_rows(c("Context emotionality", "M", "SD", "M", "SD"), after = 0) %>%
+  add_rows(c("", "Valence Rating", "", "Arousal Rating", ""), after = 0) %>%
+  quick_docx(file = "EEG/tables/ratings_table.docx", open = FALSE)
+
+## INTERACTION EFFECTS ## -------------------------------------------------------------------------
 
 # Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
 summary(models$N400.VERB)$coefficients %>%

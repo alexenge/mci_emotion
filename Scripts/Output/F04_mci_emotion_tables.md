@@ -90,10 +90,31 @@ tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
 quick_docx(huxt_word, file = "EEG/tables/lmm_table.docx", open = FALSE)
 
-## INTERACTION EFFECTS ## -------------------------------------------------------------------------
+## MEAN RATINGS ## --------------------------------------------------------------------------------
 
+# Load some new packages
+library(Rmisc)
 library(tidyverse)
 library(magrittr)
+
+# Read data
+a1 <- readRDS("EEG/export/a1.RDS")
+
+# Remove trials with errors or invalid RTs/ERPs
+a1 <- na.omit(a1[!a1$error,])
+
+# Compute mean ratings
+summarySEwithin(a1, measurevar = "ValenzResp", withinvars = "context") %>%
+  select(m_val = ValenzResp, sd_val = sd) %>%
+  bind_cols(summarySEwithin(a1, measurevar = "ArousalResp", withinvars = "context") %>% 
+              select(m_aro = ArousalResp, sd_aro = sd)) %>%
+  set_rownames(c("Neutral", "Negative")) %>%
+  huxtable(add_rownames = "", add_colnames = FALSE) %>%
+  add_rows(c("Context emotionality", "M", "SD", "M", "SD"), after = 0) %>%
+  add_rows(c("", "Valence Rating", "", "Arousal Rating", ""), after = 0) %>%
+  quick_docx(file = "EEG/tables/ratings_table.docx", open = FALSE)
+
+## INTERACTION EFFECTS ## -------------------------------------------------------------------------
 
 # Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
 summary(models$N400.VERB)$coefficients %>%
@@ -134,8 +155,8 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] magrittr_1.5    tidyverse_1.3.0 forcats_0.5.0   stringr_1.4.0   dplyr_1.0.0     purrr_0.3.4     readr_1.3.1     tidyr_1.1.0    
-    ##  [9] tibble_3.0.3    ggplot2_3.3.2   huxtable_5.0.0 
+    ##  [1] magrittr_1.5    forcats_0.5.0   stringr_1.4.0   dplyr_1.0.0     purrr_0.3.4     readr_1.3.1     tidyr_1.1.0     tibble_3.0.3   
+    ##  [9] ggplot2_3.3.2   tidyverse_1.3.0 Rmisc_1.5       plyr_1.8.6      lattice_0.20-41 huxtable_5.0.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] nlme_3.1-148        fs_1.4.2            lubridate_1.7.9     httr_1.4.2          numDeriv_2016.8-1.1 tools_4.0.2        
@@ -143,13 +164,13 @@ sessionInfo()
     ## [13] tidyselect_1.1.0    emmeans_1.4.8       curl_4.3            compiler_4.0.2      cli_2.0.2           rvest_0.3.5        
     ## [19] flextable_0.5.10    xml2_1.3.2          officer_0.3.12      scales_1.1.1        mvtnorm_1.1-1       commonmark_1.7     
     ## [25] systemfonts_0.2.3   digest_0.6.25       foreign_0.8-80      minqa_1.2.4         rmarkdown_2.3       rio_0.5.16         
-    ## [31] base64enc_0.1-3     pkgconfig_2.0.3     htmltools_0.5.0     lme4_1.1-23         highr_0.8           dbplyr_1.4.4       
+    ## [31] base64enc_0.1-3     pkgconfig_2.0.3     htmltools_0.5.0     lme4_1.1-23         dbplyr_1.4.4        highr_0.8          
     ## [37] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11     generics_0.0.2      jsonlite_1.7.0      zip_2.0.4          
     ## [43] car_3.0-8           Matrix_1.2-18       Rcpp_1.0.5          munsell_0.5.0       fansi_0.4.1         abind_1.4-5        
     ## [49] gdtools_0.2.2       lifecycle_0.2.0     stringi_1.4.6       yaml_2.2.1          carData_3.0-4       MASS_7.3-51.6      
-    ## [55] plyr_1.8.6          grid_4.0.2          blob_1.2.1          parallel_4.0.2      crayon_1.3.4        lattice_0.20-41    
-    ## [61] haven_2.3.1         splines_4.0.2       hms_0.5.3           knitr_1.29          pillar_1.4.6        uuid_0.1-4         
-    ## [67] boot_1.3-25         estimability_1.3    reshape2_1.4.4      reprex_0.3.0        glue_1.4.1          evaluate_0.14      
-    ## [73] data.table_1.13.0   modelr_0.1.8        vctrs_0.3.2         nloptr_1.2.2.2      cellranger_1.1.0    gtable_0.3.0       
-    ## [79] assertthat_0.2.1    xfun_0.16           openxlsx_4.1.5      xtable_1.8-4        broom_0.7.0.9001    coda_0.19-3        
-    ## [85] lmerTest_3.1-2      statmod_1.4.34      ellipsis_0.3.1
+    ## [55] grid_4.0.2          blob_1.2.1          parallel_4.0.2      crayon_1.3.4        haven_2.3.1         splines_4.0.2      
+    ## [61] hms_0.5.3           knitr_1.29          pillar_1.4.6        uuid_0.1-4          boot_1.3-25         estimability_1.3   
+    ## [67] reshape2_1.4.4      reprex_0.3.0        glue_1.4.1          evaluate_0.14       data.table_1.13.0   modelr_0.1.8       
+    ## [73] vctrs_0.3.2         nloptr_1.2.2.2      cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1    xfun_0.16          
+    ## [79] openxlsx_4.1.5      xtable_1.8-4        broom_0.7.0.9001    coda_0.19-3         lmerTest_3.1-2      statmod_1.4.34     
+    ## [85] ellipsis_0.3.1
