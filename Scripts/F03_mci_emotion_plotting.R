@@ -69,25 +69,34 @@ summs <- sapply(c("N400.verb", "N400.pict"), function(dv){
 
 # Bar plots for verb-related and picture-related N400
 bars <- sapply(c("N400.verb", "N400.pict"), function(what){
-  # Brackets and stars for statistical significance
-  bracket <- data.frame(context = as.factor("Neutral context"),
-                        ymin = c(0.2, 0.5, 0.2),
-                        ymax = c(0.5, 0.5, 0.5),
-                        xmin = c(0.7, 0.7, 1.3),
-                        xmax = c(0.7, 1.3, 1.3))
-  star <- data.frame("type" = as.factor(c("N400.verb", "N400.pict")), "context" = as.factor("Neutral context"), "stars" = c("**", "*"))
-  star <- subset(star, type == what)
+  # Different scales for verb-related and picture-related
+  if(what == "N400.verb"){
+    scaling <- list(ymin = -1.25, ymax = 0.25, step = 0.25)
+    bracket <- data.frame(context = as.factor("Neutral context"),
+                          ymin = 0.375*c(0.2, 0.5, 0.2),
+                          ymax = 0.375*c(0.5, 0.5, 0.5),
+                          xmin = c(0.7, 0.7, 1.3),
+                          xmax = c(0.7, 1.3, 1.3))
+    star <- data.frame("context" = as.factor("Neutral context"), "stars" = c("**"), ypos = 0.375*0.45)}
+  else {
+    scaling <- list(ymin = -3.5, ymax = 0.5, step = 1)
+    bracket <- data.frame(context = as.factor("Neutral context"),
+                          ymin = c(0.2, 0.5, 0.2),
+                          ymax = c(0.5, 0.5, 0.5),
+                          xmin = c(0.7, 0.7, 1.3),
+                          xmax = c(0.7, 1.3, 1.3))
+    star <- data.frame("context" = as.factor("Neutral context"), "stars" = c("*"), ypos = 0.45)}
   # Actual plotting
   ggplot(summs[names(summs) == what][[1]], aes(x = context, y = value, fill = semantics)) +
     geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
     geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
     geom_segment(data = bracket, aes(x = xmin, y = ymin, xend = xmax, yend = ymax), inherit.aes = FALSE) +
-    geom_label(data = star, aes(x = context, y = 0.43, label = stars), inherit.aes = FALSE, size = 6, label.size = 0) +
+    geom_label(data = star, aes(x = context, y = ypos, label = stars), inherit.aes = FALSE, size = 6, label.size = 0) +
     scale_fill_manual(values = condition.colors) +
     labs(fill = "Semantics") +
-    coord_cartesian(ylim = c(-4, 1)) +
+    coord_cartesian(ylim = c(scaling$ymin, scaling$ymax)) +
     scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
-    scale_y_continuous(name = "ROI amplitude (µV)", breaks = seq(-4, 1, 1)) +
+    scale_y_continuous(name = "ROI amplitude (µV)", breaks = seq(scaling$ymin, scaling$ymax, scaling$step)) +
     geom_hline(yintercept = 0) +
     theme_bw() + styling + theme(axis.title.x = element_blank(), legend.position = "none")
 }, simplify = FALSE)
@@ -102,25 +111,27 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
   geom_text(aes(x = 0.55, y = 0.8, label = "creaked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.5, label = "talked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.2, label = "blossomed"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.5, label = "blossomed"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.2, label = "talked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
   geom_text(aes(x = 0.699, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.667, y = 0.5, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.753, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.753, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
+  geom_text(aes(x = 0.667, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
 ## WAVEFORMS ## -----------------------------------------------------------------------------------
 
 # ERP waveforms for verb-related and picture-related N400
 waves <- sapply(c("Verb-related", "Picture-related"), function(what){
-  # Which time window to shade
-  tmin <- ifelse(what == "Verb-related", 0.300, 0.150)
-  tmax <- ifelse(what == "Verb-related", 0.500, 0.350)
+  # Different y-axis limits and shading for both plots
+  if (what == "Verb-related"){
+    lims <- list(ymin = -1.5, ymax = 1.5, step = 0.5, tmin = 0.300, tmax = 0.500)
+  } else {
+    lims <- list(ymin = -4, ymax = 3, step = 1, tmin = 0.150, tmax = 0.350)}
   # Significant area to highlight (MCI - intuitive in the neutral context)
   highlight <- avgs %>%
-    select(ROI) %>% filter(between(as_time(.sample), !!tmin, !!tmax)) %>% 
+    select(ROI) %>% filter(between(as_time(.sample), !!lims$tmin, !!lims$tmax)) %>% 
     group_by(semantics, context, type, .sample) %>% summarise_at(channel_names(.), mean, na.rm = TRUE)
-  highlight <- data.frame(seq(tmin, tmax, 0.002),
+  highlight <- data.frame(seq(lims$tmin, lims$tmax, 0.002),
                           highlight %>% filter(type == what, semantics == "MCI", context == "Neutral context") %>% signal_tbl %>% select(ROI),
                           highlight %>% filter(type == what, semantics == "Intuitive", context == "Neutral context") %>% signal_tbl %>% select(ROI))
   names(highlight) <- c(".time", "mci", "int")
@@ -133,16 +144,16 @@ waves <- sapply(c("Verb-related", "Picture-related"), function(what){
     filter(type == what) %>%
     select(ROI) %>%
     ggplot(aes(x = .time, y = .value, color = semantics)) +
-    geom_rect(aes(xmin = tmin, xmax = tmax, ymin = -Inf, ymax = Inf), fill = "gray90", inherit.aes = FALSE) +
+    geom_rect(aes(xmin = lims$tmin, xmax = lims$tmax, ymin = -Inf, ymax = Inf), fill = "gray90", inherit.aes = FALSE) +
     geom_ribbon(data = highlight, aes(x = .time, ymin = mci, ymax = int), fill = "#ffff33", inherit.aes = FALSE) +
-    geom_text(data = star, aes(x = tmin+(tmax-tmin)/2, y = 3.5, label = stars), inherit.aes = FALSE, size = 6) +
+    geom_text(data = star, aes(x = lims$tmin+(lims$tmax-lims$tmin)/2, y = lims$ymax-lims$step/2, label = stars), inherit.aes = FALSE, size = 6) +
     geom_hline(yintercept = 0, linetype = "dotted") +
     geom_vline(xintercept = 0, linetype = "dotted") +
     stat_summary(fun = "mean", geom = "line") +
     scale_color_manual(values = condition.colors) +
-    coord_cartesian(xlim = c(-0.2, 0.8), ylim = c(-4.5, 4.5), expand = FALSE) +
+    coord_cartesian(xlim = c(-0.2, 0.8), ylim = c(lims$ymin-lims$step/2, lims$ymax+lims$step/2), expand = FALSE) +
     scale_x_continuous(breaks = seq(-0.1, 0.7, 0.2), labels = seq(-100, 700, 200)) +
-    scale_y_continuous(breaks = seq(-4, 4, 2)) +
+    scale_y_continuous(breaks = seq(lims$ymin, lims$ymax, lims$step)) +
     xlab("Time (ms)") + ylab("ROI amplitude (µV)") +
     labs(color = NULL) +
     theme_bw() + styling + theme(legend.position = "none") +

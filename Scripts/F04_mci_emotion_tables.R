@@ -77,6 +77,29 @@ tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
 quick_docx(huxt_word, file = "EEG/tables/lmm_table.docx", open = FALSE)
 
+## INTERACTION EFFECTS ## -------------------------------------------------------------------------
+
+library(tidyverse)
+library(magrittr)
+
+# Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
+summary(models$N400.VERB)$coefficients %>%
+  set_colnames(c("Est.", "SE", "df", "t", "p")) %>%
+  set_rownames(c("(Intercept)", "Semantics: Vio. - int.", "Semantics: MCI - int", "Context",
+                 "(Vio. - int.) × context", "(MCI - int.) × context")) %>%
+  huxtable(add_rownames = "Verb-related N400") %>% add_colnames() %>%
+  set_number_format(value = "%3.3f") %>%
+  quick_docx(file = "EEG/tables/ias_table_verb.docx", open = FALSE)
+
+# Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
+summary(models$N400.PICT)$coefficients %>%
+  set_colnames(c("Est.", "SE", "df", "t", "p")) %>%
+  set_rownames(c("(Intercept)", "Semantics: Vio. - int.", "Semantics: MCI - int", "Context",
+                 "(Vio. - int.) × context", "(MCI - int.) × context")) %>%
+  huxtable(add_rownames = "Picture-related N400") %>% add_colnames() %>%
+  set_number_format(value = "%3.3f") %>%
+  quick_docx(file = "EEG/tables/ias_table_pict.docx", open = FALSE)
+
 #+
 
 # Full system specs and package versions
