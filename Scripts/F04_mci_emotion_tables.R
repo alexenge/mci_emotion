@@ -101,7 +101,7 @@ summarySEwithin(a1, measurevar = "Valence", withinvars = "context") %>%
               select(m_aro = Arousal, sd_aro = sd)) %>%
   set_rownames(c("Neutral", "Negative")) %>%
   huxtable(add_rownames = "", add_colnames = FALSE) %>%
-  add_rows(c("Context emotionality", "M", "SD", "M", "SD"), after = 0) %>%
+  add_rows(c("Context", "M", "SD", "M", "SD"), after = 0) %>%
   add_rows(c("", "Valence Rating", "", "Arousal Rating", ""), after = 0) %>%
   quick_docx(file = "EEG/tables/ratings_table.docx", open = FALSE)
 

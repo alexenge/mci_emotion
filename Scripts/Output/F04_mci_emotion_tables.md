@@ -103,14 +103,18 @@ a1 <- readRDS("EEG/export/a1.RDS")
 # Remove trials with errors or invalid RTs/ERPs
 a1 <- na.omit(a1[!a1$error,])
 
+# Adjust range of response scalse
+a1$Valence <- a1$ValenzResp + 3
+a1$Arousal <- a1$ArousalResp + 3
+
 # Compute mean ratings
-summarySEwithin(a1, measurevar = "ValenzResp", withinvars = "context") %>%
-  select(m_val = ValenzResp, sd_val = sd) %>%
-  bind_cols(summarySEwithin(a1, measurevar = "ArousalResp", withinvars = "context") %>% 
-              select(m_aro = ArousalResp, sd_aro = sd)) %>%
+summarySEwithin(a1, measurevar = "Valence", withinvars = "context") %>%
+  select(m_val = Valence, sd_val = sd) %>%
+  bind_cols(summarySEwithin(a1, measurevar = "Arousal", withinvars = "context") %>% 
+              select(m_aro = Arousal, sd_aro = sd)) %>%
   set_rownames(c("Neutral", "Negative")) %>%
   huxtable(add_rownames = "", add_colnames = FALSE) %>%
-  add_rows(c("Context emotionality", "M", "SD", "M", "SD"), after = 0) %>%
+  add_rows(c("Context", "M", "SD", "M", "SD"), after = 0) %>%
   add_rows(c("", "Valence Rating", "", "Arousal Rating", ""), after = 0) %>%
   quick_docx(file = "EEG/tables/ratings_table.docx", open = FALSE)
 
