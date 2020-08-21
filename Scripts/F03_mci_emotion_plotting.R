@@ -110,9 +110,9 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.8)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
-  geom_text(aes(x = 0.55, y = 0.8, label = "creaked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.5, label = "blossomed"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.2, label = "talked"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.5, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
+  geom_text(aes(x = 0.55, y = 0.2, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
   geom_text(aes(x = 0.699, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
   geom_text(aes(x = 0.753, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   geom_text(aes(x = 0.667, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
