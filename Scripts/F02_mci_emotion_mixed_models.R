@@ -53,7 +53,7 @@ mod.valence <- lmer(ValenzResp ~ context + (context|participant) + (context|item
                     data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for arousal ratings (converged after changing the optimizer + removing correlations between REs)
-mod.aroursal <- lmer(ArousalResp ~ context + (context||participant) + (context||item),
+mod.aroursal <- lmer(ArousalResp ~ context + (context|participant) + (context|item),
                          data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for verb-related N400 (converged on first attempt)
@@ -88,7 +88,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Backup results
-save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats_new ratings.RData")
+save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 
 # Full system specs and package versions
 sessionInfo()
