@@ -49,16 +49,16 @@ contrasts(a1$semantics) <- ginv(contrasts.semantics)
 ## LINEAR MIXED-EFFECTS MODELS ## -----------------------------------------------------------------
 
 # LMM for valence ratings (converged on first attempt)
-mod.valence <- lmer(ValenzResp ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
+mod.valence <- lmer(ValenzResp ~ context + (context|participant) + (context|item),
                     data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for arousal ratings (converged after changing the optimizer + removing correlations between REs)
-mod.aroursal <- lmer_alt(ArousalResp ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                         data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+mod.aroursal <- lmer(ArousalResp ~ context + (context||participant) + (context||item),
+                         data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for verb-related N400 (converged on first attempt)
-mod.N400.verb <- lmer(N400.verb ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE))
+mod.N400.verb <- lmer_alt(N400.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # LMM for picture-related N400 (converged after changing the optimizer)
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
@@ -76,7 +76,7 @@ models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = 
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 # Follow-up contrasts for the main effect of semantics
-(means.semantics <- lapply(models,function(x){
+(means.semantics <- lapply(models[3:4],function(x){
     emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for the main effect of context
@@ -84,11 +84,11 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each contexts
-(means.nested <- lapply(models, function(x){
+(means.nested <- lapply(models[3:4], function(x){
     emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Backup results
-save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
+save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats_new ratings.RData")
 
 # Full system specs and package versions
 sessionInfo()
