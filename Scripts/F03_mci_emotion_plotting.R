@@ -55,11 +55,13 @@ avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"
 colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
 colors.highlight <- "#ffff33"
 colors.topo <- "RdBu"
+scale.topo <- scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
-# Define color scheme for conditions (brewer)
-colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
-colors.highlight <- viridisLite::plasma(1, direction = -1)
-colors.topo <- "plasma"
+# # Define color scheme for conditions (brewer)
+# colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
+# colors.highlight <- viridisLite::plasma(1, direction = -1)
+# colors.topo <- "plasma"
+# scale.topo <- scale_fill_viridis_c(option = "plasma", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
 # Assign names to colors
 names(colors.conditions) <- c("Intuitive", "Violation", "MCI")
@@ -197,8 +199,7 @@ topos <- sapply(c("Verb-related", "Picture-related"), function(what){
 # Create a colorbar
 simdat1 <- data.frame(a = 1:10, b = 1:10, c = seq(-0.7, 0.7, length.out = 10))
 colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster() + geom_line() +
-                       scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7)) +
-                       scale_fill_viridis_c() +
+                       scale.topo +
                        labs(fill = "Ampl.\n(µV)") +
                        theme(legend.position = "right",
                              legend.background = element_blank(),
