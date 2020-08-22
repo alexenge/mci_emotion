@@ -1,7 +1,7 @@
 F03\_mci\_emotion\_plotting.R
 ================
 alexander
-2020-08-21
+2020-08-22
 
 ``` r
 ### MCI EMO PLOTTING SCRIPT ###
@@ -13,11 +13,10 @@ alexander
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
-library(dplyr)   # Version 1.0.0
-library(tidyr)   # Version 1.1.0
-library(eeguana) # Version 0.1.4.9000
-library(ggplot2) # Version 3.3.2
-library(cowplot) # Version 1.0.0
+library(tidyverse)   # Version 1.3.0
+library(magrittr)    # Version 1.5
+library(eeguana)     # Version 0.1.4.9000
+library(cowplot)     # Version 1.0.0
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
@@ -30,7 +29,42 @@ avgs.pict <- avgs.pict %>% mutate(type = "Picture-related")
 avgs <- bind(avgs.verb, avgs.pict)
 ```
 
-    ## # Object size in memory 110.5 Mb
+    ## Warning: Objects with different channels information, see below
+    ## 
+    ## File 2 ... 
+    ## # A tibble: 67 x 11
+    ##    .channel    .x    .y    .z .reference number resolution unit  radius theta   phi
+    ##    <chr>    <dbl> <dbl> <dbl> <chr>      <chr>       <dbl> <chr>  <dbl> <dbl> <dbl>
+    ##  1 Fp1         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  2 Fpz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  3 Fp2         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  4 AF7         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  5 AF3         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  6 AFz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  7 AF4         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  8 AF8         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  9 F9          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ## 10 F7          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ## # … with 57 more rows
+    ## 
+    ##  ... in comparison with file 1 ...
+    ## 
+    ## # A tibble: 66 x 11
+    ##    .channel    .x    .y    .z .reference number resolution unit  radius theta   phi
+    ##    <chr>    <dbl> <dbl> <dbl> <chr>      <chr>       <dbl> <chr>  <dbl> <dbl> <dbl>
+    ##  1 Fp1         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  2 Fpz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  3 Fp2         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  4 AF7         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  5 AF3         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  6 AFz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  7 AF4         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  8 AF8         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ##  9 F9          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ## 10 F7          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
+    ## # … with 56 more rows
+
+    ## # Object size in memory 112.2 Mb
 
 ``` r
 avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "Picture-related"))
@@ -39,16 +73,16 @@ avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "P
 a1 <- na.omit(a1[!a1$error,])
 
 # Define ggplot theme
-styling <-   theme(panel.grid = element_blank(),
-                   panel.border = element_rect(colour = "black", size = 1),
-                   legend.position = "right",
-                   axis.ticks = element_line(colour = "black"),
-                   axis.title = element_text(color = "black", family = "Helvetica", size = 10),
-                   axis.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
-                   legend.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   strip.background = element_blank(),
-                   strip.text = element_text(color = "black", family = "Helvetica", size = 10))
+styling <- theme(panel.grid = element_blank(),
+                 panel.border = element_rect(colour = "black", size = 1),
+                 legend.position = "right",
+                 axis.ticks = element_line(colour = "black"),
+                 axis.title = element_text(color = "black", family = "Helvetica", size = 10),
+                 axis.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
+                 legend.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 strip.background = element_blank(),
+                 strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
 # Rename some factor levels
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
@@ -56,13 +90,13 @@ a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral c
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 
-# Define color scheme
+# Define color scheme (brewer)
 colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
 colors.highlight <- "#ffff33"
 colors.topo <- "RdBu"
 scale.topo <- scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
-# # Define color scheme for conditions (brewer)
+# # Define color scheme for conditions (plasma)
 # colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
 # colors.highlight <- viridisLite::plasma(1, direction = -1)
 # colors.topo <- "plasma"
@@ -276,6 +310,97 @@ plot_grid(plot_grid(waves$`Picture-related`) +
           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
   ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm")
 
+## ONE ADDITIONAL FIGURE FOR THE APPENDIX ## ------------------------------------------------------
+
+# # Define color scales
+# colors.topo <- "RdBu"
+# scale.topo <- scale_fill_distiller(palette = "RdBu", breaks = c(-0.7, 0, 0.7),
+#                                    guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
+# colors.topo <- "plasma"
+# scales.topo <- scale_fill_viridis_c(option = "plasma", breaks = c(-0.7, 0, 0.7),
+#                                     guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
+
+# Update some parameters for the color bar
+scale.topo$guide$label.hjust <- 0.5
+scale.topo$guide$title.vjust <- 1
+
+# Create a color bar for the topographies
+colbar <- get_legend(ggplot(data.frame(x = c(0, 0), y = c(0, 0), fill = c(-0.7, 0.7)), aes(x = x, y = y, fill = fill)) + geom_raster() +
+                       scale.topo + labs(fill = "Ampl.\n(µV)") +
+                       theme(legend.direction = "horizontal",
+                             legend.key.width = unit(0.3, "cm"),
+                             legend.title = element_text(family = "Helvetica", size = 10, color = "black"),
+                             legend.text = element_text(family = "Helvetica", size = 10, color = "black"),
+                             legend.title.align = 0.5))
+
+# Create scalp topographies for P600 (new ROI)
+topos.P600 <- map(c(0.5, 0.6, 0.7, 0.8), function(tmin){
+  tmax <- tmin + 0.1
+  # Compute differences between conditions in time window at all electrodes
+  avgs %>% filter(type == "Verb-related", between(as_time(.sample), !!tmin, !!tmax)) %>%
+    group_by(semantics, context) %>% summarise_at(channel_names(.), mean) %>%
+    signal_tbl() %>% select(Fp1:A1) %>% t() %>% as.data.frame() %>%
+    set_colnames(c("int.neu", "int.neg", "vio.neu", "vio.neg", "mci.neu", "mci.neg")) %>%
+    transmute(diff.vio.neu = vio.neu - int.neu,
+              diff.vio.neg = vio.neg - int.neg,
+              diff.mci.neu = mci.neu - int.neu,
+              diff.mci.neg = mci.neg - int.neg) %>%
+    # Create four topoplots for the current time window
+    map(function(amplitudes){
+      dat <- data.frame(amplitude = amplitudes, electrode = avgs %>% select(Fp1:A1) %>% channel_names())
+      p <- eegUtils::topoplot(data = dat,
+                              limits = c(-0.7, 0.7),
+                              r = 0.9,
+                              palette = colors.topo,
+                              interp_limit = "skirt", 
+                              contour = FALSE,
+                              highlights = c("C1", "C2", "CZ", "FC1", "FC2", "FZ"),
+                              scaling = 0.4)
+      p$layers[[6]]$aes_params$size <- 0.1
+      p$layers[[7]]$aes_params$colour <- "black"
+      p + theme(legend.position = "none")}) %>%
+    # Add another plot denoting the current time window in ms
+    prepend(list(ggplot() + theme_void() +
+                   annotate("text", x = 0, y = 0, label = paste0(tmin*1000, "-", tmax*1000, " ms"), size = 3.528, family = "Helvetica"))) %>%
+    # Combine the five plots below one another
+    plot_grid(plotlist = ., nrow = 5, rel_heights = c(1, 3, 3, 3, 3))}) %>%
+  prepend(list(plot_grid(NULL,
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
+                         nrow = 5, rel_heights = c(1, 3, 3, 3, 3)))) %>%
+  # Combine all time windows next to each other
+  plot_grid(plotlist = ., nrow = 1) +
+  # Add colorbar
+  draw_plot(colbar, x = -0.403, y = 0.42)
+```
+
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+    ## Attempting to add standard electrode locations...
+
+``` r
+# Save plot
+ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, height = 15, units = "cm")
+
 # Full system specs and package versions
 sessionInfo()
 ```
@@ -295,19 +420,23 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000 tidyr_1.1.0        dplyr_1.0.0       
+    ##  [1] cowplot_1.0.0      eeguana_0.1.4.9000 magrittr_1.5       forcats_0.5.0      stringr_1.4.0      dplyr_1.0.0       
+    ##  [7] purrr_0.3.4        readr_1.3.1        tidyr_1.1.0        tibble_3.0.3       ggplot2_3.3.2      tidyverse_1.3.0   
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          lattice_0.20-41     listenv_0.8.0       digest_0.6.25       mime_0.9            R6_2.4.1           
-    ##  [7] R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6        pracma_2.2.9        evaluate_0.14       httr_1.4.2         
-    ## [13] highr_0.8           pillar_1.4.6        rlang_0.4.7         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11    
-    ## [19] data.table_1.13.0   miniUI_0.1.1.1      R.utils_2.9.2       R.oo_1.23.0         Matrix_1.2-18       rmarkdown_2.3      
-    ## [25] labeling_0.3        splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1   eegUtils_0.5.0.9000 munsell_0.5.0      
-    ## [31] shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4        xfun_0.16           pkgconfig_2.0.3     mgcv_1.8-31        
-    ## [37] globals_0.12.5      htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        codetools_0.2-16    matrixStats_0.56.0 
-    ## [43] future_1.18.0       viridisLite_0.3.0   crayon_1.3.4        withr_2.2.0         later_1.1.0.1       MASS_7.3-51.6      
-    ## [49] R.methodsS3_1.8.0   grid_4.0.2          jsonlite_1.7.0      nlme_3.1-148        xtable_1.8-4        gtable_0.3.0       
-    ## [55] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        future.apply_1.6.0  stringi_1.4.6       farver_2.0.3       
-    ## [61] promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2         RColorBrewer_1.1-2 
-    ## [67] tools_4.0.2         glue_1.4.1          purrr_0.3.4         abind_1.4-5         parallel_4.0.2      fastmap_1.0.1      
-    ## [73] yaml_2.2.1          colorspace_1.4-1    plotly_4.9.2.1      knitr_1.29
+    ##  [1] nlme_3.1-148        matrixStats_0.56.0  fs_1.4.2            lubridate_1.7.9     RColorBrewer_1.1-2  httr_1.4.2         
+    ##  [7] tools_4.0.2         backports_1.1.8     utf8_1.1.4          R6_2.4.1            DBI_1.1.0           lazyeval_0.2.2     
+    ## [13] mgcv_1.8-31         colorspace_1.4-1    withr_2.2.0         tidyselect_1.1.0    compiler_4.0.2      cli_2.0.2          
+    ## [19] rvest_0.3.5         eegUtils_0.5.0.9000 xml2_1.3.2          plotly_4.9.2.1      labeling_0.3        scales_1.1.1       
+    ## [25] digest_0.6.25       rmarkdown_2.3       R.utils_2.9.2       ini_0.3.1           pkgconfig_2.0.3     htmltools_0.5.0    
+    ## [31] highr_0.8           dbplyr_1.4.4        fastmap_1.0.1       htmlwidgets_1.5.1   Rmisc_1.5           rlang_0.4.7        
+    ## [37] readxl_1.3.1        rstudioapi_0.11     shiny_1.5.0         farver_2.0.3        generics_0.0.2      jsonlite_1.7.0     
+    ## [43] R.oo_1.23.0         R.matlab_3.6.2      Matrix_1.2-18       Rcpp_1.0.5          munsell_0.5.0       fansi_0.4.1        
+    ## [49] abind_1.4-5         lifecycle_0.2.0     R.methodsS3_1.8.0   stringi_1.4.6       yaml_2.2.1          MASS_7.3-51.6      
+    ## [55] plyr_1.8.6          grid_4.0.2          blob_1.2.1          parallel_4.0.2      listenv_0.8.0       promises_1.1.1     
+    ## [61] crayon_1.3.4        miniUI_0.1.1.1      lattice_0.20-41     haven_2.3.1         splines_4.0.2       hms_0.5.3          
+    ## [67] knitr_1.29          pillar_1.4.6        future.apply_1.6.0  codetools_0.2-16    reprex_0.3.0        glue_1.4.1         
+    ## [73] evaluate_0.14       data.table_1.13.0   modelr_0.1.8        vctrs_0.3.2         httpuv_1.5.4        cellranger_1.1.0   
+    ## [79] gtable_0.3.0        future_1.18.0       assertthat_0.2.1    xfun_0.16           mime_0.9            xtable_1.8-4       
+    ## [85] broom_0.7.0.9001    pracma_2.2.9        later_1.1.0.1       viridisLite_0.3.0   signal_0.7-6        globals_0.12.5     
+    ## [91] ellipsis_0.3.1

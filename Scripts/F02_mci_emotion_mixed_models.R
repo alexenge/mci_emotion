@@ -31,17 +31,17 @@ a1 <- readRDS("EEG/export/a1.RDS")
 a1 <- na.omit(a1[!a1$error,])
 
 # Define simple contrast coding for context emotionality (negative - neutral)
-    # HO(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
-    # H0(Slope): -mu1 + mu2 = 0
-    # with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
+#     H0(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
+#     H0(Slope): -mu1 + mu2 = 0
+#     with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
 t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
 contrasts(a1$context) <- ginv(contrasts.context)
 
 # Define simple contrast coding for semantics (violation - intuitive, mci - intuitive)
-    # H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
-    # H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
-    # H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
-    # with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
+#     H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
+#     H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
+#     H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
+#     with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
 t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
                                  c("int" = -1, "vio" = 0, "mci" = 1))))
 contrasts(a1$semantics) <- ginv(contrasts.semantics)
@@ -54,29 +54,46 @@ mod.valence <- lmer(ValenzResp ~ context + (context|participant) + (context|item
 
 # LMM for arousal ratings (converged after changing the optimizer + removing correlations between REs)
 mod.aroursal <- lmer(ArousalResp ~ context + (context|participant) + (context|item),
-                         data = a1, control = lmerControl(calc.derivs = FALSE))
+                     data = a1, control = lmerControl(calc.derivs = FALSE))
 
 # LMM for verb-related N400 (converged on first attempt)
 mod.N400.verb <- lmer_alt(N400.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                          data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # LMM for picture-related N400 (converged after changing the optimizer)
 mod.N400.pict <- lmer(N400.pict ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
                       data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
+# LMM for verb-related P600 (short time window, old ROI) (converged after changing the optimizer + removing correlations between REs)
+mod.P600_1.verb <- lmer_alt(P600_1.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# LMM for verb-related P600 (long time window, old ROI) (converged after changing the optimizer + removing correlations between REs)
+mod.P600_2.verb <- lmer_alt(P600_2.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# LMM for verb-related P600 (short time window, new ROI) (converged after changing the optimizer + removing correlations between REs)
+mod.P600_3.verb <- lmer_alt(P600_3.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# LMM for verb-related P600 (long time window, new ROI) (converged after changing the optimizer + removing correlations between REs)
+mod.P600_4.verb <- lmer_alt(P600_4.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                            data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
 # Create a list of models
-models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict)
+models <- list("VALENCE" = mod.valence, "AROUSAL" = mod.aroursal, "N400.VERB" = mod.N400.verb, "N400.PICT" = mod.N400.pict,
+               "P600_1" = mod.P600_1.verb, "P600_2" = mod.P600_2.verb, "P600_3" = mod.P600_3.verb, "P600_4" = mod.P600_4.verb)
 
 # F-tests (type III tests)
 (tests <- lapply(models, anova))
 
 ## PLANNED FOLLOW-UP CONTRASTS ## -----------------------------------------------------------------
 
-# Allow emmeans to compute Satterthwaites p-values
+# Allow emmeans to use Satterthwaites p-values
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 # Follow-up contrasts for the main effect of semantics
-(means.semantics <- lapply(models[3:4],function(x){
+(means.semantics <- lapply(models[-1:-2],function(x){
     emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for the main effect of context
@@ -84,7 +101,7 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
     emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each contexts
-(means.nested <- lapply(models[3:4], function(x){
+(means.nested <- lapply(models[-1:-2], function(x){
     emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Backup results

@@ -13,11 +13,10 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
-library(dplyr)   # Version 1.0.0
-library(tidyr)   # Version 1.1.0
-library(eeguana) # Version 0.1.4.9000
-library(ggplot2) # Version 3.3.2
-library(cowplot) # Version 1.0.0
+library(tidyverse)   # Version 1.3.0
+library(magrittr)    # Version 1.5
+library(eeguana)     # Version 0.1.4.9000
+library(cowplot)     # Version 1.0.0
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
@@ -34,16 +33,16 @@ avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "P
 a1 <- na.omit(a1[!a1$error,])
 
 # Define ggplot theme
-styling <-   theme(panel.grid = element_blank(),
-                   panel.border = element_rect(colour = "black", size = 1),
-                   legend.position = "right",
-                   axis.ticks = element_line(colour = "black"),
-                   axis.title = element_text(color = "black", family = "Helvetica", size = 10),
-                   axis.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
-                   legend.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   strip.background = element_blank(),
-                   strip.text = element_text(color = "black", family = "Helvetica", size = 10))
+styling <- theme(panel.grid = element_blank(),
+                 panel.border = element_rect(colour = "black", size = 1),
+                 legend.position = "right",
+                 axis.ticks = element_line(colour = "black"),
+                 axis.title = element_text(color = "black", family = "Helvetica", size = 10),
+                 axis.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
+                 legend.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 strip.background = element_blank(),
+                 strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
 # Rename some factor levels
 a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
@@ -51,13 +50,13 @@ a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral c
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 
-# Define color scheme
+# Define color scheme (brewer)
 colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
 colors.highlight <- "#ffff33"
 colors.topo <- "RdBu"
 scale.topo <- scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
-# # Define color scheme for conditions (brewer)
+# # Define color scheme for conditions (plasma)
 # colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
 # colors.highlight <- viridisLite::plasma(1, direction = -1)
 # colors.topo <- "plasma"
@@ -121,21 +120,12 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.8)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
   geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
-<<<<<<< HEAD
-  geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.5, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-  geom_text(aes(x = 0.55, y = 0.2, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
-  geom_text(aes(x = 0.699, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.753, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-  geom_text(aes(x = 0.667, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-=======
   geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[1], hjust = 0) +
   geom_text(aes(x = 0.55, y = 0.5, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[2], hjust = 0) +
   geom_text(aes(x = 0.55, y = 0.2, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors.conditions[3], hjust = 0) +
   geom_text(aes(x = 0.675, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
   geom_text(aes(x = 0.730, y = 0.5, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
   geom_text(aes(x = 0.643, y = 0.2, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
->>>>>>> ec717bcb3aa66f3052526a4c6010584a764ce239
   draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
 ## WAVEFORMS ## -----------------------------------------------------------------------------------
@@ -267,6 +257,78 @@ plot_grid(plot_grid(waves$`Picture-related`) +
                     label_fontfamily = "Helvetica", label_y = 1.03),
           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
   ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm")
+
+## ONE ADDITIONAL FIGURE FOR THE APPENDIX ## ------------------------------------------------------
+
+# # Define color scales
+# colors.topo <- "RdBu"
+# scale.topo <- scale_fill_distiller(palette = "RdBu", breaks = c(-0.7, 0, 0.7),
+#                                    guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
+# colors.topo <- "plasma"
+# scales.topo <- scale_fill_viridis_c(option = "plasma", breaks = c(-0.7, 0, 0.7),
+#                                     guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
+
+# Update some parameters for the color bar
+scale.topo$guide$label.hjust <- 0.5
+scale.topo$guide$title.vjust <- 1
+
+# Create a color bar for the topographies
+colbar <- get_legend(ggplot(data.frame(x = c(0, 0), y = c(0, 0), fill = c(-0.7, 0.7)), aes(x = x, y = y, fill = fill)) + geom_raster() +
+                       scale.topo + labs(fill = "Ampl.\n(µV)") +
+                       theme(legend.direction = "horizontal",
+                             legend.key.width = unit(0.3, "cm"),
+                             legend.title = element_text(family = "Helvetica", size = 10, color = "black"),
+                             legend.text = element_text(family = "Helvetica", size = 10, color = "black"),
+                             legend.title.align = 0.5))
+
+# Create scalp topographies for P600 (new ROI)
+topos.P600 <- map(c(0.5, 0.6, 0.7, 0.8), function(tmin){
+  tmax <- tmin + 0.1
+  # Compute differences between conditions in time window at all electrodes
+  avgs %>% filter(type == "Verb-related", between(as_time(.sample), !!tmin, !!tmax)) %>%
+    group_by(semantics, context) %>% summarise_at(channel_names(.), mean) %>%
+    signal_tbl() %>% select(Fp1:A1) %>% t() %>% as.data.frame() %>%
+    set_colnames(c("int.neu", "int.neg", "vio.neu", "vio.neg", "mci.neu", "mci.neg")) %>%
+    transmute(diff.vio.neu = vio.neu - int.neu,
+              diff.vio.neg = vio.neg - int.neg,
+              diff.mci.neu = mci.neu - int.neu,
+              diff.mci.neg = mci.neg - int.neg) %>%
+    # Create four topoplots for the current time window
+    map(function(amplitudes){
+      dat <- data.frame(amplitude = amplitudes, electrode = avgs %>% select(Fp1:A1) %>% channel_names())
+      p <- eegUtils::topoplot(data = dat,
+                              limits = c(-0.7, 0.7),
+                              r = 0.9,
+                              palette = colors.topo,
+                              interp_limit = "skirt", 
+                              contour = FALSE,
+                              highlights = c("C1", "C2", "CZ", "FC1", "FC2", "FZ"),
+                              scaling = 0.4)
+      p$layers[[6]]$aes_params$size <- 0.1
+      p$layers[[7]]$aes_params$colour <- "black"
+      p + theme(legend.position = "none")}) %>%
+    # Add another plot denoting the current time window in ms
+    prepend(list(ggplot() + theme_void() +
+                   annotate("text", x = 0, y = 0, label = paste0(tmin*1000, "-", tmax*1000, " ms"), size = 3.528, family = "Helvetica"))) %>%
+    # Combine the five plots below one another
+    plot_grid(plotlist = ., nrow = 5, rel_heights = c(1, 3, 3, 3, 3))}) %>%
+  prepend(list(plot_grid(NULL,
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
+                         ggplot() + theme_void() +
+                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
+                         nrow = 5, rel_heights = c(1, 3, 3, 3, 3)))) %>%
+  # Combine all time windows next to each other
+  plot_grid(plotlist = ., nrow = 1) +
+  # Add colorbar
+  draw_plot(colbar, x = -0.403, y = 0.42)
+
+# Save plot
+ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, height = 15, units = "cm")
 
 # Full system specs and package versions
 sessionInfo()

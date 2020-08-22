@@ -158,13 +158,23 @@ eeg.verb <- eeg.verb %>% mutate(semantics = factor(semantics, levels = c("int", 
 eeg.pict <- eeg.pict %>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci")),
                                 context = factor(context, levels = c("neu", "neg")))
 
-# Compute mean amplitude accross electrodes in the N400 ROI
+
+# Compute mean amplitude across electrodes in the N400 ROI
 eeg.verb <- eeg.verb %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 eeg.pict <- eeg.pict %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 
 # Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
 a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.300, 0.500)], mean, na.action = NULL)$ROI
 a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
+
+# Do the same for the P600 time window (which will be reported in the appendix)
+a1$P600_1.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI
+a1$P600_2.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI
+
+# Visual inspection suggests a P600-like effect in a more frontal ROI
+eeg.verb <- eeg.verb %>% mutate(ROI2 = chs_mean(C1, C2, Cz, FC1, FC2, Fz))
+a1$P600_3.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI2
+a1$P600_4.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI2
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1.RDS")
