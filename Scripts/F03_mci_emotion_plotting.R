@@ -26,7 +26,7 @@ avgs.pict <- readRDS("EEG/export/avgs_pict.RDS")
 # Combine verb-related and picture-related potentials
 avgs.verb <- avgs.verb %>% mutate(type = "Verb-related")
 avgs.pict <- avgs.pict %>% mutate(type = "Picture-related")
-avgs <- bind(avgs.verb, avgs.pict)
+avgs <- suppressWarnings(bind(avgs.verb, avgs.pict))
 avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "Picture-related"))
 
 # Remove trials with errors or invalid RTs/ERPs

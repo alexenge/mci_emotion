@@ -26,43 +26,8 @@ avgs.pict <- readRDS("EEG/export/avgs_pict.RDS")
 # Combine verb-related and picture-related potentials
 avgs.verb <- avgs.verb %>% mutate(type = "Verb-related")
 avgs.pict <- avgs.pict %>% mutate(type = "Picture-related")
-avgs <- bind(avgs.verb, avgs.pict)
+avgs <- suppressWarnings(bind(avgs.verb, avgs.pict))
 ```
-
-    ## Warning: Objects with different channels information, see below
-    ## 
-    ## File 2 ... 
-    ## # A tibble: 67 x 11
-    ##    .channel    .x    .y    .z .reference number resolution unit  radius theta   phi
-    ##    <chr>    <dbl> <dbl> <dbl> <chr>      <chr>       <dbl> <chr>  <dbl> <dbl> <dbl>
-    ##  1 Fp1         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  2 Fpz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  3 Fp2         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  4 AF7         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  5 AF3         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  6 AFz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  7 AF4         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  8 AF8         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  9 F9          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ## 10 F7          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ## # … with 57 more rows
-    ## 
-    ##  ... in comparison with file 1 ...
-    ## 
-    ## # A tibble: 66 x 11
-    ##    .channel    .x    .y    .z .reference number resolution unit  radius theta   phi
-    ##    <chr>    <dbl> <dbl> <dbl> <chr>      <chr>       <dbl> <chr>  <dbl> <dbl> <dbl>
-    ##  1 Fp1         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  2 Fpz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  3 Fp2         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  4 AF7         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  5 AF3         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  6 AFz         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  7 AF4         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  8 AF8         NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ##  9 F9          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ## 10 F7          NA    NA    NA <NA>       <NA>           NA <NA>      NA    NA    NA
-    ## # … with 56 more rows
 
     ## # Object size in memory 112.2 Mb
 

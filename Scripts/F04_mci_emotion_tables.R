@@ -158,6 +158,8 @@ names(taba1) <- NULL
 huxt <- huxtable(taba1, add_colnames = FALSE)
 print_md(huxt, max_width = Inf)
 
+#+
+
 # Export as a word file (after some re-formatting)
 taba1_word <- data.frame(lapply(taba1, function(x){gsub("<br/>", "\n", x)}))
 taba1_word <- data.frame(lapply(taba1_word, function(x){gsub("\\*|\\_", "", x)}))
@@ -183,8 +185,6 @@ summary(models$N400.PICT)$coefficients %>%
   huxtable(add_rownames = "Picture-related N400") %>% add_colnames() %>%
   set_number_format(value = "%3.3f") %>%
   quick_docx(file = "EEG/tables/table_ias_pict.docx", open = FALSE)
-
-#+
 
 # Full system specs and package versions
 sessionInfo()

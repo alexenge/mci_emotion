@@ -218,9 +218,7 @@ summary(models$N400.PICT)$coefficients %>%
   huxtable(add_rownames = "Picture-related N400") %>% add_colnames() %>%
   set_number_format(value = "%3.3f") %>%
   quick_docx(file = "EEG/tables/table_ias_pict.docx", open = FALSE)
-```
 
-``` r
 # Full system specs and package versions
 sessionInfo()
 ```
