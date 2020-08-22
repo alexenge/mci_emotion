@@ -225,7 +225,7 @@ colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster(
                              legend.title.align = 0.5))
 
 # Create one plot combining all four topographies (verb-related)
-simdat2 <- data.frame("semantics" = factor(c("Violation - Intuitive", "MCI - Intuitive")),
+simdat2 <- data.frame("semantics" = factor(c("Violation - intuitive", "MCI - intuitive")),
                       "context" = factor(c("Neutral\ncontext", "Negative\ncontext"), levels = c("Neutral\ncontext", "Negative\ncontext")))
 topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
   geom_point() +
@@ -390,11 +390,11 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] nlme_3.1-148        matrixStats_0.56.0  fs_1.4.2            lubridate_1.7.9     RColorBrewer_1.1-2  httr_1.4.2         
-    ##  [7] tools_4.0.2         backports_1.1.8     utf8_1.1.4          R6_2.4.1            DBI_1.1.0           lazyeval_0.2.2     
+    ##  [7] tools_4.0.2         backports_1.1.8     utf8_1.1.4          R6_2.4.1            lazyeval_0.2.2      DBI_1.1.0          
     ## [13] mgcv_1.8-31         colorspace_1.4-1    withr_2.2.0         tidyselect_1.1.0    compiler_4.0.2      cli_2.0.2          
     ## [19] rvest_0.3.5         eegUtils_0.5.0.9000 xml2_1.3.2          plotly_4.9.2.1      labeling_0.3        scales_1.1.1       
     ## [25] digest_0.6.25       rmarkdown_2.3       R.utils_2.9.2       ini_0.3.1           pkgconfig_2.0.3     htmltools_0.5.0    
-    ## [31] highr_0.8           dbplyr_1.4.4        fastmap_1.0.1       htmlwidgets_1.5.1   Rmisc_1.5           rlang_0.4.7        
+    ## [31] dbplyr_1.4.4        fastmap_1.0.1       highr_0.8           htmlwidgets_1.5.1   Rmisc_1.5           rlang_0.4.7        
     ## [37] readxl_1.3.1        rstudioapi_0.11     shiny_1.5.0         farver_2.0.3        generics_0.0.2      jsonlite_1.7.0     
     ## [43] R.oo_1.23.0         R.matlab_3.6.2      Matrix_1.2-18       Rcpp_1.0.5          munsell_0.5.0       fansi_0.4.1        
     ## [49] abind_1.4-5         lifecycle_0.2.0     R.methodsS3_1.8.0   stringi_1.4.6       yaml_2.2.1          MASS_7.3-51.6      

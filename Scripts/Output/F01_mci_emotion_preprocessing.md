@@ -1,14 +1,14 @@
 F01\_mci\_emotion\_preprocessing.R
 ================
 neuro-lab
-2020-07-14
+2020-08-22
 
 ``` r
 ### MCI EMO PREPROCESSING SCRIPT ###
 
 # Reads behavioral log files for all participants and binds them together. Performs EEG preprocessing
 # including re-refercing, ocular artifact correction, filtering, epoching, baseline correction, and
-# automatic artifact rejection, separetly for verb- and picture-related potentials. Computes single-
+# automatic artifact rejection, separatly for verb- and picture-related potentials. Computes single-
 # trial mean ERP amplitudes for the N400 component and exports by-participant averaged waveforms for
 # plotting.
 
@@ -17,8 +17,31 @@ neuro-lab
 # Load packages
 library(naturalsort)  # Version 0.1.3
 library(dplyr)        # Version 1.0.0
-library(eeguana)      # Version 0.1.4.9000
+```
 
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(eeguana)      # Version 0.1.4.9000
+```
+
+    ## 
+    ## Attaching package: 'eeguana'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     between
+
+``` r
 # Make sure we have enough RAM available
 memory.limit(size = 64000)
 ```
@@ -2833,13 +2856,23 @@ eeg.verb <- eeg.verb %>% mutate(semantics = factor(semantics, levels = c("int", 
 eeg.pict <- eeg.pict %>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci")),
                                 context = factor(context, levels = c("neu", "neg")))
 
-# Compute mean amplitude accross electrodes in the N400 ROI
+
+# Compute mean amplitude across electrodes in the N400 ROI
 eeg.verb <- eeg.verb %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 eeg.pict <- eeg.pict %>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
 
 # Average single trial ERPs in the ROI across the relevant time window (and bind to behavioral data)
 a1$N400.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.300, 0.500)], mean, na.action = NULL)$ROI
 a1$N400.pict <- aggregate(ROI ~ .id, eeg.pict$.signal[between(as_time(.sample), 0.150, 0.350)], mean, na.action = NULL)$ROI
+
+# Do the same for the P600 time window (which will be reported in the appendix)
+a1$P600_1.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI
+a1$P600_2.verb <- aggregate(ROI ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI
+
+# Visual inspection suggests a P600-like effect in a more frontal ROI
+eeg.verb <- eeg.verb %>% mutate(ROI2 = chs_mean(C1, C2, Cz, FC1, FC2, Fz))
+a1$P600_3.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.700)], mean, na.action = NULL)$ROI2
+a1$P600_4.verb <- aggregate(ROI2 ~ .id, eeg.verb$.signal[between(as_time(.sample), 0.500, 0.900)], mean, na.action = NULL)$ROI2
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1.RDS")
@@ -2883,11 +2916,19 @@ sessionInfo()
     ## [1] eeguana_0.1.4.9000 dplyr_1.0.0        naturalsort_0.1.3 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5        pillar_1.4.6      compiler_4.0.2    highr_0.8         tools_4.0.2      
-    ##  [6] digest_0.6.25     evaluate_0.14     lifecycle_0.2.0   tibble_3.0.3      gtable_0.3.0     
-    ## [11] pkgconfig_2.0.3   rlang_0.4.7       rstudioapi_0.11   yaml_2.2.1        RcppRoll_0.3.0   
-    ## [16] xfun_0.15         stringr_1.4.0     knitr_1.29        generics_0.0.2    vctrs_0.3.1      
-    ## [21] grid_4.0.2        tidyselect_1.1.0  glue_1.4.1        data.table_1.12.8 R6_2.4.1         
-    ## [26] rmarkdown_2.3     ggplot2_3.3.2     purrr_0.3.4       magrittr_1.5      scales_1.1.1     
-    ## [31] ellipsis_0.3.1    htmltools_0.5.0   MASS_7.3-51.6     colorspace_1.4-1  stringi_1.4.6    
-    ## [36] ini_0.3.1         signal_0.7-6      munsell_0.5.0     crayon_1.3.4
+    ##  [1] Rcpp_1.0.5          lattice_0.20-41     tidyr_1.1.0         listenv_0.8.0       digest_0.6.25      
+    ##  [6] mime_0.9            R6_2.4.1            R.matlab_3.6.2      plyr_1.8.6          signal_0.7-6       
+    ## [11] pracma_2.2.9        evaluate_0.14       highr_0.8           httr_1.4.1          ggplot2_3.3.2      
+    ## [16] pillar_1.4.6        rlang_0.4.7         Rmisc_1.5           lazyeval_0.2.2      rstudioapi_0.11    
+    ## [21] data.table_1.12.8   miniUI_0.1.1.1      R.utils_2.9.2       R.oo_1.23.0         Matrix_1.2-18      
+    ## [26] rmarkdown_2.3       splines_4.0.2       stringr_1.4.0       htmlwidgets_1.5.1   eegUtils_0.5.0.9000
+    ## [31] munsell_0.5.0       tinytex_0.24        shiny_1.5.0         compiler_4.0.2      httpuv_1.5.4       
+    ## [36] xfun_0.15           pkgconfig_2.0.3     mgcv_1.8-31         globals_0.12.5      htmltools_0.5.0    
+    ## [41] tidyselect_1.1.0    tibble_3.0.3        codetools_0.2-16    matrixStats_0.56.0  RcppRoll_0.3.0     
+    ## [46] future_1.18.0       viridisLite_0.3.0   crayon_1.3.4        later_1.1.0.1       MASS_7.3-51.6      
+    ## [51] R.methodsS3_1.8.0   grid_4.0.2          nlme_3.1-148        jsonlite_1.7.0      xtable_1.8-4       
+    ## [56] gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        stringi_1.4.6      
+    ## [61] future.apply_1.6.0  promises_1.1.1      ini_0.3.1           ellipsis_0.3.1      generics_0.0.2     
+    ## [66] vctrs_0.3.1         RColorBrewer_1.1-2  tools_4.0.2         glue_1.4.1          purrr_0.3.4        
+    ## [71] yaml_2.2.1          abind_1.4-5         parallel_4.0.2      fastmap_1.0.1       colorspace_1.4-1   
+    ## [76] plotly_4.9.2.1      knitr_1.29

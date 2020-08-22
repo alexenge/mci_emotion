@@ -208,7 +208,7 @@ colbar <- get_legend(ggplot(simdat1, aes(x = a, y = b, fill = c)) + geom_raster(
                              legend.title.align = 0.5))
 
 # Create one plot combining all four topographies (verb-related)
-simdat2 <- data.frame("semantics" = factor(c("Violation - Intuitive", "MCI - Intuitive")),
+simdat2 <- data.frame("semantics" = factor(c("Violation - intuitive", "MCI - intuitive")),
                       "context" = factor(c("Neutral\ncontext", "Negative\ncontext"), levels = c("Neutral\ncontext", "Negative\ncontext")))
 topos.verb <- ggplot(simdat2, aes(x = context, y = semantics)) +
   geom_point() +
