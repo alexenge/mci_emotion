@@ -107,6 +107,53 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 # Backup results
 save(models, tests, means.semantics, means.context, means.nested, file = "EEG/export/stats.RData")
 
+## ADDITIONAL ANALYSES INCLUDING COVARIATES ## ----------------------------------------------------
+
+# Load packages
+library(dplyr)
+
+# Read pilot rating data from SPSS file
+pilot <- haven::read_sav("FB/gesamt_2.sav")
+
+# Trim whitespace
+pilot$KonzeptNr <- as.numeric(trimws(pilot$KonzeptNr))
+
+# Check if pilot and experimental data are matching
+all.equal(sort(unique(pilot$KonzeptNr)), sort(unique(a1$KonzeptNr)))
+all.equal(sort(unique(pilot$VerbNr)), sort(unique(a1$VerbNr)))
+
+# Average pilot data across participants
+covariates <- pilot %>% group_by(KonzeptNr, VerbNr) %>% summarize(clozeprob = mean(Frage1),
+                                                                  plausibility = mean(Frage2),
+                                                                  metaphoricity = mean(Frage3),
+                                                                  imageability = mean(Frage4))
+
+# Bind covariates to the experimental data
+a1 <- left_join(a1, covariates, by = c("KonzeptNr", "VerbNr"))
+
+# # Center covariates for LMMs (shouldn't be necessary if we don't compute interactions)
+# a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = function(x){x - 2.5}))
+# a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = scale, scale = FALSE))
+
+# LMM including all covariates as fixed effects
+mod.N400.verb.covs <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
+                               + (semantics*context||participant) + (semantics*context||item),
+                               data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# Model output
+summary(mod.N400.verb.covs) # MCI - correct remains significant, no other effects
+anova(mod.N400.verb, mod.N400.verb.covs) # Takes a while because models need to be refitted with ML
+emmeans(mod.N400.verb.covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
+
+# # And another LMM including interactions with each covariate
+# mod.N400.verb.covs.ia <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) * semantics*context
+#                                   + (semantics*context||participant) + (semantics*context||item),
+#                                   data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# 
+# # Model summary
+# summary(mod.N400.verb.covs.ia)
+# anova(mod.N400.verb, mod.N400.verb.covs.ia)
+
 # Full system specs and package versions
 sessionInfo()
 
