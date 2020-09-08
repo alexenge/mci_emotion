@@ -132,18 +132,26 @@ covariates <- pilot %>% group_by(KonzeptNr, VerbNr) %>% summarize(clozeprob = me
 a1 <- left_join(a1, covariates, by = c("KonzeptNr", "VerbNr"))
 
 # # Center covariates for LMMs (shouldn't be necessary if we don't compute interactions)
-# a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = function(x){x - 2.5}))
-# a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = scale, scale = FALSE))
+#a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = function(x){x - 2.5}))
+a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, imageability), .fns = scale, scale = FALSE))
 
 # LMM including all covariates as fixed effects
-mod.N400.verb.covs <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
-                               + (semantics*context||participant) + (semantics*context||item),
+# mod.N400.verb.covs <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
+#                                + (semantics*context||participant) + (semantics*context||item),
+#                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# rePCA(mod.N400.verb.covs)
+mod.N400.verb.covs.alt <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
+                               + (context||participant) + (semantics*context||item),
                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# refit mod.N400.verb.alt with the same random structure so model comparison is possible
+mod.N400.verb.alt <- lmer_alt(N400.verb ~ semantics*context
+                                   + (context||participant) + (semantics*context||item),
+                                   data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Model output
-summary(mod.N400.verb.covs) # MCI - correct remains significant, no other effects
-anova(mod.N400.verb, mod.N400.verb.covs) # Takes a while because models need to be refitted with ML
-emmeans(mod.N400.verb.covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
+summary(mod.N400.verb.covs.alt) # MCI - correct remains significant, no other effects
+anova(mod.N400.verb.alt, mod.N400.verb.covs.alt) # Takes a while because models need to be refitted with ML - n.s.
+emmeans(mod.N400.verb.covs.alt, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
 
 # # And another LMM including interactions with each covariate
 # mod.N400.verb.covs.ia <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) * semantics*context
@@ -152,7 +160,13 @@ emmeans(mod.N400.verb.covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjus
 # 
 # # Model summary
 # summary(mod.N400.verb.covs.ia)
-# anova(mod.N400.verb, mod.N400.verb.covs.ia)
+# anova(mod.N400.verb, mod.N400.verb.covs.ia) # n.s.
+
+# # Set up a model with covariates only
+# mod.N400.verb.covs.only <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability)
+#                                + (semantics*context||participant) + (semantics*context||item),
+#                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# summary(mod.N400.verb.covs.only)
 
 # Full system specs and package versions
 sessionInfo()
