@@ -4,6 +4,7 @@
 .Ruserdata
 .DS_Store
 *.Rproj
+renv/library
 EEG
 FB
 RT
