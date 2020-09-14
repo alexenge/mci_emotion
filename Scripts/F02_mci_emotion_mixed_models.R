@@ -117,16 +117,30 @@ pilot <- haven::read_sav("FB/gesamt_2.sav")
 
 # Trim whitespace
 pilot$KonzeptNr <- as.numeric(trimws(pilot$KonzeptNr))
+pilot$VerbBedingung <- trimws(pilot$VerbBedingung)
 
 # Check if pilot and experimental data are matching
 all.equal(sort(unique(pilot$KonzeptNr)), sort(unique(a1$KonzeptNr)))
 all.equal(sort(unique(pilot$VerbNr)), sort(unique(a1$VerbNr)))
 
+# Rename conditions
+pilot <- pilot %>% mutate(semantics = factor(VerbBedingung, levels = c("neutral", "sem", "mci"), labels = c("int", "vio", "mci")))
+
+# Compute ANOVA on by-participant averages
+avgs <- pilot %>% group_by(VP, semantics) %>% summarize(clozeprob = mean(Frage1),
+                                                        plausibility = mean(Frage2),
+                                                        metaphoricity = mean(Frage3),
+                                                        imageability = mean(Frage4))
+aov(clozeprob ~ semantics + Error(VP), data = avgs) %>% emmeans(specs = pairwise ~ semantics)
+aov(plausibility ~ semantics + Error(VP), data = avgs) %>% emmeans(specs = pairwise ~ semantics)
+aov(metaphoricity ~ semantics + Error(VP), data = avgs) %>% emmeans(specs = pairwise ~ semantics)
+aov(imageability ~ semantics + Error(VP), data = avgs) %>% emmeans(specs = pairwise ~ semantics)
+
 # Average pilot data across participants
-covariates <- pilot %>% group_by(KonzeptNr, VerbNr) %>% summarize(clozeprob = mean(Frage1),
-                                                                  plausibility = mean(Frage2),
-                                                                  metaphoricity = mean(Frage3),
-                                                                  imageability = mean(Frage4))
+covariates <- pilot %>% group_by(KonzeptNr, VerbNr, semantics) %>% summarize(clozeprob = mean(Frage1),
+                                                                             plausibility = mean(Frage2),
+                                                                             metaphoricity = mean(Frage3),
+                                                                             imageability = mean(Frage4))
 
 # Bind covariates to the experimental data
 a1 <- left_join(a1, covariates, by = c("KonzeptNr", "VerbNr"))
