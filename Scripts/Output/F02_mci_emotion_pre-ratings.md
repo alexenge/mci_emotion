@@ -17,24 +17,7 @@ kirstenstark
 
 # Load packages
 library(dplyr)
-```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following object is masked from 'package:MASS':
-    ## 
-    ##     select
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 # Load pre-rating data from SPSS file
 pilot <- haven::read_sav("FB/gesamt_2.sav")
 
@@ -279,20 +262,21 @@ sessionInfo()
     ## [6] Matrix_1.2-18  MASS_7.3-51.6 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          mvtnorm_1.1-1       lattice_0.20-41     digest_0.6.25      
-    ##  [5] R6_2.4.1            cellranger_1.1.0    plyr_1.8.6          evaluate_0.14      
-    ##  [9] ggplot2_3.3.2       highr_0.8           pillar_1.4.6        rlang_0.4.7        
-    ## [13] Rmisc_1.5           curl_4.3            readxl_1.3.1        rstudioapi_0.11    
-    ## [17] minqa_1.2.4         data.table_1.13.0   car_3.0-8           nloptr_1.2.2.2     
-    ## [21] rmarkdown_2.3       splines_4.0.2       statmod_1.4.34      readr_1.3.1        
-    ## [25] stringr_1.4.0       foreign_0.8-80      munsell_0.5.0       compiler_4.0.2     
-    ## [29] numDeriv_2016.8-1.1 xfun_0.16           pkgconfig_2.0.3     htmltools_0.5.0    
-    ## [33] tidyselect_1.1.0    tibble_3.0.3        rio_0.5.16          crayon_1.3.4       
-    ## [37] grid_4.0.2          nlme_3.1-148        xtable_1.8-4        gtable_0.3.0       
-    ## [41] lifecycle_0.2.0     magrittr_1.5        scales_1.1.1        zip_2.0.4          
-    ## [45] estimability_1.3    stringi_1.4.6       carData_3.0-4       renv_0.12.0        
-    ## [49] reshape2_1.4.4      ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2        
-    ## [53] boot_1.3-25         openxlsx_4.1.5      RColorBrewer_1.1-2  tools_4.0.2        
-    ## [57] forcats_0.5.0       glue_1.4.1          purrr_0.3.4         hms_0.5.3          
-    ## [61] abind_1.4-5         parallel_4.0.2      yaml_2.2.1          colorspace_1.4-1   
-    ## [65] knitr_1.29          haven_2.3.1
+    ##  [1] Rcpp_1.0.5          mvtnorm_1.1-1       lattice_0.20-41     assertthat_0.2.1   
+    ##  [5] digest_0.6.25       R6_2.4.1            cellranger_1.1.0    plyr_1.8.6         
+    ##  [9] evaluate_0.14       ggplot2_3.3.2       highr_0.8           pillar_1.4.6       
+    ## [13] rlang_0.4.7         Rmisc_1.5           curl_4.3            readxl_1.3.1       
+    ## [17] rstudioapi_0.11     minqa_1.2.4         data.table_1.13.0   car_3.0-8          
+    ## [21] nloptr_1.2.2.2      rmarkdown_2.3       splines_4.0.2       statmod_1.4.34     
+    ## [25] readr_1.3.1         stringr_1.4.0       foreign_0.8-80      munsell_0.5.0      
+    ## [29] compiler_4.0.2      numDeriv_2016.8-1.1 xfun_0.16           pkgconfig_2.0.3    
+    ## [33] htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        rio_0.5.16         
+    ## [37] fansi_0.4.1         crayon_1.3.4        grid_4.0.2          nlme_3.1-148       
+    ## [41] xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5       
+    ## [45] scales_1.1.1        zip_2.0.4           cli_2.0.2           estimability_1.3   
+    ## [49] stringi_1.4.6       carData_3.0-4       renv_0.12.0         reshape2_1.4.4     
+    ## [53] ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2         boot_1.3-25        
+    ## [57] openxlsx_4.1.5      RColorBrewer_1.1-2  tools_4.0.2         forcats_0.5.0      
+    ## [61] glue_1.4.1          purrr_0.3.4         hms_0.5.3           abind_1.4-5        
+    ## [65] parallel_4.0.2      yaml_2.2.1          colorspace_1.4-1    knitr_1.29         
+    ## [69] haven_2.3.1
