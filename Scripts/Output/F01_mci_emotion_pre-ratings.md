@@ -10,18 +10,13 @@ kirstenstark
 # stories were conducted on five-point rating scales. Script computes analyses of variances testing
 # for potential differences in these ratings between semantic conditions. Additionally, pairwise 
 # t-tests test differences between each pair of semantic conditions (violation - intuitive, 
-# MCI - intuitive, MCI - violation).
-# the fixed effects factor semantics 
+# MCI - intuitive, MCI - violation). The Bonferroni-Holm-correction was applied to control for multiple
+# comparisons.
 
 ## SETUP ## ---------------------------------------------------------------------------------------
 
 # Load packages
 library(dplyr)
-#library(MASS)         # version 7.3-51.6
-#library(lme4)         # version 1.1-23
-#library(lmerTest)     # version 3.1-2
-#library(afex)         # version 0.27-2
-#library(emmeans)      # version 1.4.8
 
 # Load pre-rating data from SPSS file
 pilot <- haven::read_sav("FB/gesamt_2.sav")
