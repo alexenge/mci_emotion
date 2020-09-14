@@ -1,7 +1,7 @@
 F03\_mci\_emotion\_mixed\_models\_appendix.R
 ================
 kirstenstark
-2020-09-14
+2020-09-15
 
 ``` r
 ### MCI EMO MIXED MODELS SCRIPT  - APPENDIX (P600) ###
@@ -167,26 +167,36 @@ sessionInfo()
     ## [1] stats     graphics  grDevices datasets  utils     methods   base     
     ## 
     ## other attached packages:
-    ##  [1] huxtable_5.0.0     cowplot_1.0.0      ggplot2_3.3.2      eeguana_0.1.4.9000
-    ##  [5] tidyr_1.1.0        dplyr_1.0.0        emmeans_1.4.8      afex_0.27-2       
-    ##  [9] lmerTest_3.1-2     lme4_1.1-23        Matrix_1.2-18      MASS_7.3-51.6     
+    ##  [1] huxtable_5.0.0  magrittr_1.5    forcats_0.5.0   stringr_1.4.0   dplyr_1.0.0    
+    ##  [6] purrr_0.3.4     readr_1.3.1     tidyr_1.1.0     tibble_3.0.3    ggplot2_3.3.2  
+    ## [11] tidyverse_1.3.0 Rmisc_1.5       plyr_1.8.6      lattice_0.20-41 emmeans_1.4.8  
+    ## [16] afex_0.27-2     lmerTest_3.1-2  lme4_1.1-23     Matrix_1.2-18   MASS_7.3-51.6  
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          mvtnorm_1.1-1       lattice_0.20-41     assertthat_0.2.1   
-    ##  [5] digest_0.6.25       R6_2.4.1            cellranger_1.1.0    plyr_1.8.6         
-    ##  [9] evaluate_0.14       highr_0.8           pillar_1.4.6        rlang_0.4.7        
-    ## [13] Rmisc_1.5           curl_4.3            readxl_1.3.1        rstudioapi_0.11    
-    ## [17] minqa_1.2.4         data.table_1.13.0   car_3.0-8           nloptr_1.2.2.2     
-    ## [21] rmarkdown_2.3       labeling_0.3        splines_4.0.2       statmod_1.4.34     
-    ## [25] readr_1.3.1         stringr_1.4.0       foreign_0.8-80      munsell_0.5.0      
-    ## [29] compiler_4.0.2      numDeriv_2016.8-1.1 xfun_0.16           pkgconfig_2.0.3    
-    ## [33] htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        rio_0.5.16         
-    ## [37] fansi_0.4.1         withr_2.2.0         crayon_1.3.4        grid_4.0.2         
-    ## [41] nlme_3.1-148        xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0    
-    ## [45] magrittr_1.5        scales_1.1.1        zip_2.0.4           cli_2.0.2          
-    ## [49] estimability_1.3    stringi_1.4.6       carData_3.0-4       farver_2.0.3       
-    ## [53] renv_0.12.0         reshape2_1.4.4      ellipsis_0.3.1      generics_0.0.2     
-    ## [57] vctrs_0.3.2         boot_1.3-25         openxlsx_4.1.5      RColorBrewer_1.1-2 
-    ## [61] tools_4.0.2         forcats_0.5.0       glue_1.4.1          purrr_0.3.4        
-    ## [65] hms_0.5.3           abind_1.4-5         parallel_4.0.2      yaml_2.2.1         
-    ## [69] colorspace_1.4-1    knitr_1.29          haven_2.3.1
+    ##   [1] minqa_1.2.4         colorspace_1.4-1    ellipsis_0.3.1      rio_0.5.16         
+    ##   [5] flextable_0.5.11    estimability_1.3    base64enc_0.1-3     fs_1.4.2           
+    ##   [9] rstudioapi_0.11     listenv_0.8.0       R.matlab_3.6.2      fansi_0.4.1        
+    ##  [13] mvtnorm_1.1-1       lubridate_1.7.9     xml2_1.3.2          codetools_0.2-16   
+    ##  [17] splines_4.0.2       R.methodsS3_1.8.0   knitr_1.29          eegUtils_0.5.0.9000
+    ##  [21] jsonlite_1.7.0      nloptr_1.2.2.2      broom_0.7.0.9001    dbplyr_1.4.4       
+    ##  [25] R.oo_1.23.0         shiny_1.5.0         compiler_4.0.2      httr_1.4.2         
+    ##  [29] backports_1.1.8     assertthat_0.2.1    fastmap_1.0.1       lazyeval_0.2.2     
+    ##  [33] cli_2.0.2           later_1.1.0.1       htmltools_0.5.0     tools_4.0.2        
+    ##  [37] gtable_0.3.0        glue_1.4.1          reshape2_1.4.4      Rcpp_1.0.5         
+    ##  [41] carData_3.0-4       cellranger_1.1.0    vctrs_0.3.2         nlme_3.1-148       
+    ##  [45] xfun_0.16           globals_0.12.5      rvest_0.3.5         openxlsx_4.1.5     
+    ##  [49] mime_0.9            miniUI_0.1.1.1      lifecycle_0.2.0     renv_0.12.0        
+    ##  [53] statmod_1.4.34      future_1.18.0       scales_1.1.1        hms_0.5.3          
+    ##  [57] promises_1.1.1      parallel_4.0.2      RColorBrewer_1.1-2  yaml_2.2.1         
+    ##  [61] curl_4.3            gdtools_0.2.2       stringi_1.4.6       highr_0.8          
+    ##  [65] boot_1.3-25         zip_2.1.1           cpp11_0.2.1         commonmark_1.7     
+    ##  [69] systemfonts_0.3.1   rlang_0.4.7         pkgconfig_2.0.3     matrixStats_0.56.0 
+    ##  [73] pracma_2.2.9        evaluate_0.14       htmlwidgets_1.5.1   tidyselect_1.1.0   
+    ##  [77] R6_2.4.1            generics_0.0.2      ini_0.3.1           DBI_1.1.0          
+    ##  [81] withr_2.2.0         pillar_1.4.6        haven_2.3.1         foreign_0.8-80     
+    ##  [85] mgcv_1.8-31         abind_1.4-5         future.apply_1.6.0  modelr_0.1.8       
+    ##  [89] crayon_1.3.4        car_3.0-8           uuid_0.1-4          plotly_4.9.2.1     
+    ##  [93] officer_0.3.14      rmarkdown_2.3       grid_4.0.2          readxl_1.3.1       
+    ##  [97] data.table_1.13.0   blob_1.2.1          reprex_0.3.0        digest_0.6.25      
+    ## [101] xtable_1.8-4        httpuv_1.5.4        numDeriv_2016.8-1.1 R.utils_2.9.2      
+    ## [105] signal_0.7-6        munsell_0.5.0       viridisLite_0.3.0
