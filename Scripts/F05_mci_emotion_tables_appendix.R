@@ -59,7 +59,7 @@ tab <- rbind(anovas, conts)
 ## P600 - 500-900 ms ## ---------------------------------------------------------------------------
 
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Verb-Related P600 (500-700 ms)", ""), tab)
+tab <- rbind(c("Verb-Related P600", ""), tab)
 
 # Add a stub column
 tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",

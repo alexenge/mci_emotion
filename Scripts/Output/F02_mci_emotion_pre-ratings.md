@@ -1,7 +1,7 @@
 F02\_mci\_emotion\_pre-ratings.R
 ================
 kirstenstark
-2020-09-14
+2020-09-15
 
 ``` r
 ### MCI EMO PRE-RATINGS OF MATERIAL ###
@@ -140,7 +140,7 @@ mean(anova.metaphoricity$`VP:semantics`$residuals^2)
 ``` r
 ## PAIRWISE TESTS ## -------------------------------------------------------------------------------------------------
 # cloze probability
-(pairwise.clozeprob <- anova.cloze %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.clozeprob <- anova.cloze %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 ```
 
     ## Note: re-fitting model with sum-to-zero contrasts
@@ -165,7 +165,7 @@ mean(anova.metaphoricity$`VP:semantics`$residuals^2)
 
 ``` r
 # plausibility
-(pairwise.plausibility <- anova.plausibility %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.plausibility <- anova.plausibility %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 ```
 
     ## Note: re-fitting model with sum-to-zero contrasts
@@ -190,7 +190,7 @@ mean(anova.metaphoricity$`VP:semantics`$residuals^2)
 
 ``` r
 # imageability
-(pairwise.imageability <- anova.imageability %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.imageability <- anova.imageability %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 ```
 
     ## Note: re-fitting model with sum-to-zero contrasts
@@ -215,7 +215,7 @@ mean(anova.metaphoricity$`VP:semantics`$residuals^2)
 
 ``` r
 # metaphoricity
-(pairwise.metaphoricity <- anova.metaphoricity %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.metaphoricity <- anova.metaphoricity %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 ```
 
     ## Note: re-fitting model with sum-to-zero contrasts
@@ -258,25 +258,32 @@ sessionInfo()
     ## [1] stats     graphics  grDevices datasets  utils     methods   base     
     ## 
     ## other attached packages:
-    ## [1] dplyr_1.0.0    emmeans_1.4.8  afex_0.27-2    lmerTest_3.1-2 lme4_1.1-23   
-    ## [6] Matrix_1.2-18  MASS_7.3-51.6 
+    ## [1] dplyr_1.0.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.5          mvtnorm_1.1-1       lattice_0.20-41     assertthat_0.2.1   
-    ##  [5] digest_0.6.25       R6_2.4.1            cellranger_1.1.0    plyr_1.8.6         
-    ##  [9] evaluate_0.14       ggplot2_3.3.2       highr_0.8           pillar_1.4.6       
-    ## [13] rlang_0.4.7         Rmisc_1.5           curl_4.3            readxl_1.3.1       
-    ## [17] rstudioapi_0.11     minqa_1.2.4         data.table_1.13.0   car_3.0-8          
-    ## [21] nloptr_1.2.2.2      rmarkdown_2.3       splines_4.0.2       statmod_1.4.34     
-    ## [25] readr_1.3.1         stringr_1.4.0       foreign_0.8-80      munsell_0.5.0      
-    ## [29] compiler_4.0.2      numDeriv_2016.8-1.1 xfun_0.16           pkgconfig_2.0.3    
-    ## [33] htmltools_0.5.0     tidyselect_1.1.0    tibble_3.0.3        rio_0.5.16         
-    ## [37] fansi_0.4.1         crayon_1.3.4        grid_4.0.2          nlme_3.1-148       
-    ## [41] xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0     magrittr_1.5       
-    ## [45] scales_1.1.1        zip_2.0.4           cli_2.0.2           estimability_1.3   
-    ## [49] stringi_1.4.6       carData_3.0-4       renv_0.12.0         reshape2_1.4.4     
-    ## [53] ellipsis_0.3.1      generics_0.0.2      vctrs_0.3.2         boot_1.3-25        
-    ## [57] openxlsx_4.1.5      RColorBrewer_1.1-2  tools_4.0.2         forcats_0.5.0      
-    ## [61] glue_1.4.1          purrr_0.3.4         hms_0.5.3           abind_1.4-5        
-    ## [65] parallel_4.0.2      yaml_2.2.1          colorspace_1.4-1    knitr_1.29         
-    ## [69] haven_2.3.1
+    ##   [1] nlme_3.1-148        matrixStats_0.56.0  RColorBrewer_1.1-2  httr_1.4.2         
+    ##   [5] numDeriv_2016.8-1.1 tools_4.0.2         R6_2.4.1            afex_0.27-2        
+    ##   [9] lazyeval_0.2.2      mgcv_1.8-31         colorspace_1.4-1    tidyselect_1.1.0   
+    ##  [13] emmeans_1.4.8       curl_4.3            compiler_4.0.2      cli_2.0.2          
+    ##  [17] eegUtils_0.5.0.9000 plotly_4.9.2.1      scales_1.1.1        mvtnorm_1.1-1      
+    ##  [21] readr_1.3.1         stringr_1.4.0       digest_0.6.25       foreign_0.8-80     
+    ##  [25] minqa_1.2.4         rmarkdown_2.3       R.utils_2.9.2       rio_0.5.16         
+    ##  [29] ini_0.3.1           pkgconfig_2.0.3     htmltools_0.5.0     lme4_1.1-23        
+    ##  [33] highr_0.8           fastmap_1.0.1       htmlwidgets_1.5.1   Rmisc_1.5          
+    ##  [37] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11     shiny_1.5.0        
+    ##  [41] generics_0.0.2      jsonlite_1.7.0      zip_2.1.1           car_3.0-8          
+    ##  [45] R.oo_1.23.0         magrittr_1.5        R.matlab_3.6.2      Matrix_1.2-18      
+    ##  [49] fansi_0.4.1         Rcpp_1.0.5          munsell_0.5.0       abind_1.4-5        
+    ##  [53] lifecycle_0.2.0     R.methodsS3_1.8.0   yaml_2.2.1          stringi_1.4.6      
+    ##  [57] carData_3.0-4       MASS_7.3-51.6       plyr_1.8.6          grid_4.0.2         
+    ##  [61] parallel_4.0.2      listenv_0.8.0       promises_1.1.1      forcats_0.5.0      
+    ##  [65] crayon_1.3.4        miniUI_0.1.1.1      lattice_0.20-41     haven_2.3.1        
+    ##  [69] splines_4.0.2       hms_0.5.3           knitr_1.29          pillar_1.4.6       
+    ##  [73] boot_1.3-25         estimability_1.3    future.apply_1.6.0  reshape2_1.4.4     
+    ##  [77] codetools_0.2-16    glue_1.4.1          evaluate_0.14       data.table_1.13.0  
+    ##  [81] renv_0.12.0         vctrs_0.3.2         nloptr_1.2.2.2      httpuv_1.5.4       
+    ##  [85] cellranger_1.1.0    gtable_0.3.0        purrr_0.3.4         tidyr_1.1.0        
+    ##  [89] assertthat_0.2.1    future_1.18.0       ggplot2_3.3.2       xfun_0.16          
+    ##  [93] openxlsx_4.1.5      mime_0.9            xtable_1.8-4        pracma_2.2.9       
+    ##  [97] later_1.1.0.1       viridisLite_0.3.0   signal_0.7-6        tibble_3.0.3       
+    ## [101] lmerTest_3.1-2      globals_0.12.5      statmod_1.4.34      ellipsis_0.3.1

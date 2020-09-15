@@ -59,16 +59,16 @@ mean(anova.metaphoricity$`VP:semantics`$residuals^2)
 
 ## PAIRWISE TESTS ## -------------------------------------------------------------------------------------------------
 # cloze probability
-(pairwise.clozeprob <- anova.cloze %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.clozeprob <- anova.cloze %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 
 # plausibility
-(pairwise.plausibility <- anova.plausibility %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.plausibility <- anova.plausibility %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 
 # imageability
-(pairwise.imageability <- anova.imageability %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.imageability <- anova.imageability %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 
 # metaphoricity
-(pairwise.metaphoricity <- anova.metaphoricity %>% emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
+(pairwise.metaphoricity <- anova.metaphoricity %>% emmeans::emmeans(specs = pairwise ~ semantics) %>% summary(adjust = "holm"))
 
 
 

@@ -1,7 +1,7 @@
 F04\_mci\_emotion\_plotting.R
 ================
 kirstenstark
-2020-09-14
+2020-09-15
 
 ``` r
 ### MCI EMO PLOTTING SCRIPT ###
@@ -55,17 +55,17 @@ a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral c
 avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
 avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 
-# Define color scheme (brewer)
-colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
-colors.highlight <- "#ffff33"
-colors.topo <- "RdBu"
-scale.topo <- scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
+# # Define color scheme (brewer)
+# colors.conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
+# colors.highlight <- "#ffff33"
+# colors.topo <- "RdBu"
+# scale.topo <- scale_fill_distiller(palette = "RdBu", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
-# # Define color scheme for conditions (plasma)
-# colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
-# colors.highlight <- viridisLite::plasma(1, direction = -1)
-# colors.topo <- "plasma"
-# scale.topo <- scale_fill_viridis_c(option = "plasma", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
+# Define color scheme for conditions (plasma)
+colors.conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)]
+colors.highlight <- viridisLite::plasma(1, direction = -1)
+colors.topo <- "plasma"
+scale.topo <- scale_fill_viridis_c(option = "plasma", guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 1), breaks = c(-0.7, 0, 0.7))
 
 # Assign names to colors
 names(colors.conditions) <- c("Intuitive", "Violation", "MCI")
@@ -275,97 +275,6 @@ plot_grid(plot_grid(waves$`Picture-related`) +
           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
   ggsave(filename = "EEG/figures/N400_pict.pdf", width = 18, height = 19.8, units = "cm")
 
-## ONE ADDITIONAL FIGURE FOR THE APPENDIX ## ------------------------------------------------------
-
-# # Define color scales
-# colors.topo <- "RdBu"
-# scale.topo <- scale_fill_distiller(palette = "RdBu", breaks = c(-0.7, 0, 0.7),
-#                                    guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
-# colors.topo <- "plasma"
-# scales.topo <- scale_fill_viridis_c(option = "plasma", breaks = c(-0.7, 0, 0.7),
-#                                     guide = guide_colorbar(ticks = FALSE, title.position = "left", label.hjust = 0.5, title.vjust = 1))
-
-# Update some parameters for the color bar
-scale.topo$guide$label.hjust <- 0.5
-scale.topo$guide$title.vjust <- 1
-
-# Create a color bar for the topographies
-colbar <- get_legend(ggplot(data.frame(x = c(0, 0), y = c(0, 0), fill = c(-0.7, 0.7)), aes(x = x, y = y, fill = fill)) + geom_raster() +
-                       scale.topo + labs(fill = "Ampl.\n(µV)") +
-                       theme(legend.direction = "horizontal",
-                             legend.key.width = unit(0.3, "cm"),
-                             legend.title = element_text(family = "Helvetica", size = 10, color = "black"),
-                             legend.text = element_text(family = "Helvetica", size = 10, color = "black"),
-                             legend.title.align = 0.5))
-
-# Create scalp topographies for P600 (new ROI)
-topos.P600 <- map(c(0.5, 0.6, 0.7, 0.8), function(tmin){
-  tmax <- tmin + 0.1
-  # Compute differences between conditions in time window at all electrodes
-  avgs %>% filter(type == "Verb-related", between(as_time(.sample), !!tmin, !!tmax)) %>%
-    group_by(semantics, context) %>% summarise_at(channel_names(.), mean) %>%
-    signal_tbl() %>% select(Fp1:A1) %>% t() %>% as.data.frame() %>%
-    set_colnames(c("int.neu", "int.neg", "vio.neu", "vio.neg", "mci.neu", "mci.neg")) %>%
-    transmute(diff.vio.neu = vio.neu - int.neu,
-              diff.vio.neg = vio.neg - int.neg,
-              diff.mci.neu = mci.neu - int.neu,
-              diff.mci.neg = mci.neg - int.neg) %>%
-    # Create four topoplots for the current time window
-    map(function(amplitudes){
-      dat <- data.frame(amplitude = amplitudes, electrode = avgs %>% select(Fp1:A1) %>% channel_names())
-      p <- eegUtils::topoplot(data = dat,
-                              limits = c(-0.7, 0.7),
-                              r = 0.9,
-                              palette = colors.topo,
-                              interp_limit = "skirt", 
-                              contour = FALSE,
-                              highlights = c("C1", "C2", "CZ", "FC1", "FC2", "FZ"),
-                              scaling = 0.4)
-      p$layers[[6]]$aes_params$size <- 0.1
-      p$layers[[7]]$aes_params$colour <- "black"
-      p + theme(legend.position = "none")}) %>%
-    # Add another plot denoting the current time window in ms
-    prepend(list(ggplot() + theme_void() +
-                   annotate("text", x = 0, y = 0, label = paste0(tmin*1000, "-", tmax*1000, " ms"), size = 3.528, family = "Helvetica"))) %>%
-    # Combine the five plots below one another
-    plot_grid(plotlist = ., nrow = 5, rel_heights = c(1, 3, 3, 3, 3))}) %>%
-  prepend(list(plot_grid(NULL,
-                         ggplot() + theme_void() +
-                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
-                         ggplot() + theme_void() +
-                           annotate("text", x = 0, y = 0, label = paste0("Violation - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
-                         ggplot() + theme_void() +
-                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(neutral context)"), size = 3.528, family = "Helvetica"),
-                         ggplot() + theme_void() +
-                           annotate("text", x = 0, y = 0, label = paste0("MCI - intuitive\n(negative context)"), size = 3.528, family = "Helvetica"),
-                         nrow = 5, rel_heights = c(1, 3, 3, 3, 3)))) %>%
-  # Combine all time windows next to each other
-  plot_grid(plotlist = ., nrow = 1) +
-  # Add colorbar
-  draw_plot(colbar, x = -0.403, y = 0.42)
-```
-
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-    ## Attempting to add standard electrode locations...
-
-``` r
-# Save plot
-ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, height = 15, units = "cm")
-
 # Full system specs and package versions
 sessionInfo()
 ```
@@ -406,15 +315,15 @@ sessionInfo()
     ##  [53] rvest_0.3.5         mime_0.9            miniUI_0.1.1.1      lifecycle_0.2.0    
     ##  [57] renv_0.12.0         statmod_1.4.34      future_1.18.0       MASS_7.3-51.6      
     ##  [61] scales_1.1.1        hms_0.5.3           promises_1.1.1      parallel_4.0.2     
-    ##  [65] RColorBrewer_1.1-2  yaml_2.2.1          curl_4.3            stringi_1.4.6      
-    ##  [69] highr_0.8           boot_1.3-25         zip_2.0.4           rlang_0.4.7        
-    ##  [73] pkgconfig_2.0.3     matrixStats_0.56.0  pracma_2.2.9        evaluate_0.14      
-    ##  [77] lattice_0.20-41     labeling_0.3        htmlwidgets_1.5.1   tidyselect_1.1.0   
-    ##  [81] plyr_1.8.6          R6_2.4.1            generics_0.0.2      ini_0.3.1          
-    ##  [85] DBI_1.1.0           withr_2.2.0         pillar_1.4.6        haven_2.3.1        
-    ##  [89] foreign_0.8-80      mgcv_1.8-31         abind_1.4-5         future.apply_1.6.0 
-    ##  [93] modelr_0.1.8        crayon_1.3.4        car_3.0-8           plotly_4.9.2.1     
-    ##  [97] rmarkdown_2.3       grid_4.0.2          readxl_1.3.1        data.table_1.13.0  
-    ## [101] blob_1.2.1          reprex_0.3.0        digest_0.6.25       xtable_1.8-4       
-    ## [105] httpuv_1.5.4        numDeriv_2016.8-1.1 R.utils_2.9.2       signal_0.7-6       
-    ## [109] munsell_0.5.0       viridisLite_0.3.0
+    ##  [65] yaml_2.2.1          curl_4.3            stringi_1.4.6       highr_0.8          
+    ##  [69] boot_1.3-25         zip_2.1.1           rlang_0.4.7         pkgconfig_2.0.3    
+    ##  [73] matrixStats_0.56.0  pracma_2.2.9        evaluate_0.14       lattice_0.20-41    
+    ##  [77] labeling_0.3        htmlwidgets_1.5.1   tidyselect_1.1.0    plyr_1.8.6         
+    ##  [81] R6_2.4.1            generics_0.0.2      ini_0.3.1           DBI_1.1.0          
+    ##  [85] withr_2.2.0         pillar_1.4.6        haven_2.3.1         foreign_0.8-80     
+    ##  [89] mgcv_1.8-31         abind_1.4-5         future.apply_1.6.0  modelr_0.1.8       
+    ##  [93] crayon_1.3.4        car_3.0-8           plotly_4.9.2.1      rmarkdown_2.3      
+    ##  [97] grid_4.0.2          readxl_1.3.1        data.table_1.13.0   blob_1.2.1         
+    ## [101] reprex_0.3.0        digest_0.6.25       xtable_1.8-4        httpuv_1.5.4       
+    ## [105] numDeriv_2016.8-1.1 R.utils_2.9.2       signal_0.7-6        munsell_0.5.0      
+    ## [109] viridisLite_0.3.0
