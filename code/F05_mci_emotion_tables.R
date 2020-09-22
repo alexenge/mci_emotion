@@ -1,35 +1,40 @@
-#/* Run this first piece of code only if you want to create a markdown report for GitHub
+#/* Run this first piece of code only if you want to create a PDF report for GitHub/OSF
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
-                  output_format = rmarkdown::github_document(html_preview = FALSE),
-                  output_dir = "Scripts/Output",
+                  output_format = rmarkdown::pdf_document(),
+                  output_dir = "output",
                   knit_root_dir = getwd()) #*/
+#' ---
+#' author: ""
+#' classoption: "landscape"
+#' ---
 #+ results="asis"
 
-### MCI EMO TABLES SCRIPT ###
+## MCI EMO TABLES SCRIPT ##
 
-# Creates a table for the output of our four linear mixed-effects models. The upper half of
-# the table includes ANOVA-style type III tests (F-tests), the bottom half contains planned
-# follow-up contrasts. For the F-tests, F-values, degrees of freedom, and p-values are
-# printed, whereas for the contrasts, regression estimates, 95% confidence intervals, and
-# p-values are printed.
+# Creates a table for the output of our four linear mixed-effects models. The upper half of the table includes ANOVA-
+# style type III tests (F-tests), the bottom half contains planned follow-up contrasts. For the F-tests, F-values,
+# degrees of freedom, and p-values are printed, whereas for the contrasts, regression estimates, 95% confidence
+# intervals, and p-values are printed.
 
-## PREPARATION ## ---------------------------------------------------------------------------------
+## PREPARATION ## ------------------------------------------------------------------------------------------------------
 
 # Load packages
 library(Rmisc)        # Version 1.5
 library(tidyverse)    # Version 1.3.0
 library(magrittr)     # Version 1.5
+library(officer)      # Version 0.3.14
+library(flextable)    # Version 0.5.11
 library(huxtable)     # version 5.0.0
 
-## TABLE 2: MEAN RATINGS ## -----------------------------------------------------------------------
+## TABLE 2: MEAN RATINGS ## --------------------------------------------------------------------------------------------
 
 # Load single-trial data
 a1 <- readRDS("EEG/export/a1.RDS")
 
 # Remove trials with errors or invalid RTs/ERPs
-a1 <- na.omit(a1[!a1$error,])
+a1 %<>% filter(!error) %>% na.omit()
 
-# Adjust range of response scalse
+# Adjust range of response scales
 a1$Valence <- a1$ValenzResp + 3
 a1$Arousal <- a1$ArousalResp + 3
 
@@ -47,133 +52,133 @@ tab2 <- summarySEwithin(a1, measurevar = "Valence", withinvars = "context") %>%
 suppressWarnings(print_md(tab2, max_width = Inf))
 
 # Save as Word document
-tab2 %>% quick_docx(file = "EEG/tables/table_ratings.docx", open = FALSE)
+tab2 %>% quick_docx(file = "EEG/tables/table_2.docx", open = FALSE)
 
-## TABLE 3: LMMS FOR N400 ## ----------------------------------------------------------------------
+## TABLE 3: LMMS FOR N400 ## -------------------------------------------------------------------------------------------
 
 # Load output of linear mixed-effects models
 load("EEG/export/stats.RData")
 
 # Extract a table for the F tests for each model (columns: F value (df), p-value)
-anovas <- lapply(tests[c("N400.VERB", "N400.PICT")], function(x){
+anovas_tab3 <- map(tests[c("N400_VERB", "N400_PICT")], function(x){
   coefs <- data.frame(paste0(format(round(x$`F value`, 2), trim = TRUE, nsmall = 2),
-                             "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
+                             "<br/> (", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
                       format(round(x$`Pr(>F)`, 3), nsmall = 3),
                       fix.empty.names = FALSE)
   coefs[,2] <- substr(coefs[,2], 1, 5)
   coefs[coefs[,2] == "0.000", 2] <- "< .001"
-  return(coefs)})
+  return(coefs)
+})
 
 # Bind all the F-tests to one data frame
-anovas <- do.call(cbind, anovas)
-anovas <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas)
+anovas_tab3 <- do.call(cbind, anovas_tab3)
+anovas_tab3 <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas_tab3)
 
 # Extract a table for the planned contrasts for each model (columns: estimate [CI], p-value)
-conts <- lapply(means.nested[c("N400.VERB", "N400.PICT")], function(x){
+conts_tab3 <- map(means_nested[c("N400_VERB", "N400_PICT")], function(x){
   x <- as.data.frame(x)
   coefs <- data.frame(paste0(format(round(x$estimate, 2), trim = TRUE, nsmall = 2),
-                             "<br/>[", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
+                             "<br/> [", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
                              format(round(x$upper.CL, 2), trim = TRUE, nsmall = 2), "]"),
                       format(round(x$p.value, 3), nsmall = 3),
                       fix.empty.names = FALSE)
   coefs[,2] <- substr(coefs[,2], 1, 5)
   coefs[coefs[,2] == "0.000", 2] <- "< .001"
-  return(coefs)})
+  return(coefs)
+})
 
 # Bind all the planned contrasts to one data frame
-conts <- do.call(cbind, conts)
-conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
+conts_tab3 <- do.call(cbind, conts_tab3)
+conts_tab3 <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts_tab3)
 
 # Bind both data frames (F-tests and contrats) below one another
-tab3 <- rbind(anovas, conts)
+tab3 <- rbind(anovas_tab3, conts_tab3)
 
 # Add model names (dependent variables) as the first row
 tab3 <- rbind(c("Verb-Related N400", "", "Picture-Related N400", ""), tab3)
 
 # Add a stub column
-tab3 <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
-                "**Planned contrasts**", "Vio. - int.<br/>(neutral)", "MCI - int.<br/>(neutral)",
-                "Vio. - int.<br/>(negative)", "MCI - int.<br/>(negative)"), tab3)
+tab3 <- cbind(c("", "**Fixed effects**", "Semantics", "Context", "Semantics × context",
+                "**Planned contrasts**", "Vio. - int.<br/> (neutral context)", "MCI - int.<br/> (neutral context)",
+                "Vio. - int.<br/> (negative context)", "MCI - int.<br/> (negative context)"), tab3)
 
 # Remove old column names
 names(tab3) <- NULL
 
 # Create a huxtable and output as markdown
-huxt <- huxtable(tab3, add_colnames = FALSE)
-print_md(huxt, max_width = Inf)
+huxt_tab3 <- huxtable(tab3, add_colnames = FALSE)
+print_md(huxt_tab3, max_width = Inf)
 
 # Export as a word file (after some re-formatting)
-tab3_word <- data.frame(lapply(tab3, function(x){gsub("<br/>", "\n", x)}))
-tab3_word <- data.frame(lapply(tab3_word, function(x){gsub("\\*|\\_", "", x)}))
-huxt_word <- huxtable(tab3_word, add_colnames = FALSE)
-quick_docx(huxt_word, file = "EEG/tables/table_N400.docx", open = FALSE)
+tab3_word <- data.frame(map(tab3, function(x){gsub("<br/> ", "\n", x)}))
+tab3_word <- data.frame(map(tab3_word, function(x){gsub("\\*|\\_", "", x)}))
+huxt_tab3_word <- huxtable(tab3_word, add_colnames = FALSE)
+quick_docx(huxt_tab3_word, file = "EEG/tables/table_3.docx", open = FALSE)
 
-## TABLE A1: LMM FOR P600 ## ----------------------------------------------------------------------
-# Load output from mixed models
-load("EEG/export/stats_appendix.RData")
+## TABLE A1: LMM FOR P600 ## -------------------------------------------------------------------------------------------
 
-# Extract a table for the F tests for each model (columns: F value (df), p-value)
-anovas <- lapply(tests_app, function(x){
+# Extract a table for the F tests for the model (columns: F value (df), p-value)
+anovas_tabA1 <- map(tests["P600_VERB"], function(x){
   coefs <- data.frame(paste0(format(round(x$`F value`, 2), trim = TRUE, nsmall = 2),
-                             "<br/>(", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
+                             "<br/> (", x$NumDF, ", ", format(round(x$DenDF, 1), trim = TRUE, nsmall = 1), ")"),
                       format(round(x$`Pr(>F)`, 3), nsmall = 3),
                       fix.empty.names = FALSE)
   coefs[,2] <- substr(coefs[,2], 1, 5)
   coefs[coefs[,2] == "0.000", 2] <- "< .001"
-  return(coefs)})
+  return(coefs)
+})
 
 # Bind all the F-tests to one data frame
-anovas <- do.call(cbind, anovas)
-anovas <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas)
+anovas_tabA1 <- do.call(cbind, anovas_tabA1)
+anovas_tabA1 <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas_tabA1)
 
 # Extract a table for the planned contrasts for each model (columns: estimate [CI], p-value)
-conts <- lapply(means.nested_app, function(x){
+conts_tabA1 <- map(means_nested["P600_VERB"], function(x){
   x <- as.data.frame(x)
   coefs <- data.frame(paste0(format(round(x$estimate, 2), trim = TRUE, nsmall = 2),
-                             "<br/>[", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
+                             "<br/> [", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
                              format(round(x$upper.CL, 2), trim = TRUE, nsmall = 2), "]"),
                       format(round(x$p.value, 3), nsmall = 3),
                       fix.empty.names = FALSE)
   coefs[,2] <- substr(coefs[,2], 1, 5)
   coefs[coefs[,2] == "0.000", 2] <- "< .001"
-  return(coefs)})
+  return(coefs)
+})
 
 # Bind all the planned contrasts to one data frame
-conts <- do.call(cbind, conts)
-conts <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts)
-
-## CREATE A SINGLE TABLE ## -----------------------------------------------------------------------
+conts_tabA1 <- do.call(cbind, conts_tabA1)
+conts_tabA1 <- rbind(c("**Est. [95% CI]**", "**_p_**"), conts_tabA1)
 
 # Bind both data frames (F-tests and contrats) below one another
-tab <- rbind(anovas, conts)
+tabA1 <- rbind(anovas_tabA1, conts_tabA1)
 
 # Add model names (dependent variables) as the first row
-tab <- rbind(c("Verb-Related P600", ""), tab)
+tabA1 <- rbind(c("Verb-Related P600", ""), tabA1)
 
 # Add a stub column
-tab <- cbind(c("", "**Model output**", "Semantics", "Context", "Semantics × context",
-               "**Planned contrasts**", "Vio. - int.<br/>(neutral)", "MCI - int.<br/>(neutral)",
-               "Vio. - int.<br/>(negative)", "MCI - int.<br/>(negative)"), tab)
+tabA1 <- cbind(c("", "**Fixed effects**", "Semantics", "Context", "Semantics × context",
+               "**Planned contrasts**", "Vio. - int.<br/> (neutral context)", "MCI - int.<br/> (neutral context)",
+               "Vio. - int.<br/> (negative context)", "MCI - int.<br/> (negative context)"), tabA1)
 
 # Remove old column names
-names(tab) <- NULL
+names(tabA1) <- NULL
 
 # Create a huxtable and output as markdown
-huxt <- huxtable(tab, add_colnames = FALSE)
-print_md(huxt, max_width = Inf)
+huxt_tabA1 <- huxtable(tabA1, add_colnames = FALSE)
+print_md(huxt_tabA1, max_width = Inf)
 
 # Export as a word file (after some re-formatting)
-tab_word <- data.frame(lapply(tab, function(x){gsub("<br/>", "\n", x)}))
-tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
-huxt_word <- huxtable(tab_word, add_colnames = FALSE)
-quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-900ms.docx", open = FALSE)
+tabA1_word <- data.frame(map(tabA1, function(x){gsub("<br/> ", "\n", x)}))
+tabA1_word <- data.frame(map(tabA1_word, function(x){gsub("\\*|\\_", "", x)}))
+huxt_tabA1_word <- huxtable(tabA1_word, add_colnames = FALSE)
+quick_docx(huxt_tabA1_word, file = "EEG/tables/table_A1.docx", open = FALSE)
 
 #+
- 
-# ## INTERACTION EFFECTS ## -------------------------------------------------------------------------
+
+# ## ADDITIONAL TABLE INTERACTION EFFECTS ## ---------------------------------------------------------------------------
 # 
 # # Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
-# summary(models$N400.VERB)$coefficients %>%
+# summary(models$N400_VERB)$coefficients %>%
 #   set_colnames(c("Est.", "SE", "df", "t", "p")) %>%
 #   set_rownames(c("(Intercept)", "Semantics: Vio. - int.", "Semantics: MCI - int", "Context",
 #                  "(Vio. - int.) × context", "(MCI - int.) × context")) %>%
@@ -182,7 +187,7 @@ quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-900ms.docx",
 #   quick_docx(file = "EEG/tables/table_ias_verb.docx", open = FALSE)
 # 
 # # Checking the MCI-intuitive x context and SEV-intuitive x context interactions separetely (verb)
-# summary(models$N400.PICT)$coefficients %>%
+# summary(models$N400_PICT)$coefficients %>%
 #   set_colnames(c("Est.", "SE", "df", "t", "p")) %>%
 #   set_rownames(c("(Intercept)", "Semantics: Vio. - int.", "Semantics: MCI - int", "Context",
 #                  "(Vio. - int.) × context", "(MCI - int.) × context")) %>%
@@ -190,7 +195,6 @@ quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixP600_500-900ms.docx",
 #   set_number_format(value = "%3.3f") %>%
 #   quick_docx(file = "EEG/tables/table_ias_pict.docx", open = FALSE)
 
-
-# Full system specs and package versions
+# System specs and package versions
 sessionInfo()
 

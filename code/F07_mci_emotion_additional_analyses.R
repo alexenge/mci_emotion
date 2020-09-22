@@ -1,13 +1,18 @@
-#/* Run this first piece of code only if you want to create a markdown report for GitHub
+#/* Run this first piece of code only if you want to create a PDF report for GitHub/OSF
 rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
-                  output_format = rmarkdown::github_document(html_preview = FALSE),
-                  output_dir = "Scripts/Output",
+                  output_format = rmarkdown::pdf_document(),
+                  output_dir = "output",
                   knit_root_dir = getwd()) #*/
+#' ---
+#' author: ""
+#' classoption: "landscape"
+#' ---
 
-### MCI EMO - ADDITIONAL ANALYSES ###
-### 1) EFFECT OF LAG1 SEMANTICS
-### 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
-### 3) P600 figure
+## MCI EMO - ADDITIONAL ANALYSES ##
+
+## 1) EFFECT OF LAG1 SEMANTICS
+## 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
+## 3) P600 figure
 
 # THESE ANALYSES WERE EXPLORATORY ANALYSES NOT REPORTED IN THE MANUSCRIPT
 
@@ -15,18 +20,16 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 ## 1) EFFECT OF LAG1 SEMANTICS ## -----------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-# The expected effect of semantic violations on N400 amplitudes was not found in the main analyses.
-# Additional "sequence analyses" were conducted in order to test whether the type of semantic
-# manipulation in the previous trial affected present N400 amplitudes. 
-# Script computes linear mixed-effects regression models with simple contrast coding for the fixed 
-# effects of semantics, lag1Semantics, and emotional context. Thus, in each model, the estimate 
-# of the intercept is the grand mean, while the estimates of the slopes contrast "treatment" levels 
-# to their respective reference levels (semantics & lag1Semantics: violation - intuitive, mci - 
-# intuitive; emotional context: negative - neutral). The maximal random effects structure is used 
-# with all by-participant and by-item random slopes and random intercepts. Correlations between random 
-# effects are removed if the model fails two converge with two different numerical optimizers. Planned 
-# follow-up contrasts are computed for the main effects and the effects of semantics separately within
-# each type of lag1 semantics and emotional context.
+# The expected effect of semantic violations on N400 amplitudes was not found in the main analyses. Additional "sequence
+# analyses" were conducted in order to test whether the type of semantic manipulation in the previous trial affected
+# present N400 amplitudes. Script computes linear mixed-effects regression models with simple contrast coding for the
+# fixed effects of semantics, lag1Semantics, and emotional context. Thus, in each model, the estimate of the intercept
+# is the grand mean, while the estimates of the slopes contrast "treatment" levels to their respective reference levels
+# (semantics & lag1Semantics: violation - intuitive, mci - intuitive; emotional context: negative - neutral). The
+# maximal random effects structure is used with all by-participant and by-item random slopes and random intercepts.
+# Correlations between random effects are removed if the model fails two converge with two different numerical
+# optimizers. Planned follow-up contrasts are computed for the main effects and the effects of semantics separately
+# within each type of lag1 semantics and emotional context.
 
 ## SETUP ## ---------------------------------------------------------------------------------------
 
@@ -38,7 +41,7 @@ library(afex)         # version 0.27-2
 library(emmeans)      # version 1.4.8
 
 # Load preprocessed data
-a1 <- readRDS("EEG/export/a1.RDS")
+a1 <- readRDS("EEG/export/a1_RDS")
 
 # Remove trials with errors or invalid RTs/ERPs
 a1 <- na.omit(a1[!a1$error,])
@@ -64,33 +67,32 @@ contrasts(a1$lag1Semantics) <- ginv(contrasts.semantics)
 ## LINEAR MIXED-EFFECTS MODELS ## -----------------------------------------------------------------
 
 # LMM for verb-related N400: Controlling for sequence of trials (lag)
-    # same random structure as for mod.N400.verb (main analyses) intended
+    # same random structure as for mod_N400_verb (main analyses) intended
     # however, model converged only after bobyqa optimizer was used and correlation parameters were excluded
-mod.N400.verb.lag <- lmer_alt(N400.verb ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
+mod_N400_verb_lag <- lmer_alt(N400_verb ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
                       data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-    # to compare the two models, the N400.verb random structure needs to be identical
-mod.N400.verb.comp <- lmer_alt(N400.verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+    # to compare the two models, the N400_verb random structure needs to be identical
+mod_N400_verb_comp <- lmer_alt(N400_verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
                               data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
     # model comparison
-anova(mod.N400.verb.comp, mod.N400.verb.lag)
+anova(mod_N400_verb_comp, mod_N400_verb_lag)
 
 # LMM for picture-related N400: Controlling for sequence of trials
-    # same random structure as for mod.N400.pict (main analyses) intended
+    # same random structure as for mod_N400_pict (main analyses) intended
     # however, model converged only after exclusion of correlation parameters
-mod.N400.pict.lag <- lmer_alt(N400.pict ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
+mod_N400_pict_lag <- lmer_alt(N400_pict ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
                       data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-    # to compare the two models, N400.pict random structure needs to be identical
-mod.N400.pict.comp <- lmer_alt(N400.pict ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+    # to compare the two models, N400_pict random structure needs to be identical
+mod_N400_pict_comp <- lmer_alt(N400_pict ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
                       data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 # model comparison
-anova(mod.N400.pict.comp, mod.N400.pict.lag)
+anova(mod_N400_pict_comp, mod_N400_pict_lag)
 
 # Create a list of models
-models <- list("N400.VERB.LAG" = mod.N400.verb.lag, "N400.PICT.LAG" = mod.N400.pict.lag)
+models <- list("N400_verb_LAG" = mod_N400_verb_lag, "N400_pict_LAG" = mod_N400_pict_lag)
 
 # F-tests (type III tests)
 (tests <- lapply(models, anova))
-
 
 ## PLANNED FOLLOW-UP CONTRASTS ## -----------------------------------------------------------------
 
@@ -98,34 +100,32 @@ models <- list("N400.VERB.LAG" = mod.N400.verb.lag, "N400.PICT.LAG" = mod.N400.p
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
 # Follow-up contrasts for the main effect of semantics
-(means.semantics <- lapply(models,function(x){
+(means_semantics <- lapply(models,function(x){
     emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for the main effect of context
-(means.context <- lapply(models, function(x){
+(means_context <- lapply(models, function(x){
     emmeans(x, trt.vs.ctrl ~ context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for the main effect of lag
-(means.lag <- lapply(models, function(x){
+(means_lag <- lapply(models, function(x){
     emmeans(x, trt.vs.ctrl ~ lag1Semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each contexts
-(means.nested.context <- lapply(models, function(x){
+(means_nested.context <- lapply(models, function(x){
     emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each lag1 semantic condition
-(means.nested.lag <- lapply(models, function(x){
+(means_nested.lag <- lapply(models, function(x){
     emmeans(x, trt.vs.ctrl ~ semantics|lag1Semantics, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
 # Follow-up contrasts for semantics within each lag1Semantics and each context condition
-(means.nested <- lapply(models, function(x){
+(means_nested <- lapply(models, function(x){
     emmeans(x, trt.vs.ctrl ~ semantics|lag1Semantics*context, infer = TRUE, adjust = "bonferroni")$contrasts}))
 
-
 # Backup results
-save(models, tests, means.semantics, means.context, means.lag, 
-     means.nested.context, means.nested.lag,means.nested, file = "EEG/export/stats_appendixLag.RData")
-
+save(models, tests, means_semantics, means_context, means_lag, 
+     means_nested.context, means_nested.lag,means_nested, file = "EEG/export/stats_appendixLag.RData")
 
 ## PLOTTING ## ------------------------------------------------------------------------------------
 
@@ -134,64 +134,58 @@ save(models, tests, means.semantics, means.context, means.lag,
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
-library(dplyr)   # Version 1.0.0
-library(tidyr)   # Version 1.1.0
-library(eeguana) # Version 0.1.4.9000
-library(ggplot2) # Version 3.3.2
-library(cowplot) # Version 1.0.0
+library(tidyverse)    # Version 1.3.0
+library(magrittr)     # Version 1.5
+library(eeguana)      # Version 0.1.4.9000
+library(cowplot)      # Version 1.0.0
 
 # Load preprocessed data
 a1 <- readRDS("EEG/export/a1.RDS")
-avgs.verb <- readRDS("EEG/export/avgs_verb.RDS")
-avgs.pict <- readRDS("EEG/export/avgs_pict.RDS")
-
-# Combine verb-related and picture-related potentials
-avgs.verb <- avgs.verb %>% mutate(type = "Verb-related")
-avgs.pict <- avgs.pict %>% mutate(type = "Picture-related")
-avgs <- bind(avgs.verb, avgs.pict)
-avgs$.segments$type <- factor(avgs$.segments$type, levels = c("Verb-related", "Picture-related"))
 
 # Remove trials with errors or invalid RTs/ERPs
-a1 <- na.omit(a1[!a1$error,])
+a1 %<>% filter(!error) %>% na.omit()
 
 # Define ggplot theme
-styling <-   theme(panel.grid = element_blank(),
-                   panel.border = element_rect(colour = "black", size = 1),
-                   legend.position = "right",
-                   axis.ticks = element_line(colour = "black"),
-                   axis.title = element_text(color = "black", family = "Helvetica", size = 10),
-                   axis.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
-                   legend.text = element_text(color = "black", family = "Helvetica", size = 10),
-                   strip.background = element_blank(),
-                   strip.text = element_text(color = "black", family = "Helvetica", size = 10))
+styling <- theme(panel.grid = element_blank(),
+                 panel.border = element_rect(colour = "black", size = 1),
+                 legend.position = "right",
+                 axis.ticks = element_line(colour = "black"),
+                 axis.title = element_text(color = "black", family = "Helvetica", size = 10),
+                 axis.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 legend.title = element_text(color = "black", family = "Helvetica", size = 10, face = "bold"),
+                 legend.text = element_text(color = "black", family = "Helvetica", size = 10),
+                 strip.background = element_blank(),
+                 strip.text = element_text(color = "black", family = "Helvetica", size = 10))
 
 # Rename some factor levels
-a1$semantics <- factor(a1$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
-a1$lag1Semantics <- factor(a1$lag1Semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
-a1$context <- factor(a1$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
-avgs$.segments$semantics <- factor(avgs$.segments$semantics, levels = c("int", "vio", "mci"), labels = c("Intuitive", "Violation", "MCI"))
-avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
+a1 %<>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci"),
+                                  labels = c("Intuitive", "Violation", "MCI")),
+               lag1Semantics = factor(lag1Semantics, levels = c("int", "vio", "mci"),
+                                  labels = c("Intuitive", "Violation", "MCI")),
+               context = factor(context, levels = c("neu", "neg"),
+                                labels = c("Neutral context", "Negative context")))
 
-# Define colours for conditions
-condition.colors <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
-names(condition.colors) <- c("Intuitive", "Violation", "MCI")
+# Define color scheme for conditions
+colors_conditions <- viridisLite::plasma(3, end = 0.9, direction = -1)[c(1, 2, 3)] %>%
+    set_names(c("Intuitive", "Violation", "MCI"))
 
 ## BAR PLOTS ## -----------------------------------------------------------------------------------
 
 # Convert dependent variables to long format
-a1.long <- a1 %>% gather(key = "dv", value = "value", N400.verb, N400.pict, factor_key = TRUE)
+a1_long <- a1 %>% gather(key = "dv", value = "value", N400_verb, N400_pict, factor_key = TRUE)
 
 # Compute summary statistics (means and confidence intervals) for verb-related and picture-related N400
-summs <- sapply(c("N400.verb", "N400.pict"), function(dv){
-    summ <- Rmisc::summarySEwithin(a1, measurevar = dv, withinvars = c("lag1Semantics", "semantics", "context"), idvar = "participant", na.rm = TRUE)
+summs <- map(c("N400_verb", "N400_pict"), function(dv){
+    summ <- Rmisc::summarySEwithin(a1, measurevar = dv, withinvars = c("lag1Semantics", "semantics", "context"),
+                                   idvar = "participant", na.rm = TRUE)
     colnames(summ)[colnames(summ) == dv] <- "value"
     summ$dv <- dv
-    return(summ)}, simplify = FALSE)
+    return(summ)
+}) %>% set_names(c("N400_verb", "N400_pict"))
 
 # Bar plots for verb-related and picture-related N400
-bars <- sapply(c("N400.verb", "N400.pict"), function(what){
-    if (what == "N400.verb") {
+bars <- map(c("N400_verb", "N400_pict"), function(what){
+    if (what == "N400_verb") {
         # Brackets and stars for statistical significance
         bracket <- data.frame(context = as.factor("Neutral context"),
                               lag1Semantics = rep(as.factor(c("Intuitive", "Violation", "MCI")), each = 3),
@@ -207,7 +201,7 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
             geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
             geom_segment(data = bracket, aes(x = xmin, y = ymin, xend = xmax, yend = ymax), inherit.aes = FALSE) +
             geom_label(data = bracket, aes(x = context, y = ystar, label = star), inherit.aes = FALSE, size = 6, label.size = 0) +
-            scale_fill_manual(values = condition.colors) +
+            scale_fill_manual(values = colors_conditions) +
             labs(fill = "Semantics") +
             coord_cartesian(ylim = c(-4, 1)) +
             scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
@@ -231,7 +225,7 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
             geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
             geom_segment(data = bracket, aes(x = xmin, y = ymin, xend = xmax, yend = ymax), inherit.aes = FALSE) +
             geom_label(data = bracket, aes(x = context, y = ystar, label = star), inherit.aes = FALSE, size = 6, label.size = 0) +
-            scale_fill_manual(values = condition.colors) +
+            scale_fill_manual(values = colors_conditions) +
             labs(fill = "Semantics") +
             coord_cartesian(ylim = c(-4, 1)) +
             scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
@@ -239,7 +233,8 @@ bars <- sapply(c("N400.verb", "N400.pict"), function(what){
             geom_hline(yintercept = 0) +
             theme_bw() + styling + theme(axis.title.x = element_blank(), legend.position = "none") +
             facet_grid(.~lag1Semantics)
-    }}, simplify = FALSE)
+    }
+}) %>% set_names(c("N400_verb", "N400_pict"))
 
 ## EXAMPLE TRIAL ## -------------------------------------------------------------------------------
 
@@ -250,23 +245,23 @@ stim <- ggplot() + theme_void() + theme(plot.background = element_rect(fill = "w
     geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.8)) +
     geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.5)) +
     geom_segment(aes(x = 0.51, xend = 0.54, y = 0.5, yend = 0.2)) +
-    geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[1], hjust = 0) +
-    geom_text(aes(x = 0.55, y = 0.5, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[2], hjust = 0) +
-    geom_text(aes(x = 0.55, y = 0.2, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = condition.colors[3], hjust = 0) +
+    geom_text(aes(x = 0.55, y = 0.8, label = "creaks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors_conditions[1], hjust = 0) +
+    geom_text(aes(x = 0.55, y = 0.5, label = "talks"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors_conditions[2], hjust = 0) +
+    geom_text(aes(x = 0.55, y = 0.2, label = "blossoms"), size = 4.939, family = "Helvetica", fontface = "bold", color = colors_conditions[3], hjust = 0) +
     geom_text(aes(x = 0.675, y = 0.8, label = 'in the wind"'), size = 4.939, family = "Helvetica", hjust = 0) +
     geom_text(aes(x = 0.643, y = 0.5, label = 'to the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
     geom_text(aes(x = 0.730, y = 0.2, label = 'above the girl"'), size = 4.939, family = "Helvetica", hjust = 0) +
-    draw_plot(get_legend(bars$N400.verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
+    draw_plot(get_legend(bars$N400_verb + theme(legend.position = "right", legend.title = element_blank())), x = 0.65, y = 0.5, vjust = 0.48)
 
 # Figure 1: Verb-Related N400 Effects
-plot_grid(stim, bars$N400.verb,
+plot_grid(stim, bars$N400_verb,
           nrow = 2, rel_heights = c(0.2, 1), labels = c("A", "B", NULL), label_fontfamily = "Helvetica") %>%
-    ggsave(filename = "EEG/figures/N400_verb_lag.pdf", width = 18, height = 22, units = "cm")
+    ggsave(filename = "EEG/figures/lag_N400_verb.pdf", width = 18, height = 22, units = "cm")
 
 # Figure 1: Picture-Related N400 Effects
-plot_grid(stim, bars$N400.pict,
+plot_grid(stim, bars$N400_pict,
           nrow = 2, rel_heights = c(0.2, 1), labels = c("A", "B", NULL), label_fontfamily = "Helvetica") %>%
-    ggsave(filename = "EEG/figures/N400_pict_lag.pdf", width = 18, height = 22, units = "cm")
+    ggsave(filename = "EEG/figures/lag_N400_pict.pdf", width = 18, height = 22, units = "cm")
 
 ## TABLES -----------------------------------------------------------------------------------------
     
@@ -299,7 +294,7 @@ anovas <- do.call(cbind, anovas)
 anovas <- rbind(c("**_F_** (**_df_**)", "**_p_**"), anovas)
 
 # Extract a table for the planned contrasts for each model (columns: estimate [CI], p-value)
-conts <- lapply(means.nested, function(x){
+conts <- lapply(means_nested, function(x){
     x <- as.data.frame(x)
     coefs <- data.frame(paste0(format(round(x$estimate, 2), trim = TRUE, nsmall = 2),
                                "<br/>[", format(round(x$lower.CL, 2), trim = TRUE, nsmall = 2), ", ",
@@ -343,7 +338,7 @@ print_md(huxt, max_width = Inf)
 tab_word <- data.frame(lapply(tab, function(x){gsub("<br/>", "\n", x)}))
 tab_word <- data.frame(lapply(tab_word, function(x){gsub("\\*|\\_", "", x)}))
 huxt_word <- huxtable(tab_word, add_colnames = FALSE)
-quick_docx(huxt_word, file = "EEG/tables/lmm_table_appendixLag.docx", open = FALSE)
+quick_docx(huxt_word, file = "EEG/tables/table_lag.docx", open = FALSE)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -395,44 +390,44 @@ a1 <- a1 %>% mutate(across(.cols = c(clozeprob, plausibility, metaphoricity, ima
 ## LINEAR MIXED-EFFECTS MODELS ## -----------------------------------------------------------------
 
 # LMM including all covariates as fixed effects
-mod.N400.verb.covs <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
+mod_N400_verb_covs <- lmer_alt(N400_verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
                                + (semantics*context||participant) + (semantics*context||item), data = a1,
                                control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 # Model output
-anova(mod.N400.verb.covs) # Semantics remains significant, no other effects
-anova(mod.N400.verb, mod.N400.verb.covs) # Takes a while because models need to be refitted with ML; p = 0.765
-emmeans(mod.N400.verb.covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
+anova(mod_N400_verb_covs) # Semantics remains significant, no other effects
+anova(mod_N400_verb, mod_N400_verb_covs) # Takes a while because models need to be refitted with ML; p = 0.765
+emmeans(mod_N400_verb_covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
 # MCI - intuitive remains significant (still ~ -0.5 Microvolts, p = 0.004)
 
-# rePCA(mod.N400.verb.covs)
-# mod.N400.verb.covs.alt <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
+# rePCA(mod_N400_verb_covs)
+# mod_N400_verb_covs.alt <- lmer_alt(N400_verb ~ (clozeprob + plausibility + metaphoricity + imageability) + semantics*context
 #                                + (context||participant) + (semantics*context||item),
 #                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-# # refit mod.N400.verb.alt with the same random structure so model comparison is possible
-# mod.N400.verb.alt <- lmer_alt(N400.verb ~ semantics*context
+# # refit mod_N400_verb_alt with the same random structure so model comparison is possible
+# mod_N400_verb_alt <- lmer_alt(N400_verb ~ semantics*context
 #                                    + (context||participant) + (semantics*context||item),
 #                                    data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 #
 # # Model output
-# anova(mod.N400.verb.covs.alt) # MCI - correct remains significant, no other effects
-# anova(mod.N400.verb.alt, mod.N400.verb.covs.alt) # Takes a while because models need to be refitted with ML - n.s.
-# emmeans(mod.N400.verb.covs.alt, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
+# anova(mod_N400_verb_covs.alt) # MCI - correct remains significant, no other effects
+# anova(mod_N400_verb_alt, mod_N400_verb_covs.alt) # Takes a while because models need to be refitted with ML - n.s.
+# emmeans(mod_N400_verb_covs.alt, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
 #
 # # And another LMM including interactions with each covariate
-# mod.N400.verb.covs.ia <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability) * semantics*context
+# mod_N400_verb_covs.ia <- lmer_alt(N400_verb ~ (clozeprob + plausibility + metaphoricity + imageability) * semantics*context
 #                                   + (semantics*context||participant) + (semantics*context||item),
 #                                   data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 # 
 # # Model summary
-# summary(mod.N400.verb.covs.ia)
-# anova(mod.N400.verb, mod.N400.verb.covs.ia) # n.s.
+# summary(mod_N400_verb_covs.ia)
+# anova(mod_N400_verb, mod_N400_verb_covs.ia) # n.s.
 #
 # # Set up a model with covariates only
-# mod.N400.verb.covs.only <- lmer_alt(N400.verb ~ (clozeprob + plausibility + metaphoricity + imageability)
+# mod_N400_verb_covs.only <- lmer_alt(N400_verb ~ (clozeprob + plausibility + metaphoricity + imageability)
 #                                + (semantics*context||participant) + (semantics*context||item),
 #                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-# summary(mod.N400.verb.covs.only)
+# summary(mod_N400_verb_covs.only)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -447,9 +442,9 @@ library(eeguana)     # Version 0.1.4.9000
 library(cowplot)     # Version 1.0.0
 
 # Load preprocessed data
-a1 <- readRDS("EEG/export/a1.RDS")
-avgs.verb <- readRDS("EEG/export/avgs_verb.RDS")
-avgs.pict <- readRDS("EEG/export/avgs_pict.RDS")
+a1 <- readRDS("EEG/export/a1_RDS")
+avgs.verb <- readRDS("EEG/export/avgs_verb_RDS")
+avgs.pict <- readRDS("EEG/export/avgs_pict_RDS")
 
 # Combine verb-related and picture-related potentials
 avgs.verb <- avgs.verb %>% mutate(type = "Verb-related")
@@ -605,8 +600,8 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 # avgs$.segments$context <- factor(avgs$.segments$context, levels = c("neu", "neg"), labels = c("Neutral context", "Negative context"))
 # 
 # # Define colours for conditions
-# condition.colors <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
-# names(condition.colors) <- c("Intuitive", "Violation", "MCI")
+# colors_conditions <- RColorBrewer::brewer.pal(3, name = "Set1")[c(3, 1, 2)]
+# names(colors_conditions) <- c("Intuitive", "Violation", "MCI")
 # 
 # ## TOPOGRAPHIES ONLY ## ---------------------------------------------------------------------------
 # 
@@ -679,7 +674,7 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 # ## BAR PLOTS ## -----------------------------------------------------------------------------------
 # 
 # # Convert dependent variables to long format
-# a1.long <- a1 %>% gather(key = "dv", value = "value", P600_1.verb, P600_2.verb, P600_3.verb, P600_4.verb, factor_key = TRUE)
+# a1_long <- a1 %>% gather(key = "dv", value = "value", P600_1.verb, P600_2.verb, P600_3.verb, P600_4.verb, factor_key = TRUE)
 # 
 # # Compute summary statistics (means and confidence intervals) for verb-related and picture-related N400
 # summs <- sapply(c("P600_1.verb", "P600_2.verb", "P600_3.verb", "P600_4.verb"), function(dv){
@@ -694,7 +689,7 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #   ggplot(summs[names(summs) == what][[1]], aes(x = context, y = value, fill = semantics)) +
 #     geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
 #     geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
-#     scale_fill_manual(values = condition.colors) +
+#     scale_fill_manual(values = colors_conditions) +
 #     labs(fill = "Semantics") +
 #     coord_cartesian(ylim = c(-2, 3)) +
 #     scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
@@ -717,7 +712,7 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #     geom_errorbar(aes(ymin = value - ci, ymax = value + ci), position = position_dodge(width = 0.9), width = 0.5) +
 #     geom_segment(data = bracket, aes(x = xmin, y = ymin, xend = xmax, yend = ymax), inherit.aes = FALSE) +
 #     geom_label(aes(x = 1.85, y = -0.67, label = "*"), inherit.aes = FALSE, size = 6, label.size = 0) +
-#     scale_fill_manual(values = condition.colors) +
+#     scale_fill_manual(values = colors_conditions) +
 #     labs(fill = "Semantics") +
 #     coord_cartesian(ylim = c(-2, 3)) +
 #     scale_x_discrete(labels = c("Neutral\ncontext", "Negative\ncontext")) +
@@ -743,7 +738,7 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #     geom_hline(yintercept = 0, linetype = "dotted") +
 #     geom_vline(xintercept = 0, linetype = "dotted") +
 #     stat_summary(fun = "mean", geom = "line") +
-#     scale_color_manual(values = condition.colors) +
+#     scale_color_manual(values = colors_conditions) +
 #     coord_cartesian(xlim = c(-0.2, x_lim), ylim = c(-4.5, 4.5), expand = FALSE) +
 #     scale_x_continuous(breaks = seq(-0.1, x_break, 0.2), labels = seq(-100, x_label, 200)) +
 #     scale_y_continuous(breaks = seq(-4, 4, 2)) +
@@ -781,7 +776,7 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #     geom_hline(yintercept = 0, linetype = "dotted") +
 #     geom_vline(xintercept = 0, linetype = "dotted") +
 #     stat_summary(fun = "mean", geom = "line") +
-#     scale_color_manual(values = condition.colors) +
+#     scale_color_manual(values = colors_conditions) +
 #     coord_cartesian(xlim = c(-0.2, x_lim), ylim = c(-4.5, 4.5), expand = FALSE) +
 #     scale_x_continuous(breaks = seq(-0.1, x_break, 0.2), labels = seq(-100, x_label, 200)) +
 #     scale_y_continuous(breaks = seq(-4, 4, 2)) +
@@ -956,9 +951,6 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #   ggsave(filename = "EEG/figures/appendix_P600_500-900ms_new_ROI.pdf", width = 18, height = 19.8, units = "cm")
 # 
 
-
-
-
-# Full system specs and package versions
+# System specs and package versions
 sessionInfo()
 
