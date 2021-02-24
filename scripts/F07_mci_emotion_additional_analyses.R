@@ -12,7 +12,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 ## 1) EFFECT OF LAG1 SEMANTICS
 ## 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
-## 3) P-hacking the verb-related N400 (ANOVA instead of LMM, Half I vs. Half II)
+## 3) P-hacking the verb-related N400 (ANOVA instead of LMM, Half I vs. Half II, shorter time window)
 ## 4) P600 figure
 
 # THESE ANALYSES WERE EXPLORATORY ANALYSES NOT REPORTED IN THE MANUSCRIPT
@@ -48,18 +48,18 @@ a1 <- readRDS("EEG/export/a1_RDS")
 a1 <- na.omit(a1[!a1$error,])
 
 # Define simple contrast coding for context emotionality (negative - neutral)
-    # HO(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
-    # H0(Slope): -mu1 + mu2 = 0
-    # with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
+# HO(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
+# H0(Slope): -mu1 + mu2 = 0
+# with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
 t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
 contrasts(a1$context) <- ginv(contrasts.context)
 
 # Define simple contrast coding for semantics and lag1Semantics
 # (violation - intuitive, mci - intuitive)
-    # H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
-    # H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
-    # H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
-    # with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
+# H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
+# H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
+# H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
+# with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
 t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
                                  c("int" = -1, "vio" = 0, "mci" = 1))))
 contrasts(a1$semantics) <- ginv(contrasts.semantics)
@@ -68,24 +68,24 @@ contrasts(a1$lag1Semantics) <- ginv(contrasts.semantics)
 ## LINEAR MIXED-EFFECTS MODELS ## -----------------------------------------------------------------
 
 # LMM for verb-related N400: Controlling for sequence of trials (lag)
-    # same random structure as for mod_N400_verb (main analyses) intended
-    # however, model converged only after bobyqa optimizer was used and correlation parameters were excluded
+# same random structure as for mod_N400_verb (main analyses) intended
+# however, model converged only after bobyqa optimizer was used and correlation parameters were excluded
 mod_N400_verb_lag <- lmer_alt(N400_verb ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-    # to compare the two models, the N400_verb random structure needs to be identical
-mod_N400_verb_comp <- lmer_alt(N400_verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
                               data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-    # model comparison
+# to compare the two models, the N400_verb random structure needs to be identical
+mod_N400_verb_comp <- lmer_alt(N400_verb ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
+                               data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# model comparison
 anova(mod_N400_verb_comp, mod_N400_verb_lag)
 
 # LMM for picture-related N400: Controlling for sequence of trials
-    # same random structure as for mod_N400_pict (main analyses) intended
-    # however, model converged only after exclusion of correlation parameters
+# same random structure as for mod_N400_pict (main analyses) intended
+# however, model converged only after exclusion of correlation parameters
 mod_N400_pict_lag <- lmer_alt(N400_pict ~ lag1Semantics*semantics*context + (semantics*context||participant) + (semantics*context||item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
-    # to compare the two models, N400_pict random structure needs to be identical
+                              data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+# to compare the two models, N400_pict random structure needs to be identical
 mod_N400_pict_comp <- lmer_alt(N400_pict ~ semantics*context + (semantics*context||participant) + (semantics*context||item),
-                      data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+                               data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 # model comparison
 anova(mod_N400_pict_comp, mod_N400_pict_lag)
 
@@ -162,7 +162,7 @@ styling <- theme(panel.grid = element_blank(),
 a1 %<>% mutate(semantics = factor(semantics, levels = c("int", "vio", "mci"),
                                   labels = c("Intuitive", "Violation", "MCI")),
                lag1Semantics = factor(lag1Semantics, levels = c("int", "vio", "mci"),
-                                  labels = c("Intuitive", "Violation", "MCI")),
+                                      labels = c("Intuitive", "Violation", "MCI")),
                context = factor(context, levels = c("neu", "neg"),
                                 labels = c("Neutral context", "Negative context")))
 
@@ -265,14 +265,14 @@ plot_grid(stim, bars$N400_pict,
     ggsave(filename = "EEG/figures/lag_N400_pict.pdf", width = 18, height = 22, units = "cm")
 
 ## TABLES -----------------------------------------------------------------------------------------
-    
-    # Script creates a table for the output of our two linear mixed-effects models. The upper half of
-    # the table includes ANOVA-style type III tests (F-tests), the bottom half contains planned
-    # follow-up contrasts. For the F-tests, F-values, degrees of freedom, and p-values are
-    # printed, whereas for the contrasts, regression estimates, 95% confidence intervals, and
-    # p-values are printed.
-    
-    ## PREPARATION ## ---------------------------------------------------------------------------------
+
+# Script creates a table for the output of our two linear mixed-effects models. The upper half of
+# the table includes ANOVA-style type III tests (F-tests), the bottom half contains planned
+# follow-up contrasts. For the F-tests, F-values, degrees of freedom, and p-values are
+# printed, whereas for the contrasts, regression estimates, 95% confidence intervals, and
+# p-values are printed.
+
+## PREPARATION ## ---------------------------------------------------------------------------------
 
 # Load packages
 library(huxtable)     # version 5.0.0
@@ -513,6 +513,29 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 emmeans(
     mod_N400_half, 
     trt.vs.ctrl ~ semantics|context|half,
+    infer = TRUE,
+    adjust = "bonferroni"
+)$contrasts %>%
+    as.data.frame()
+
+## SHORTER TIME WINDOW ## -------------------------------------------------------------------------
+
+# LMM for verb-related N400 (post hoc time window)
+mod_N400_posthoc <- lmer_alt(N400_posthoc ~ semantics*context
+                             + (semantics*context||participant)
+                             + (semantics*context||item),
+                             data = a1, control = lmerControl(calc.derivs = FALSE,
+                                                              optimizer = "bobyqa",
+                                                              optCtrl = list(maxfun = 2e5)))
+
+# F-tests
+anova(mod_N400_posthoc)
+
+# Follow-up contrasts for semantics within each contexts
+emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
+emmeans(
+    mod_N400_posthoc, 
+    trt.vs.ctrl ~ semantics|context,
     infer = TRUE,
     adjust = "bonferroni"
 )$contrasts %>%
