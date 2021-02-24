@@ -12,7 +12,8 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 ## 1) EFFECT OF LAG1 SEMANTICS
 ## 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
-## 3) P600 figure
+## 3) P-hacking the verb-related N400 (ANOVA instead of LMM, Half I vs. Half II)
+## 4) P600 figure
 
 # THESE ANALYSES WERE EXPLORATORY ANALYSES NOT REPORTED IN THE MANUSCRIPT
 
@@ -429,9 +430,96 @@ emmeans(mod_N400_verb_covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjus
 #                                data = a1, control = lmerControl(calc.derivs = FALSE, optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 # summary(mod_N400_verb_covs.only)
 
+# -------------------------------------------------------------------------------------------------
+## 3) P-HACKING THE VERB-RELATED N400 EFFECT ## ---------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+## SETUP AS BEFORE ## -----------------------------------------------------------------------------
+
+# Load packages
+library(MASS)         # version 7.3-51.6
+library(lme4)         # version 1.1-23
+library(lmerTest)     # version 3.1-2
+library(afex)         # version 0.27-2
+library(emmeans)      # version 1.4.8
+library(tidyverse)    # Version 1.3.0
+library(magrittr)     # Version 1.5
+
+# Load preprocessed data
+a1 <- readRDS("EEG/export/a1.RDS")
+
+# Remove trials with errors or invalid RTs/ERPs
+a1 %<>% filter(!error) %>% na.omit()
+
+# Define simple contrast coding for context emotionality (negative - neutral)
+t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
+contrasts(a1$context) <- ginv(contrasts.context)
+
+# Define simple contrast coding for semantics (violation - intuitive, mci - intuitive)
+t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
+                                 c("int" = -1, "vio" = 0, "mci" = 1))))
+contrasts(a1$semantics) <- ginv(contrasts.semantics)
+
+## RM-ANOVA INSTEAD OF LMM ## ---------------------------------------------------------------------
+
+# Fit a repeated-measures ANOVA instead of a LMM
+mod_N400_aov <- aov_ez(
+    id = "participant",
+    dv = "N400_verb",
+    within = c("semantics", "context"),
+    fun_aggregate = mean,
+    data = a1
+)
+
+# Show ANOVA summary
+summary(mod_N400_aov)
+
+# Follow-up contrasts for semantics within each contexts
+emmeans(
+    mod_N400_aov, 
+    trt.vs.ctrl ~ semantics|context,
+    infer = TRUE,
+    adjust = "bonferroni"
+)$contrasts %>% 
+    as.data.frame()
+
+## FATIGUE ## -------------------------------------------------------------------------------------
+
+# Create a new variable for the half of the experiment (I vs. II, split-half)
+a1 %<>%
+    group_by(participant) %>%
+    mutate(
+        trial = row_number(),
+        half = ifelse(trial < max(trial) / 2, "I", "II") %>% factor()
+    )
+
+# Set new contrasts
+t(contrasts.half <- t(cbind(c("I" = -1, "II" = 1))))
+contrasts(a1$half) <- ginv(contrasts.half)
+
+# Fit LMM with an additional fixed effect
+mod_N400_half <- lmer_alt(N400_verb ~ semantics*context*half
+                          + (semantics*context||participant) 
+                          + (semantics*context||item),
+                          data = a1, control = lmerControl(calc.derivs = FALSE,
+                                                           optimizer = "bobyqa",
+                                                           optCtrl = list(maxfun = 2e5)))
+
+# F-tests
+anova(mod_N400_half)
+
+# Follow-up contrasts for semantics within each contexts
+emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
+emmeans(
+    mod_N400_half, 
+    trt.vs.ctrl ~ semantics|context|half,
+    infer = TRUE,
+    adjust = "bonferroni"
+)$contrasts %>%
+    as.data.frame()
 
 # -------------------------------------------------------------------------------------------------
-## 3) P600 FIGURE ## ------------------------------------------------------------------------------
+## 4) P600 FIGURE ## ------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 ## PREPARATION ## ---------------------------------------------------------------------------------
 
