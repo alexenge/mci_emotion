@@ -23,8 +23,8 @@ library(tidyverse)    # Version 1.3.0
 library(magrittr)     # Version 1.5
 library(eeguana)      # Version 0.1.4.9000
 
-# Make sure we have enough RAM available
-memory.limit(size = 64000)
+# Make sure we have enough RAM available (note that your computer does not *actually* have so much RAM physically)
+memory.limit(size = 128000)
 
 ## BEHAVIORAL DATA ## --------------------------------------------------------------------------------------------------
 
@@ -145,6 +145,15 @@ a1 <- eeg %>%
   pull(erps) %>%
   as.numeric() %>%
   bind_cols(a1, P600_verb = .)
+
+# Post-hoc analysis of a shorter time window for the verb-related N400
+a1 <- eeg %>%
+  filter(type == "Verb-related", between(as_time(.sample), 0.350, 0.450)) %>%
+  group_by(.id) %>%
+  summarise(erps = mean(ROI)) %>%
+  pull(erps) %>%
+  as.numeric() %>%
+  bind_cols(a1, N400_posthoc = .)
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1.RDS")

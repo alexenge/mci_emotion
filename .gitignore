@@ -4,7 +4,8 @@
 .Ruserdata
 .DS_Store
 *.Rproj
-renv/library
-EEG
-FB
-RT
+renv/library/
+EEG/
+FB/
+RT/
+scripts/old/
