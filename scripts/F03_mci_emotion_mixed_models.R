@@ -106,8 +106,13 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
   emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
 }))
 
+# Follow-up contrasts for contexts within each semantic condition
+(means_nested_rev <- map(models[c("N400_VERB", "N400_PICT", "P600_VERB")], function(x){
+  emmeans(x, trt.vs.ctrl ~ context|semantics, infer = TRUE, adjust = "bonferroni")$contrasts
+}))
+
 # Backup results
-save(models, tests, means_semantics, means_context, means_nested, file = "EEG/export/stats.RData")
+save(models, tests, means_semantics, means_context, means_nested, means_nested_rev, file = "EEG/export/stats.RData")
 
 # System specs and package versions
 sessionInfo()
