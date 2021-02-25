@@ -12,7 +12,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 
 ## 1) EFFECT OF LAG1 SEMANTICS
 ## 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
-## 3) P-hacking the verb-related N400 (ANOVA instead of LMM, Half I vs. Half II, shorter time window)
+## 3) EXPLORATORY ANALYSES ON THE VERB-RELATED N400 (ANOVA, SPLIT-HALF, SHORTER TIME-WINDOW)
 ## 4) P600 figure
 
 # THESE ANALYSES WERE EXPLORATORY ANALYSES NOT REPORTED IN THE MANUSCRIPT
@@ -431,7 +431,7 @@ emmeans(mod_N400_verb_covs, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjus
 # summary(mod_N400_verb_covs.only)
 
 # -------------------------------------------------------------------------------------------------
-## 3) P-HACKING THE VERB-RELATED N400 EFFECT ## ---------------------------------------------------
+## 3) EXPLORATORY ANALYSES ON THE VERB-RELATED N400 (ANOVA, SPLIT-HALF, SHORTER TIME-WINDOW) ## ---
 # -------------------------------------------------------------------------------------------------
 
 ## SETUP AS BEFORE ## -----------------------------------------------------------------------------
