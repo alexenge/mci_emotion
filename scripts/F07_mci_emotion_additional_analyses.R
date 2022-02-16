@@ -14,6 +14,7 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 ## 2) MODELS WITH COVARIATES METAPHORICITY, PLAUSIBILITY, IMAGEABILIY, CLOZE PROBABILITY
 ## 3) EXPLORATORY ANALYSES ON THE VERB-RELATED N400 (ANOVA, SPLIT-HALF, SHORTER TIME-WINDOW)
 ## 4) P600 figure
+## 5) CONTRAST MCI VS. VIOLATIONS
 
 # THESE ANALYSES WERE EXPLORATORY ANALYSES NOT REPORTED IN THE MANUSCRIPT
 
@@ -1061,6 +1062,85 @@ ggsave(topos.P600, filename = "EEG/figures/P600_appendix.pdf", width = 18, heigh
 #           nrow = 2, rel_heights = c(0.8, 1), labels = c("A", NULL), label_fontfamily = "Helvetica") %>%
 #   ggsave(filename = "EEG/figures/appendix_P600_500-900ms_new_ROI.pdf", width = 18, height = 19.8, units = "cm")
 # 
+
+# -------------------------------------------------------------------------------------------------
+## 5) CONTRAST MCI VS. VIOLATIONS -----------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# Load packages
+library(MASS)         # version 7.3-51.6
+library(emmeans)      # version 1.4.8
+library(tidyverse)    # Version 1.3.0
+library(magrittr)     # Version 1.5
+
+# Load preprocessed data
+a1 <- readRDS("EEG/export/a1.RDS")
+
+# Remove trials with errors or invalid RTs/ERPs
+a1 %<>% filter(!error) %>% na.omit()
+
+# Define simple contrast coding for context emotionality (negative - neutral)
+#     H0(Intercept): (mu1+mu2)/2 = 0 <-> mu1+mu2 = 0
+#     H0(Slope): -mu1 + mu2 = 0
+#     with mu1 = mean of the neutral contexts and mu2 = mean of the neg contexts
+t(contrasts.context <- t(cbind(c("neu" = -1, "neg" = 1))))
+contrasts(a1$context) <- ginv(contrasts.context)
+
+# Define simple contrast coding for semantics (violation - intuitive, mci - intuitive)
+#     H0(Intercept): (mu1+mu2+mu3)/3 = 0 <-> mu1+mu2+mu3 = 0
+#     H0(Slope1): -1*mu1 +1*mu2 + 0*mu3 = 0
+#     H0(Slope2): -1*mu1 +0*mu2 + 1*mu3 = 0
+#     with mu1 = mean of intuitive concepts, mu2 = mean of violations, mu3 = mean of MCIs
+t(contrasts.semantics <- t(cbind(c("int" = -1, "vio" = 1, "mci" = 0),
+                                 c("int" = -1, "vio" = 0, "mci" = 1))))
+contrasts(a1$semantics) <- ginv(contrasts.semantics)
+
+# Load fitted models
+load("EEG/export/stats.RData")
+models_erp <- models[c("N400_VERB", "N400_PICT", "P600_VERB", "N400_PICT_POSTHOC")]
+
+# Allow emmeans to use Satterthwaites p-values
+emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
+
+# Re-estimate contrasts but with violations (instead of intuitive) as the control level
+(means_semantics_vio <- map(models_erp, function(x){
+  emmeans(
+    x,
+    trt.vs.ctrl ~ semantics,
+    ref = "vio",
+    infer = TRUE,
+    adjust = "bonferroni"
+  )$contrasts
+}))
+(means_nested_vio <- map(models_erp, function(x){
+  emmeans(
+    x,
+    trt.vs.ctrl ~ semantics|context,
+    ref = "vio",
+    adjust = "bonferroni",
+    infer = TRUE
+  )$contrasts
+}))
+
+# Re-estimate contrasts but for all pairwise differences
+# Note that this changes the original p values for MCI vs. intuitive because of the Bonferroni correction
+# Follow-up contrasts for the main effect of semantics
+(means_semantics_pairwise <- map(models_erp, function(x){
+  emmeans(
+    x,
+    pairwise ~ semantics,
+    infer = TRUE,
+    adjust = "bonferroni"
+  )$contrasts
+}))
+(means_nested_pairwise <- map(models_erp, function(x){
+  emmeans(
+    x,
+    pairwise ~ semantics|context,
+    adjust = "bonferroni",
+    infer = TRUE
+  )$contrasts
+}))
 
 # System specs and package versions
 sessionInfo()
