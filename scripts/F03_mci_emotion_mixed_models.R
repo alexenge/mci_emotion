@@ -79,9 +79,15 @@ mod_P600_verb <- lmer_alt(P600_verb ~ semantics*context + (semantics*context||pa
                                                            optimizer = "bobyqa",
                                                            optCtrl = list(maxfun = 2e5)))
 
+# LMM for picture-related N400 in a narrower time window (converged after changing the optimizer)
+mod_N400_pict_posthoc_narrow250_350 <- lmer(N400_pict_posthoc_narrow250_350 ~ semantics*context + (semantics*context|participant) + (semantics*context|item),
+                                            data = a1, control = lmerControl(calc.derivs = FALSE,
+                                                                             optimizer = "bobyqa",
+                                                                             optCtrl = list(maxfun = 2e5)))
+
 # Create a list of all models
-models <- list("VALENCE" = mod_valence, "AROUSAL" = mod_aroursal, "N400_VERB" = mod_N400_verb,
-               "N400_PICT" = mod_N400_pict, "P600_VERB" = mod_P600_verb)
+models <- list("VALENCE" = mod_valence, "AROUSAL" = mod_aroursal, "N400_VERB" = mod_N400_verb, "N400_PICT" = mod_N400_pict,
+               "P600_VERB" = mod_P600_verb, "N400_PICT_POSTHOC_NARROW250_350" = mod_N400_pict_posthoc_narrow250_350)
 
 # F-tests (type III tests)
 (tests <- map(models, anova))
@@ -91,8 +97,11 @@ models <- list("VALENCE" = mod_valence, "AROUSAL" = mod_aroursal, "N400_VERB" = 
 # Allow emmeans to use Satterthwaites p-values
 emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 
+# We want to test most effects for the *ERP* models only, so let's create a seperate list
+models_erp <- models[c("N400_VERB", "N400_PICT", "P600_VERB", "N400_PICT_POSTHOC_NARROW250_350")]
+
 # Follow-up contrasts for the main effect of semantics
-(means_semantics <- map(models[c("N400_VERB", "N400_PICT", "P600_VERB")],function(x){
+(means_semantics <- map(models_erp, function(x){
   emmeans(x, trt.vs.ctrl ~ semantics, infer = TRUE, adjust = "bonferroni")$contrasts
 }))
 
@@ -102,12 +111,12 @@ emm_options(lmer.df = "Satterthwaite", lmerTest.limit = Inf)
 }))
 
 # Follow-up contrasts for semantics within each contexts
-(means_nested <- map(models[c("N400_VERB", "N400_PICT", "P600_VERB")], function(x){
+(means_nested <- map(models_erp, function(x){
   emmeans(x, trt.vs.ctrl ~ semantics|context, infer = TRUE, adjust = "bonferroni")$contrasts
 }))
 
 # Follow-up contrasts for contexts within each semantic condition
-(means_nested_rev <- map(models[c("N400_VERB", "N400_PICT", "P600_VERB")], function(x){
+(means_nested_rev <- map(models_erp, function(x){
   emmeans(x, trt.vs.ctrl ~ context|semantics, infer = TRUE, adjust = "bonferroni")$contrasts
 }))
 
