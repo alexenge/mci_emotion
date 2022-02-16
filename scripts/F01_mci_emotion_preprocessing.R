@@ -20,11 +20,13 @@ rmarkdown::render(input = rstudioapi::getSourceEditorContext()$path,
 # Load packages
 library(naturalsort)  # Version 0.1.3
 library(tidyverse)    # Version 1.3.0
-library(magrittr)     # Version 1.5
-library(eeguana)      # Version 0.1.4.9000
+library(magrittr)     # Version 1.5 // 2.0.2
+library(eeguana)      # Version 0.1.4.9000 // 0.1.6.9000
 
 # Make sure we have enough RAM available (note that your computer does not *actually* have so much RAM physically)
 memory.limit(size = 128000)
+
+setwd("N:/Experimente/MCI/mci_emotion")
 
 ## BEHAVIORAL DATA ## --------------------------------------------------------------------------------------------------
 
@@ -91,7 +93,7 @@ eeg <- map2(filenames_eeg, filenames_besa, function(vhdr_filename, besa_filename
   message("## EPOCHING...")
   dat %<>% eeg_segment(.description %in% c("S211", "S212", "S213", "S221", "S222", "S223",
                                            "S181", "S182", "S183", "S191", "S192", "S193"),
-                       lim = c(-200, 998), unit = "ms")
+                       lim = c(-200, 998), unit="ms")
   message("## BASELINE CORRECTION...")
   dat %<>% eeg_baseline()
   message("## ARTIFACT REJECTION...")
@@ -103,7 +105,7 @@ eeg <- map2(filenames_eeg, filenames_besa, function(vhdr_filename, besa_filename
   message("## DONE\n")
   return(dat)
 })
-
+eeg2 <- eeg
 # Bind data from all participants together
 eeg %<>% do.call(what = bind)
 
@@ -119,10 +121,11 @@ eeg %<>%
   mutate(type = factor (type, levels = c("Verb-related", "Picture-related")),
          semantics = factor(semantics, levels = c("int", "vio", "mci")),
          context = factor(context, levels = c("neu", "neg")))
-
+eeg3 <- eeg
 # Compute mean amplitude across electrodes in the N400 ROI
 eeg %<>% mutate(ROI = chs_mean(C1, C2, Cz, CP1, CP2, CPz))
-
+eeg3 <- eeg
+a2 <- a1
 # Average single trial ERPs in the ROI across the relevant time windows (and bind to behavioral data)
 a1 <- eeg %>%
   filter(type == "Verb-related", between(as_time(.sample), 0.300, 0.500)) %>%
@@ -146,14 +149,34 @@ a1 <- eeg %>%
   as.numeric() %>%
   bind_cols(a1, P600_verb = .)
 
-# Post-hoc analysis of a shorter time window for the verb-related N400
+# Post-hoc analysis of a later time window for the verb-related N400
 a1 <- eeg %>%
   filter(type == "Verb-related", between(as_time(.sample), 0.350, 0.450)) %>%
   group_by(.id) %>%
   summarise(erps = mean(ROI)) %>%
   pull(erps) %>%
   as.numeric() %>%
-  bind_cols(a1, N400_posthoc = .)
+  bind_cols(a1, N400_posthoc_350450 = .)
+
+
+# Post-hoc analysis of later time window for picture-related N400
+a1 <- eeg %>%
+  filter(type == "Picture-related", between(as_time(.sample), 0.350, 0.450)) %>%
+  group_by(.id) %>%
+  summarise(erps = mean(ROI)) %>%
+  pull(erps) %>%
+  as.numeric() %>%
+  bind_cols(a1, N400_pict_posthoc = .)
+
+# Post-hoc analysis of a narrower time window for the pciture-related N400
+a1 <- eeg %>%
+  filter(type == "Picture-related", between(as_time(.sample), 0.250, 0.350)) %>%
+  group_by(.id) %>%
+  summarise(erps = mean(ROI)) %>%
+  pull(erps) %>%
+  as.numeric() %>%
+  bind_cols(a1, N400_pict_posthoc_narrow250_350 = .)
+
 
 # Export behavioral data and ERPs for mixed models
 saveRDS(a1, file = "EEG/export/a1.RDS")
